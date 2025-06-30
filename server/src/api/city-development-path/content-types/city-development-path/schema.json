@@ -1,0 +1,170 @@
+{
+  "kind": "collectionType",
+  "collectionName": "city_development_paths",
+  "info": {
+    "singularName": "city-development-path",
+    "pluralName": "city-development-paths",
+    "displayName": "城池发展路线",
+    "description": "城池发展路线配置数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "path_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 30,
+      "description": "路线ID"
+    },
+    "name_zh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "中文名称"
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "英文名称"
+    },
+    "description": {
+      "type": "text",
+      "description": "路线描述"
+    },
+    "development_type": {
+      "type": "enumeration",
+      "enum": ["military_fortress", "trade_hub", "cultural_center", "resource_base", "defensive_stronghold"],
+      "required": true,
+      "description": "发展类型"
+    },
+    "specialization_focus": {
+      "type": "string",
+      "maxLength": 30,
+      "description": "专精重点"
+    },
+    "milestone_buildings": {
+      "type": "json",
+      "description": "里程碑建筑"
+    },
+    "development_stages": {
+      "type": "json",
+      "description": "发展阶段"
+    },
+    "stage_requirements": {
+      "type": "json",
+      "description": "阶段要求"
+    },
+    "primary_benefits": {
+      "type": "json",
+      "description": "主要收益"
+    },
+    "secondary_benefits": {
+      "type": "json",
+      "description": "次要收益"
+    },
+    "late_game_bonuses": {
+      "type": "json",
+      "description": "后期奖励"
+    },
+    "unique_abilities": {
+      "type": "json",
+      "description": "独特能力"
+    },
+    "total_investment_estimate": {
+      "type": "biginteger",
+      "description": "总投资估算"
+    },
+    "time_investment_estimate": {
+      "type": "integer",
+      "description": "时间投资估算（天）"
+    },
+    "resource_requirements": {
+      "type": "json",
+      "description": "资源需求"
+    },
+    "recommended_for": {
+      "type": "json",
+      "description": "推荐对象"
+    },
+    "optimal_city_types": {
+      "type": "json",
+      "description": "最适城池类型"
+    },
+    "synergy_cities": {
+      "type": "json",
+      "description": "协同城池"
+    },
+    "development_risks": {
+      "type": "json",
+      "description": "发展风险"
+    },
+    "maintenance_challenges": {
+      "type": "json",
+      "description": "维护挑战"
+    },
+    "vulnerability_factors": {
+      "type": "json",
+      "description": "脆弱因素"
+    },
+    "early_priorities": {
+      "type": "json",
+      "description": "早期优先级"
+    },
+    "mid_game_focus": {
+      "type": "json",
+      "description": "中期重点"
+    },
+    "late_game_objectives": {
+      "type": "json",
+      "description": "后期目标"
+    },
+    "historical_examples": {
+      "type": "json",
+      "description": "历史案例"
+    },
+    "famous_implementations": {
+      "type": "json",
+      "description": "著名实例"
+    },
+    "success_rate": {
+      "type": "float",
+      "default": 0.7,
+      "min": 0,
+      "max": 1,
+      "description": "成功率"
+    },
+    "difficulty_rating": {
+      "type": "integer",
+      "default": 5,
+      "min": 1,
+      "max": 10,
+      "description": "难度评级"
+    },
+    "popularity_score": {
+      "type": "float",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "description": "受欢迎度"
+    },
+    "strategy_guide": {
+      "type": "text",
+      "description": "策略指南"
+    },
+    "display_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "显示顺序"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "是否启用"
+    }
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "chapters": [
+    {
+      "chapter_id": 1,
+      "name": "桃园结义",
+      "description": "初入乱世，三兄弟立下誓言",
+      "unlock_level": 1,
+      "total_stages": 10,
+      "difficulty": "tutorial",
+      "prev_chapter_id": null,
+      "required_stars": 0,
+      "first_clear_rewards": {
+        "hero": "刘备",
+        "gold": 10000,
+        "gems": 50
+      },
+      "three_star_rewards": {
+        "gems": 50,
+        "energy": 30,
+        "skill_books": 3
+      },
+      "story_intro": "东汉末年，天下大乱。刘备、关羽、张飞三人在桃园结为异姓兄弟，立志匡扶汉室，拯救苍生。",
+      "is_active": true,
+      "sort_order": 1
+    },
+    {
+      "chapter_id": 2,
+      "name": "黄巾起义",
+      "description": "太平道张角作乱，群雄并起",
+      "unlock_level": 5,
+      "total_stages": 12,
+      "difficulty": "easy",
+      "prev_chapter_id": 1,
+      "required_stars": 15,
+      "first_clear_rewards": {
+        "hero": "关羽",
+        "gold": 15000,
+        "gems": 80
+      },
+      "three_star_rewards": {
+        "gems": 80,
+        "skill_books": 5,
+        "enhancement_stones": 10
+      },
+      "story_intro": "张角率领黄巾军起义，各地豪杰纷纷响应朝廷号召，讨伐黄巾。刘关张三兄弟也加入了讨伐军。",
+      "is_active": true,
+      "sort_order": 2
+    },
+    {
+      "chapter_id": 3,
+      "name": "董卓乱政",
+      "description": "董卓专权，十八路诸侯讨董",
+      "unlock_level": 10,
+      "total_stages": 15,
+      "difficulty": "normal",
+      "prev_chapter_id": 2,
+      "required_stars": 25,
+      "first_clear_rewards": {
+        "hero": "张飞",
+        "gold": 25000,
+        "gems": 120
+      },
+      "three_star_rewards": {
+        "gems": 120,
+        "enhancement_stones": 10,
+        "awakening_crystals": 5
+      },
+      "story_intro": "董卓挟天子以令诸侯，暴虐无道。十八路诸侯会盟讨伐董卓，三英战吕布成为千古佳话。",
+      "is_active": true,
+      "sort_order": 3
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "1-1",
+      "name": "初出茅庐",
+      "chapter_id": 1,
+      "stage_type": "normal",
+      "stage_number": 1,
+      "energy_cost": 6,
+      "recommended_power": 100,
+      "enemy_formation": {
+        "enemies": [
+          {"id": "bandit_1", "level": 1, "position": 4},
+          {"id": "bandit_1", "level": 1, "position": 5},
+          {"id": "bandit_1", "level": 1, "position": 6}
+        ]
+      },
+      "star_conditions": {
+        "one_star": "完成关卡",
+        "two_star": "无英雄阵亡",
+        "three_star": "30秒内完成"
+      },
+      "base_rewards": {
+        "gold": 500,
+        "player_exp": 50,
+        "hero_exp": 100
+      },
+      "drop_items": [
+        {"item_id": "skill_book_basic", "drop_rate": 30},
+        {"item_id": "enhancement_stone_basic", "drop_rate": 20}
+      ],
+      "battle_tips": "第一次战斗，跟随指引即可轻松获胜",
+      "is_boss_stage": false,
+      "is_active": true
+    },
+    {
+      "stage_id": "1-2",
+      "name": "剿灭山贼",
+      "chapter_id": 1,
+      "stage_type": "normal",
+      "stage_number": 2,
+      "energy_cost": 6,
+      "recommended_power": 150,
+      "enemy_formation": {
+        "enemies": [
+          {"id": "bandit_1", "level": 2, "position": 1},
+          {"id": "bandit_1", "level": 2, "position": 4},
+          {"id": "bandit_2", "level": 2, "position": 5},
+          {"id": "bandit_1", "level": 2, "position": 7}
+        ]
+      },
+      "star_conditions": {
+        "one_star": "完成关卡",
+        "two_star": "无英雄阵亡",
+        "three_star": "40秒内完成"
+      },
+      "base_rewards": {
+        "gold": 600,
+        "player_exp": 60,
+        "hero_exp": 120
+      },
+      "drop_items": [
+        {"item_id": "skill_book_basic", "drop_rate": 35},
+        {"item_id": "enhancement_stone_basic", "drop_rate": 25}
+      ],
+      "battle_tips": "注意使用技能打断敌人",
+      "is_boss_stage": false,
+      "is_active": true
+    },
+    {
+      "stage_id": "1-3",
+      "name": "结识关羽",
+      "chapter_id": 1,
+      "stage_type": "normal",
+      "stage_number": 3,
+      "energy_cost": 6,
+      "recommended_power": 200,
+      "enemy_formation": {
+        "enemies": [
+          {"id": "bandit_2", "level": 3, "position": 1},
+          {"id": "bandit_2", "level": 3, "position": 3},
+          {"id": "bandit_leader", "level": 3, "position": 5},
+          {"id": "bandit_2", "level": 3, "position": 7},
+          {"id": "bandit_2", "level": 3, "position": 9}
+        ]
+      },
+      "star_conditions": {
+        "one_star": "完成关卡",
+        "two_star": "无英雄阵亡",
+        "three_star": "50秒内完成"
+      },
+      "base_rewards": {
+        "gold": 800,
+        "player_exp": 80,
+        "hero_exp": 150
+      },
+      "drop_items": [
+        {"item_id": "guan_yu_fragment", "drop_rate": 10},
+        {"item_id": "skill_book_basic", "drop_rate": 40},
+        {"item_id": "enhancement_stone_basic", "drop_rate": 30}
+      ],
+      "story_dialogue": {
+        "before_battle": [
+          {"speaker": "刘备", "text": "前方有山贼作乱，我们去除害吧。"},
+          {"speaker": "关羽", "text": "某愿助兄长一臂之力！"}
+        ],
+        "after_battle": [
+          {"speaker": "刘备", "text": "多谢二弟相助！"},
+          {"speaker": "关羽", "text": "兄长客气了，这是关某应该做的。"}
+        ]
+      },
+      "battle_tips": "关羽加入队伍，试试他的斩击技能",
+      "is_boss_stage": false,
+      "is_active": true
+    },
+    {
+      "stage_id": "1-10",
+      "name": "桃园结义",
+      "chapter_id": 1,
+      "stage_type": "normal",
+      "stage_number": 10,
+      "energy_cost": 8,
+      "recommended_power": 500,
+      "enemy_formation": {
+        "enemies": [
+          {"id": "bandit_elite", "level": 5, "position": 1},
+          {"id": "bandit_elite", "level": 5, "position": 3},
+          {"id": "bandit_boss", "level": 6, "position": 5},
+          {"id": "bandit_elite", "level": 5, "position": 7},
+          {"id": "bandit_elite", "level": 5, "position": 9}
+        ]
+      },
+      "star_conditions": {
+        "one_star": "完成关卡",
+        "two_star": "无英雄阵亡",
+        "three_star": "90秒内完成"
+      },
+      "base_rewards": {
+        "gold": 2000,
+        "player_exp": 200,
+        "hero_exp": 300,
+        "gems": 20
+      },
+      "drop_items": [
+        {"item_id": "zhang_fei_fragment", "drop_rate": 15},
+        {"item_id": "skill_book_intermediate", "drop_rate": 25},
+        {"item_id": "enhancement_stone_intermediate", "drop_rate": 20}
+      ],
+      "story_dialogue": {
+        "before_battle": [
+          {"speaker": "刘备", "text": "今日我们三人结为兄弟，不求同年同月同日生..."},
+          {"speaker": "关羽", "text": "但求同年同月同日死！"},
+          {"speaker": "张飞", "text": "哈哈哈，说得好！让我们先去扫平这些山贼！"}
+        ],
+        "after_battle": [
+          {"speaker": "刘备", "text": "从今往后，我们就是生死兄弟了！"},
+          {"speaker": "关羽", "text": "誓死追随大哥！"},
+          {"speaker": "张飞", "text": "俺也一样！"}
+        ]
+      },
+      "battle_tips": "BOSS战！集中火力先击败小怪",
+      "is_boss_stage": true,
+      "is_active": true
+    },
+    {
+      "stage_id": "2-1",
+      "name": "黄巾军现",
+      "chapter_id": 2,
+      "stage_type": "normal",
+      "stage_number": 1,
+      "energy_cost": 8,
+      "recommended_power": 600,
+      "enemy_formation": {
+        "enemies": [
+          {"id": "yellow_turban_soldier", "level": 6, "position": 1},
+          {"id": "yellow_turban_soldier", "level": 6, "position": 4},
+          {"id": "yellow_turban_soldier", "level": 6, "position": 5},
+          {"id": "yellow_turban_soldier", "level": 6, "position": 6},
+          {"id": "yellow_turban_soldier", "level": 6, "position": 9}
+        ]
+      },
+      "star_conditions": {
+        "one_star": "完成关卡",
+        "two_star": "无英雄阵亡",
+        "three_star": "60秒内完成"
+      },
+      "base_rewards": {
+        "gold": 1200,
+        "player_exp": 120,
+        "hero_exp": 200
+      },
+      "drop_items": [
+        {"item_id": "skill_book_intermediate", "drop_rate": 30},
+        {"item_id": "enhancement_stone_intermediate", "drop_rate": 25}
+      ],
+      "unlock_conditions": {
+        "prev_stage": "1-10",
+        "player_level": 5
+      },
+      "battle_tips": "黄巾军士兵防御较高，使用技能破防",
+      "is_boss_stage": false,
+      "is_active": true
+    }
+  ],
+  "stage_rewards": [
+    {
+      "stage_id": "1-1",
+      "reward_type": "first_clear",
+      "resource_type": "gold",
+      "quantity": 500,
+      "drop_rate": 100,
+      "is_guaranteed": true
+    },
+    {
+      "stage_id": "1-1",
+      "reward_type": "first_clear",
+      "resource_type": "gems",
+      "quantity": 10,
+      "drop_rate": 100,
+      "is_guaranteed": true
+    },
+    {
+      "stage_id": "1-3",
+      "reward_type": "first_clear",
+      "resource_type": "hero_fragment",
+      "resource_id": "guan_yu",
+      "quantity": 5,
+      "drop_rate": 100,
+      "is_guaranteed": true
+    },
+    {
+      "stage_id": "1-10",
+      "reward_type": "first_clear",
+      "resource_type": "hero",
+      "resource_id": "zhang_fei",
+      "quantity": 1,
+      "drop_rate": 100,
+      "is_guaranteed": true
+    },
+    {
+      "stage_id": "1-10",
+      "reward_type": "three_star",
+      "resource_type": "gems",
+      "quantity": 50,
+      "drop_rate": 100,
+      "is_guaranteed": true
+    }
+  ]
+}

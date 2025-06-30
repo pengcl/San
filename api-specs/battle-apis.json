@@ -1,0 +1,683 @@
+{
+  "battleApis": {
+    "version": "1.0.0",
+    "description": "战斗相关API规范",
+    "baseUrl": "/api/battles",
+
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/stages",
+        "name": "获取关卡列表",
+        "description": "获取可用的战斗关卡",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "chapter": {
+              "type": "number",
+              "min": 1
+            },
+            "difficulty": {
+              "type": "string",
+              "enum": ["normal", "elite", "heroic"]
+            },
+            "completed": {
+              "type": "boolean"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "chapters": [
+                {
+                  "id": "number",
+                  "name": "string",
+                  "description": "string",
+                  "unlocked": "boolean",
+                  "totalStars": "number",
+                  "maxStars": "number",
+                  "stages": [
+                    {
+                      "id": "string",
+                      "name": "string",
+                      "energyCost": "number",
+                      "recommendedPower": "number",
+                      "unlocked": "boolean",
+                      "completed": "boolean",
+                      "stars": "number",
+                      "firstClearReward": "object",
+                      "dropItems": ["object"],
+                      "enemies": [
+                        {
+                          "name": "string",
+                          "level": "number",
+                          "avatar": "string"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/start",
+        "name": "开始战斗",
+        "description": "发起战斗请求",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "battleType": {
+              "type": "string",
+              "enum": ["pve_normal", "pve_elite", "pvp_arena", "guild_war", "world_boss"],
+              "required": true
+            },
+            "stageId": {
+              "type": "string",
+              "required": false,
+              "description": "PVE战斗时必需"
+            },
+            "opponentId": {
+              "type": "number",
+              "required": false,
+              "description": "PVP战斗时必需"
+            },
+            "formation": {
+              "type": "array",
+              "required": true,
+              "items": {
+                "position": "number",
+                "heroId": "number|null"
+              },
+              "minItems": 1,
+              "maxItems": 9
+            },
+            "autoSkill": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "battleId": "string",
+              "battleType": "string",
+              "playerTeam": {
+                "heroes": [
+                  {
+                    "id": "number",
+                    "name": "string",
+                    "level": "number",
+                    "position": "number",
+                    "currentHp": "number",
+                    "maxHp": "number",
+                    "stats": "object",
+                    "skills": ["object"],
+                    "buffs": ["object"]
+                  }
+                ]
+              },
+              "enemyTeam": {
+                "heroes": ["object"]
+              },
+              "battleState": {
+                "turn": "number",
+                "phase": "string",
+                "timeLimit": "number"
+              },
+              "nextActions": [
+                {
+                  "heroId": "number",
+                  "actionType": "string",
+                  "availableTargets": ["number"],
+                  "availableSkills": ["object"]
+                }
+              ]
+            }
+          },
+          "error": {
+            "400": "体力不足 | 阵容无效 | 关卡未解锁",
+            "404": "关卡不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{battleId}/action",
+        "name": "执行战斗动作",
+        "description": "在战斗中执行动作",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "battleId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            },
+            "actionType": {
+              "type": "string",
+              "enum": ["attack", "skill", "ultimate", "defend"],
+              "required": true
+            },
+            "skillId": {
+              "type": "number",
+              "required": false,
+              "description": "技能动作时必需"
+            },
+            "targetId": {
+              "type": "number",
+              "required": false,
+              "description": "攻击动作时必需"
+            },
+            "targetPosition": {
+              "type": "number",
+              "required": false,
+              "description": "位置技能时使用"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "actionResult": {
+                "success": "boolean",
+                "damage": "number",
+                "healing": "number",
+                "effects": ["string"],
+                "criticalHit": "boolean",
+                "dodged": "boolean",
+                "blocked": "boolean"
+              },
+              "battleState": {
+                "turn": "number",
+                "phase": "string",
+                "playerTeam": "object",
+                "enemyTeam": "object",
+                "battleEnded": "boolean",
+                "winner": "string|null"
+              },
+              "nextActions": ["object"],
+              "battleLog": ["object"]
+            }
+          },
+          "error": {
+            "400": "无效动作 | 不是该武将回合",
+            "404": "战斗不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{battleId}/auto",
+        "name": "自动战斗",
+        "description": "启用自动战斗模式",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "battleId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "enabled": {
+              "type": "boolean",
+              "required": true
+            },
+            "skillPriority": {
+              "type": "string",
+              "enum": ["damage", "heal", "buff", "balanced"],
+              "default": "balanced"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "autoEnabled": "boolean",
+              "battleResult": "object|null",
+              "message": "string"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/{battleId}/result",
+        "name": "获取战斗结果",
+        "description": "获取战斗结束后的结果",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "battleId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "battleId": "string",
+              "battleType": "string",
+              "result": "string",
+              "duration": "number",
+              "turns": "number",
+              "starRating": "number",
+              "experience": {
+                "player": "number",
+                "heroes": [
+                  {
+                    "heroId": "number",
+                    "expGained": "number",
+                    "levelUp": "boolean",
+                    "newLevel": "number"
+                  }
+                ]
+              },
+              "rewards": {
+                "gold": "number",
+                "items": [
+                  {
+                    "itemId": "number",
+                    "name": "string",
+                    "quantity": "number",
+                    "rarity": "number"
+                  }
+                ],
+                "heroFragments": [
+                  {
+                    "heroId": "number",
+                    "fragments": "number"
+                  }
+                ]
+              },
+              "statistics": {
+                "totalDamageDealt": "number",
+                "totalDamageReceived": "number",
+                "totalHealing": "number",
+                "criticalHits": "number",
+                "skillsUsed": "number"
+              },
+              "achievements": [
+                {
+                  "id": "string",
+                  "name": "string",
+                  "reward": "object"
+                }
+              ]
+            }
+          },
+          "error": {
+            "404": "战斗不存在或未结束"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{battleId}/surrender",
+        "name": "投降",
+        "description": "主动结束战斗",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "battleId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "result": "defeat",
+              "energyRefunded": "number",
+              "rewards": "object"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/arena/rankings",
+        "name": "竞技场排行榜",
+        "description": "获取竞技场排名信息",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "page": {
+              "type": "number",
+              "default": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 50,
+              "max": 100
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "playerRank": {
+                "rank": "number",
+                "points": "number",
+                "winRate": "number",
+                "totalBattles": "number"
+              },
+              "rankings": [
+                {
+                  "rank": "number",
+                  "username": "string",
+                  "level": "number",
+                  "points": "number",
+                  "winRate": "number",
+                  "avatar": "string",
+                  "topHeroes": [
+                    {
+                      "name": "string",
+                      "level": "number",
+                      "rarity": "number",
+                      "avatar": "string"
+                    }
+                  ]
+                }
+              ],
+              "seasonInfo": {
+                "currentSeason": "number",
+                "endDate": "string",
+                "rewardsPreview": ["object"]
+              }
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/arena/opponents",
+        "name": "获取竞技场对手",
+        "description": "获取可挑战的竞技场对手列表",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "opponents": [
+                {
+                  "userId": "number",
+                  "username": "string",
+                  "level": "number",
+                  "rank": "number",
+                  "points": "number",
+                  "power": "number",
+                  "formation": [
+                    {
+                      "position": "number",
+                      "hero": {
+                        "name": "string",
+                        "level": "number",
+                        "rarity": "number",
+                        "avatar": "string"
+                      }
+                    }
+                  ],
+                  "winRate": "number",
+                  "lastOnline": "string"
+                }
+              ],
+              "refreshCost": "number",
+              "remainingAttempts": "number",
+              "nextFreeRefresh": "string"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/arena/refresh",
+        "name": "刷新竞技场对手",
+        "description": "刷新竞技场对手列表",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "useGems": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "opponents": ["object"],
+              "cost": "number",
+              "nextFreeRefresh": "string"
+            }
+          },
+          "error": {
+            "400": "元宝不足"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/history",
+        "name": "战斗历史",
+        "description": "获取玩家的战斗历史记录",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "battleType": {
+              "type": "string",
+              "enum": ["all", "pve", "pvp", "guild"]
+            },
+            "page": {
+              "type": "number",
+              "default": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 20,
+              "max": 50
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "battles": [
+                {
+                  "id": "string",
+                  "battleType": "string",
+                  "result": "string",
+                  "opponent": "string",
+                  "duration": "number",
+                  "starRating": "number",
+                  "experienceGained": "number",
+                  "goldGained": "number",
+                  "createdAt": "string"
+                }
+              ],
+              "statistics": {
+                "totalBattles": "number",
+                "totalVictories": "number",
+                "winRate": "number",
+                "averageDuration": "number",
+                "favoriteHero": "string"
+              },
+              "pagination": "object"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/world-boss",
+        "name": "世界Boss信息",
+        "description": "获取当前世界Boss状态",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "boss": {
+                "id": "number",
+                "name": "string",
+                "level": "number",
+                "currentHp": "number",
+                "maxHp": "number",
+                "avatar": "string",
+                "description": "string",
+                "weaknesses": ["string"],
+                "resistances": ["string"]
+              },
+              "event": {
+                "startTime": "string",
+                "endTime": "string",
+                "remainingTime": "number"
+              },
+              "playerProgress": {
+                "damageDealt": "number",
+                "rank": "number",
+                "attemptsUsed": "number",
+                "maxAttempts": "number"
+              },
+              "leaderboard": [
+                {
+                  "rank": "number",
+                  "username": "string",
+                  "damageDealt": "number",
+                  "guild": "string"
+                }
+              ],
+              "rewards": {
+                "participation": ["object"],
+                "ranking": [
+                  {
+                    "rankRange": "string",
+                    "rewards": ["object"]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ],
+
+    "webSocketEvents": {
+      "battle.started": {
+        "description": "战斗开始通知",
+        "payload": {
+          "battleId": "string",
+          "battleType": "string",
+          "participants": ["object"]
+        }
+      },
+      "battle.action": {
+        "description": "战斗动作实时更新",
+        "payload": {
+          "battleId": "string",
+          "action": "object",
+          "result": "object",
+          "nextTurn": "object"
+        }
+      },
+      "battle.ended": {
+        "description": "战斗结束通知",
+        "payload": {
+          "battleId": "string",
+          "result": "string",
+          "winner": "string",
+          "rewards": "object"
+        }
+      },
+      "arena.challenge": {
+        "description": "竞技场挑战通知",
+        "payload": {
+          "challenger": "string",
+          "result": "string",
+          "rankChange": "number"
+        }
+      }
+    },
+
+    "dataModels": {
+      "Battle": {
+        "tableName": "battles",
+        "fields": {
+          "id": "uuid_primary_key",
+          "battleType": "enum",
+          "playerId": "foreign_key_users",
+          "opponentId": "foreign_key_users_nullable",
+          "stageId": "string_nullable",
+          "playerFormation": "json_object",
+          "enemyFormation": "json_object",
+          "result": "enum_victory_defeat",
+          "starRating": "integer_nullable",
+          "duration": "integer",
+          "turns": "integer",
+          "battleLog": "json_array",
+          "rewards": "json_object",
+          "experience": "json_object",
+          "statistics": "json_object",
+          "createdAt": "timestamp",
+          "endedAt": "timestamp"
+        },
+        "indexes": ["playerId", "battleType", "result", "createdAt"]
+      },
+      "ArenaRecord": {
+        "tableName": "arena_records",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "currentRank": "integer",
+          "bestRank": "integer",
+          "points": "integer_default_1000",
+          "totalBattles": "integer_default_0",
+          "victories": "integer_default_0",
+          "defeats": "integer_default_0",
+          "winStreak": "integer_default_0",
+          "seasonId": "integer",
+          "lastBattleAt": "timestamp_nullable",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["userId", "currentRank", "points", "seasonId"]
+      }
+    }
+  }
+}

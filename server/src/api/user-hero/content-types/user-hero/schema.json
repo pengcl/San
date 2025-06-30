@@ -1,0 +1,70 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_heroes",
+  "info": {
+    "singularName": "user-hero",
+    "pluralName": "user-heroes",
+    "displayName": "用户武将",
+    "description": "用户拥有的武将"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "hero": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::hero.hero"
+    },
+    "level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 100
+    },
+    "star": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 6
+    },
+    "exp": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "breakthrough": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 4
+    },
+    "skill_points": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "skill_tree": {
+      "type": "json",
+      "default": {}
+    },
+    "power": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    },
+    "position": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

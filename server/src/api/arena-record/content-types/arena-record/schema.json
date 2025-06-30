@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "arena_records",
+  "info": {
+    "singularName": "arena-record",
+    "pluralName": "arena-records",
+    "displayName": "竞技场记录",
+    "description": "竞技场排名和战绩记录"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "current_rank": {
+      "type": "integer",
+      "required": true,
+      "default": 999999
+    },
+    "best_rank": {
+      "type": "integer",
+      "required": true,
+      "default": 999999
+    },
+    "points": {
+      "type": "integer",
+      "required": true,
+      "default": 1000
+    },
+    "total_battles": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "victories": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "defeats": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "win_streak": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "season_id": {
+      "type": "integer",
+      "required": true,
+      "default": 1
+    },
+    "last_battle_at": {
+      "type": "datetime"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

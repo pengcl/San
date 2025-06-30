@@ -1,0 +1,116 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_city_policies",
+  "info": {
+    "singularName": "user-city-policy",
+    "pluralName": "user-city-policies",
+    "displayName": "用户城池政策",
+    "description": "用户城池政策实施数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "policy_status": {
+      "type": "enumeration",
+      "enum": ["active", "suspended", "planning", "expired"],
+      "default": "active",
+      "description": "政策状态"
+    },
+    "implementation_level": {
+      "type": "float",
+      "default": 1,
+      "min": 0,
+      "max": 1,
+      "description": "实施程度"
+    },
+    "efficiency_modifier": {
+      "type": "float",
+      "default": 1,
+      "min": 0,
+      "max": 2,
+      "description": "效率修正"
+    },
+    "implemented_at": {
+      "type": "datetime",
+      "description": "实施时间"
+    },
+    "expires_at": {
+      "type": "datetime",
+      "description": "过期时间"
+    },
+    "last_review_at": {
+      "type": "datetime",
+      "description": "上次审查时间"
+    },
+    "effectiveness_score": {
+      "type": "float",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "description": "效果得分"
+    },
+    "popularity_score": {
+      "type": "float",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "description": "受欢迎度"
+    },
+    "economic_impact": {
+      "type": "float",
+      "default": 0,
+      "description": "经济影响"
+    },
+    "total_cost_spent": {
+      "type": "biginteger",
+      "default": 0,
+      "min": 0,
+      "description": "总花费"
+    },
+    "daily_cost": {
+      "type": "biginteger",
+      "default": 0,
+      "min": 0,
+      "description": "日常成本"
+    },
+    "roi_score": {
+      "type": "float",
+      "default": 0,
+      "description": "投资回报率"
+    },
+    "citizen_approval": {
+      "type": "float",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "description": "市民支持度"
+    },
+    "administrative_burden": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "行政负担"
+    },
+    "unintended_consequences": {
+      "type": "json",
+      "description": "意外后果"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "city": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::city.city"
+    },
+    "policy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::city-policy.city-policy"
+    }
+  }
+}

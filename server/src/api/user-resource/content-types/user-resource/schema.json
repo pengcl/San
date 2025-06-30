@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_resources",
+  "info": {
+    "singularName": "user-resource",
+    "pluralName": "user-resources",
+    "displayName": "用户资源",
+    "description": "用户资源管理数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "resource_type": {
+      "type": "enumeration",
+      "enum": ["gold", "gems", "energy", "honor", "guild_coins", "arena_tokens", "event_tokens", "enhancement_stones", "skill_books", "awakening_crystals", "hero_fragments", "equipment_materials"],
+      "required": true
+    },
+    "quantity": {
+      "type": "biginteger",
+      "required": true,
+      "default": 0,
+      "min": 0
+    },
+    "max_quantity": {
+      "type": "biginteger",
+      "description": "最大容量限制，null表示无限制"
+    },
+    "last_update": {
+      "type": "datetime",
+      "required": true
+    },
+    "daily_gained": {
+      "type": "integer",
+      "default": 0,
+      "description": "今日获得数量"
+    },
+    "daily_used": {
+      "type": "integer",
+      "default": 0,
+      "description": "今日使用数量"
+    },
+    "last_reset": {
+      "type": "date",
+      "description": "上次重置日期"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

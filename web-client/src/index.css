@@ -1,0 +1,804 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    background-color: #111827;
+    color: white;
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        circle at 20% 50%,
+        rgba(220, 38, 38, 0.05) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(37, 99, 235, 0.05) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 80%,
+        rgba(22, 163, 74, 0.05) 0%,
+        transparent 50%
+      ),
+      linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background-attachment: fixed;
+  }
+
+  /* 古代纸张纹理效果 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      radial-gradient(
+        circle at 100% 50%,
+        transparent 20%,
+        rgba(255, 255, 255, 0.01) 21%,
+        rgba(255, 255, 255, 0.01) 34%,
+        transparent 35%,
+        transparent
+      ),
+      linear-gradient(
+        0deg,
+        transparent 24%,
+        rgba(255, 255, 255, 0.01) 25%,
+        rgba(255, 255, 255, 0.01) 26%,
+        transparent 27%,
+        transparent 74%,
+        rgba(255, 255, 255, 0.01) 75%,
+        rgba(255, 255, 255, 0.01) 76%,
+        transparent 77%,
+        transparent
+      );
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+  }
+}
+
+@layer components {
+  .game-card {
+    background: linear-gradient(to bottom right, #1f2937, #111827);
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    background-image:
+      radial-gradient(
+        circle at 25% 25%,
+        rgba(255, 215, 0, 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(255, 107, 53, 0.03) 0%,
+        transparent 50%
+      );
+    border-image: linear-gradient(
+        45deg,
+        transparent 20%,
+        rgba(255, 215, 0, 0.2),
+        transparent 80%
+      )
+      1;
+  }
+
+  .game-card:hover {
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.02) 50%,
+      transparent 70%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .game-card:hover {
+    background-image:
+      radial-gradient(
+        circle at 25% 25%,
+        rgba(255, 215, 0, 0.08) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(255, 107, 53, 0.08) 0%,
+        transparent 50%
+      );
+    box-shadow:
+      0 0 30px rgba(255, 107, 53, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .game-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    transform-origin: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .game-button:hover {
+    transform: scale(1.05);
+  }
+
+  .game-button:active {
+    transform: scale(0.95);
+  }
+
+  .game-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .game-button:hover::before {
+    left: 100%;
+  }
+
+  .game-button-primary {
+    background: linear-gradient(to right, #f97316, #ea580c);
+    color: white;
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.1) 75%
+    );
+    background-size: 20px 20px;
+  }
+
+  .game-button-primary:hover {
+    background: linear-gradient(to right, #ea580c, #c2410c);
+  }
+
+  .game-button-secondary {
+    background: linear-gradient(to right, #4b5563, #374151);
+    color: white;
+  }
+
+  .game-button-secondary:hover {
+    background: linear-gradient(to right, #374151, #1f2937);
+  }
+
+  .hero-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.95),
+      rgba(15, 23, 42, 0.95)
+    );
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 0.5rem;
+    /* 确保宽高比兼容性 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 添加aspect-ratio兼容性支持 */
+  @supports not (aspect-ratio: 3/4) {
+    .hero-card::before {
+      content: '';
+      float: left;
+      padding-bottom: 133.33%; /* 4/3 ratio */
+      width: 1px;
+      margin-left: -1px;
+    }
+    .hero-card::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: all 0.5s ease;
+    background:
+      linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 215, 0, 0.1) 50%,
+        transparent 70%
+      ),
+      radial-gradient(
+        circle at center,
+        rgba(255, 107, 53, 0.1) 0%,
+        transparent 70%
+      );
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  .hero-card:hover::before {
+    opacity: 1;
+  }
+
+  .hero-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 215, 0, 0.3) 0%,
+      rgba(255, 107, 53, 0.3) 25%,
+      rgba(156, 39, 176, 0.3) 50%,
+      rgba(33, 150, 243, 0.3) 75%,
+      rgba(255, 215, 0, 0.3) 100%
+    );
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .hero-card:hover::after {
+    opacity: 1;
+  }
+
+  .hero-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(255, 107, 53, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      transform: translateX(-100%) rotate(45deg);
+    }
+    50% {
+      transform: translateX(100%) rotate(45deg);
+    }
+  }
+
+  .health-bar {
+    width: 100%;
+    height: 0.75rem;
+    background-color: #374151;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .health-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, #ef4444, #f87171);
+    transition: all 0.5s ease-out;
+  }
+
+  .currency-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(31, 41, 55, 0.5);
+    border-radius: 0.5rem;
+    border: 1px solid #4b5563;
+  }
+
+  .loading-spinner {
+    animation: spin 1s linear infinite;
+    border-radius: 9999px;
+    border: 4px solid #d1d5db;
+    border-top-color: #f97316;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+  }
+
+  .modal-content {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #374151;
+    max-width: 28rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@layer utilities {
+  .aspect-card {
+    aspect-ratio: 3 / 4;
+    width: 100%;
+  }
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  /* 自定义aspect-ratio工具类以确保兼容性 */
+  .aspect-card {
+    aspect-ratio: 3/4;
+  }
+
+  /* 兼容不支持aspect-ratio的浏览器 */
+  @supports not (aspect-ratio: 3/4) {
+    .aspect-card {
+      position: relative;
+      width: 100%;
+    }
+    .aspect-card::before {
+      content: '';
+      display: block;
+      padding-bottom: 133.33%; /* 4/3 * 100% */
+    }
+    .aspect-card > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .text-shadow-glow {
+    text-shadow:
+      0 0 10px rgba(255, 215, 0, 0.5),
+      2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .glow {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+  }
+
+  .glow-gold {
+    box-shadow:
+      0 0 20px rgba(255, 215, 0, 0.4),
+      0 0 40px rgba(255, 215, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glow-legendary {
+    box-shadow:
+      0 0 20px rgba(255, 107, 53, 0.4),
+      0 0 40px rgba(255, 107, 53, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: legendary-pulse 2s ease-in-out infinite;
+  }
+
+  .glow-epic {
+    box-shadow:
+      0 0 20px rgba(156, 39, 176, 0.4),
+      0 0 40px rgba(156, 39, 176, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: epic-pulse 2s ease-in-out infinite;
+  }
+
+  .glow-rare {
+    box-shadow:
+      0 0 20px rgba(33, 150, 243, 0.4),
+      0 0 40px rgba(33, 150, 243, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .quality-common {
+    border-color: #9ca3af;
+    background-color: rgba(156, 163, 175, 0.1);
+    background-image: linear-gradient(
+      45deg,
+      rgba(156, 163, 175, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(156, 163, 175, 0.1) 75%
+    );
+    background-size: 20px 20px;
+  }
+
+  .quality-rare {
+    border-color: #60a5fa;
+    background-color: rgba(33, 150, 243, 0.1);
+    background-image:
+      linear-gradient(
+        45deg,
+        rgba(33, 150, 243, 0.1) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(33, 150, 243, 0.1) 75%
+      ),
+      radial-gradient(
+        circle at center,
+        rgba(33, 150, 243, 0.05) 0%,
+        transparent 70%
+      );
+    background-size:
+      20px 20px,
+      100% 100%;
+  }
+
+  .quality-epic {
+    border-color: #c084fc;
+    background-color: rgba(156, 39, 176, 0.1);
+    background-image:
+      linear-gradient(
+        45deg,
+        rgba(156, 39, 176, 0.1) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(156, 39, 176, 0.1) 75%
+      ),
+      radial-gradient(
+        circle at center,
+        rgba(156, 39, 176, 0.05) 0%,
+        transparent 70%
+      );
+    background-size:
+      20px 20px,
+      100% 100%;
+    box-shadow:
+      0 0 15px rgba(156, 39, 176, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .quality-legendary {
+    border-color: #fb923c;
+    background-color: rgba(255, 107, 53, 0.1);
+    background-image:
+      linear-gradient(
+        45deg,
+        rgba(255, 107, 53, 0.15) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(255, 107, 53, 0.15) 75%
+      ),
+      radial-gradient(
+        circle at 30% 30%,
+        rgba(255, 215, 0, 0.08) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 70% 70%,
+        rgba(255, 107, 53, 0.08) 0%,
+        transparent 50%
+      );
+    background-size:
+      15px 15px,
+      100% 100%,
+      100% 100%;
+    box-shadow:
+      0 0 25px rgba(255, 107, 53, 0.4),
+      0 0 50px rgba(255, 107, 53, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    animation: legendary-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes legendary-pulse {
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px rgba(255, 107, 53, 0.4),
+        0 0 40px rgba(255, 107, 53, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 30px rgba(255, 107, 53, 0.6),
+        0 0 60px rgba(255, 107, 53, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  @keyframes epic-pulse {
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px rgba(156, 39, 176, 0.4),
+        0 0 40px rgba(156, 39, 176, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 30px rgba(156, 39, 176, 0.6),
+        0 0 60px rgba(156, 39, 176, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+/* 游戏动画效果 */
+@keyframes damage-number {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-40px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes coin-collect {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-30px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.damage-number {
+  animation: damage-number 1.5s ease-out forwards;
+}
+
+.coin-collect {
+  animation: coin-collect 1s ease-out forwards;
+}
+
+/* 战斗特效 */
+.battle-glow {
+  animation: battle-glow 0.5s ease-in-out;
+}
+
+@keyframes battle-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
+  }
+}
+
+/* 游戏专用动画 */
+.game-entrance {
+  animation: game-entrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes game-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card-hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px) scale(1.02);
+  filter: brightness(1.1);
+}
+
+/* 粒子效果背景 */
+.particle-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.particle-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 215, 0, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 107, 53, 0.3), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(33, 150, 243, 0.3), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(156, 39, 176, 0.3), transparent);
+  background-repeat: repeat;
+  background-size: 150px 150px;
+  animation: particle-float 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-150px);
+  }
+}
+
+/* 文字特效 */
+.text-game-title {
+  background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd700);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes text-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 按钮加载动画 */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: btn-spin 1s linear infinite;
+}
+
+@keyframes btn-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 技能释放特效 */
+.skill-cast {
+  animation: skill-cast 0.6s ease-out;
+}
+
+@keyframes skill-cast {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+  }
+  25% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(255, 107, 53, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(255, 107, 53, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 30px rgba(255, 107, 53, 0);
+  }
+}
+
+/* 经验获得特效 */
+.exp-gain {
+  animation: exp-gain 1.2s ease-out;
+}
+
+@keyframes exp-gain {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    color: #10b981;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 1;
+    color: #34d399;
+  }
+  100% {
+    transform: translateY(-40px) scale(0.8);
+    opacity: 0;
+    color: #6ee7b7;
+  }
+}

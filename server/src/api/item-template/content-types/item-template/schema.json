@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "items",
+  "info": {
+    "singularName": "item-template",
+    "pluralName": "item-templates",
+    "displayName": "物品模板",
+    "description": "游戏物品模板配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "item_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["materials", "consumables", "equipment", "fragments", "currency", "special"],
+      "required": true
+    },
+    "rarity": {
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "max": 6,
+      "default": 1
+    },
+    "max_stack": {
+      "type": "integer",
+      "required": true,
+      "default": 99,
+      "min": 1
+    },
+    "sell_price": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0
+    },
+    "is_usable": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "effects": {
+      "type": "json"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "use_conditions": {
+      "type": "json",
+      "description": "使用条件配置"
+    },
+    "cooldown": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "使用冷却时间(秒)"
+    },
+    "quality": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::quality.quality"
+    }
+  }
+}

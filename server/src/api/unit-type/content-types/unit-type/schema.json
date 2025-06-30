@@ -1,0 +1,86 @@
+{
+  "kind": "collectionType",
+  "collectionName": "unit_types",
+  "info": {
+    "singularName": "unit-type",
+    "pluralName": "unit-types",
+    "displayName": "兵种类型",
+    "description": "Three Kingdoms unit type configuration with combat mechanics"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 20
+    },
+    "name_zh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "description": {
+      "type": "text"
+    },
+    "icon_url": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "color_hex": {
+      "type": "string",
+      "required": true,
+      "maxLength": 7
+    },
+    "base_stats_modifier": {
+      "type": "json"
+    },
+    "combat_advantages": {
+      "type": "json"
+    },
+    "combat_disadvantages": {
+      "type": "json"
+    },
+    "special_abilities": {
+      "type": "json"
+    },
+    "movement_type": {
+      "type": "enumeration",
+      "enum": ["land", "water", "flying", "mixed"],
+      "default": "land"
+    },
+    "range_type": {
+      "type": "enumeration",
+      "enum": ["melee", "ranged", "mixed"],
+      "default": "melee"
+    },
+    "formation_bonus": {
+      "type": "json"
+    },
+    "terrain_modifier": {
+      "type": "json"
+    },
+    "display_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "heroes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::hero.hero",
+      "mappedBy": "unit_type"
+    }
+  }
+}

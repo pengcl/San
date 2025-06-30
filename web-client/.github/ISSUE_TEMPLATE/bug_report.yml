@@ -1,0 +1,135 @@
+name: 🐛 Bug Report
+description: 报告一个bug来帮助我们改进
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您报告bug！这将帮助我们改进游戏体验。
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认检查
+      description: 在提交之前，请确认以下内容
+      options:
+        - label: 我已经搜索了现有的issues，确认这不是重复问题
+          required: true
+        - label: 我已经阅读了贡献指南
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug描述
+      description: 清楚、简洁地描述遇到的问题
+      placeholder: 描述您遇到的bug...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 重现步骤
+      description: 详细描述如何重现这个问题
+      placeholder: |
+        1. 打开页面 '...'
+        2. 点击 '...'
+        3. 滚动到 '...'
+        4. 看到错误
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+      description: 描述您期望发生的行为
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      description: 描述实际发生的行为
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图
+      description: 如果适用，请添加截图来说明问题
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 浏览器
+      description: 您在哪个浏览器中遇到了这个问题？
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 其他
+      multiple: true
+    validations:
+      required: true
+
+  - type: dropdown
+    id: devices
+    attributes:
+      label: 设备类型
+      description: 您在什么设备上遇到了这个问题？
+      options:
+        - 桌面电脑
+        - 笔记本电脑
+        - 平板电脑
+        - 手机
+      multiple: true
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统
+      description: 您使用的操作系统和版本
+      placeholder: '例如: Windows 11, macOS 13.0, Ubuntu 22.04'
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 游戏版本
+      description: 您使用的游戏版本
+      placeholder: '例如: v1.0.0'
+
+  - type: textarea
+    id: console-logs
+    attributes:
+      label: 控制台日志
+      description: 如果有，请提供浏览器控制台的错误信息
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 其他信息
+      description: 添加任何其他相关信息
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 严重程度
+      description: 这个bug的严重程度如何？
+      options:
+        - 低 - 小的不便，有变通方法
+        - 中 - 影响功能，但不阻止使用
+        - 高 - 重要功能无法使用
+        - 严重 - 游戏无法正常运行
+    validations:
+      required: true

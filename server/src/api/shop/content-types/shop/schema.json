@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shops",
+  "info": {
+    "singularName": "shop",
+    "pluralName": "shops",
+    "displayName": "Shop",
+    "description": "商店配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "shop_type": {
+      "type": "enumeration",
+      "enum": ["general", "arena", "guild", "event", "vip"],
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": ["gold", "gems", "honor", "guild_coins", "arena_tokens"],
+      "required": true
+    },
+    "refresh_interval": {
+      "type": "integer",
+      "description": "刷新间隔（秒）",
+      "default": 86400
+    },
+    "refresh_cost": {
+      "type": "json",
+      "description": "刷新费用配置"
+    },
+    "free_refreshes_daily": {
+      "type": "integer",
+      "default": 1
+    },
+    "item_slots": {
+      "type": "integer",
+      "default": 8,
+      "description": "商品槽位数量"
+    },
+    "level_requirement": {
+      "type": "integer",
+      "default": 1
+    },
+    "vip_requirement": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

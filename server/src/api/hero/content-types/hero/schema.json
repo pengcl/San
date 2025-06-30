@@ -1,0 +1,75 @@
+{
+  "kind": "collectionType",
+  "collectionName": "heroes",
+  "info": {
+    "singularName": "hero",
+    "pluralName": "heroes",
+    "displayName": "武将",
+    "description": "武将模板数据"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "base_hp": {
+      "type": "integer",
+      "required": true,
+      "default": 100
+    },
+    "base_attack": {
+      "type": "integer",
+      "required": true,
+      "default": 20
+    },
+    "base_defense": {
+      "type": "integer",
+      "required": true,
+      "default": 15
+    },
+    "base_speed": {
+      "type": "integer",
+      "required": true,
+      "default": 10
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "quality": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::quality.quality",
+      "inversedBy": "heroes"
+    },
+    "faction": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::faction.faction",
+      "inversedBy": "heroes"
+    },
+    "unit_type": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::unit-type.unit-type",
+      "inversedBy": "heroes"
+    },
+    "skills": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::skill.skill",
+      "inversedBy": "heroes"
+    }
+  }
+}

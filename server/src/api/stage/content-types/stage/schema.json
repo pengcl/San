@@ -1,0 +1,111 @@
+{
+  "kind": "collectionType",
+  "collectionName": "stages",
+  "info": {
+    "singularName": "stage",
+    "pluralName": "stages",
+    "displayName": "游戏关卡",
+    "description": "游戏关卡配置数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "stage_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "关卡ID（如：1-1, 2-3）"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "description": "关卡名称"
+    },
+    "stage_type": {
+      "type": "enumeration",
+      "enum": ["normal", "elite", "heroic", "event", "daily"],
+      "required": true,
+      "default": "normal",
+      "description": "关卡类型"
+    },
+    "stage_number": {
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "description": "关卡序号"
+    },
+    "energy_cost": {
+      "type": "integer",
+      "required": true,
+      "default": 6,
+      "min": 0,
+      "description": "消耗体力"
+    },
+    "recommended_power": {
+      "type": "integer",
+      "required": true,
+      "default": 1000,
+      "description": "推荐战力"
+    },
+    "enemy_formation": {
+      "type": "json",
+      "required": true,
+      "description": "敌方阵容配置"
+    },
+    "battle_background": {
+      "type": "string",
+      "description": "战斗背景"
+    },
+    "star_conditions": {
+      "type": "json",
+      "required": true,
+      "description": "星级条件配置"
+    },
+    "base_rewards": {
+      "type": "json",
+      "required": true,
+      "description": "基础奖励配置"
+    },
+    "drop_items": {
+      "type": "json",
+      "description": "掉落物品配置"
+    },
+    "daily_attempts": {
+      "type": "integer",
+      "default": 0,
+      "description": "每日挑战次数限制（0为无限）"
+    },
+    "unlock_conditions": {
+      "type": "json",
+      "description": "解锁条件"
+    },
+    "story_dialogue": {
+      "type": "json",
+      "description": "剧情对话"
+    },
+    "battle_tips": {
+      "type": "text",
+      "maxLength": 200,
+      "description": "战斗提示"
+    },
+    "is_boss_stage": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否为BOSS关"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "是否开放"
+    },
+    "chapter": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::chapter.chapter"
+    }
+  }
+}

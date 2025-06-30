@@ -1,0 +1,75 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shop_items",
+  "info": {
+    "singularName": "shop-item",
+    "pluralName": "shop-items",
+    "displayName": "Shop Item",
+    "description": "商店物品配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "item_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["material", "consumable", "equipment", "fragment", "special"],
+      "required": true
+    },
+    "rarity": {
+      "type": "integer",
+      "min": 1,
+      "max": 6,
+      "required": true
+    },
+    "base_price": {
+      "type": "integer",
+      "required": true
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": ["gold", "gems", "honor", "guild_coins", "arena_tokens"],
+      "required": true
+    },
+    "shop_types": {
+      "type": "json",
+      "description": "可出现的商店类型"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "max_stack": {
+      "type": "integer",
+      "default": 999
+    },
+    "sellable": {
+      "type": "boolean",
+      "default": true
+    },
+    "sell_price": {
+      "type": "integer",
+      "default": 0
+    },
+    "effects": {
+      "type": "json",
+      "description": "物品使用效果"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

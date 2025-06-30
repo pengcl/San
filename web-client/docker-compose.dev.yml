@@ -1,0 +1,132 @@
+# 开发环境Docker Compose配置
+version: '3.8'
+
+services:
+  # 开发环境Web客户端
+  web-client-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: development
+    image: three-kingdoms-web-client:dev
+    container_name: three-kingdoms-web-dev
+    ports:
+      - '3000:3000'
+      - '24678:24678' # Vite HMR
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:8080/api
+      - VITE_WS_BASE_URL=ws://localhost:8080/ws
+    volumes:
+      # 挂载源代码实现热重载
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - three-kingdoms-dev-network
+    stdin_open: true
+    tty: true
+
+  # Mock API服务器
+  mock-api:
+    image: mockoon/cli:latest
+    container_name: three-kingdoms-mock-api
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./mock-api/mockoon-env.json:/data/mockoon-env.json:ro
+    command: ['--data', '/data/mockoon-env.json', '--port', '8080']
+    networks:
+      - three-kingdoms-dev-network
+    profiles:
+      - mock
+
+  # 数据库（开发环境）
+  postgres-dev:
+    image: postgres:14-alpine
+    container_name: three-kingdoms-postgres-dev
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=three_kingdoms_dev
+      - POSTGRES_USER=dev_user
+      - POSTGRES_PASSWORD=dev_password
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - three-kingdoms-dev-network
+    profiles:
+      - database
+
+  # Redis（开发环境）
+  redis-dev:
+    image: redis:alpine
+    container_name: three-kingdoms-redis-dev
+    ports:
+      - '6379:6379'
+    networks:
+      - three-kingdoms-dev-network
+    profiles:
+      - cache
+
+  # MinIO（对象存储，开发环境）
+  minio:
+    image: minio/minio:latest
+    container_name: three-kingdoms-minio
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - three-kingdoms-dev-network
+    profiles:
+      - storage
+
+  # 邮件服务（开发环境测试）
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: three-kingdoms-mailhog
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # Web UI
+    networks:
+      - three-kingdoms-dev-network
+    profiles:
+      - mail
+
+  # 测试数据库
+  postgres-test:
+    image: postgres:14-alpine
+    container_name: three-kingdoms-postgres-test
+    environment:
+      - POSTGRES_DB=three_kingdoms_test
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test_password
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+    networks:
+      - three-kingdoms-dev-network
+    profiles:
+      - test
+
+networks:
+  three-kingdoms-dev-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  postgres-dev-data:
+    driver: local
+  postgres-test-data:
+    driver: local
+  minio-data:
+    driver: local

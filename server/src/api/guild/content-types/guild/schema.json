@@ -1,0 +1,99 @@
+{
+  "kind": "collectionType",
+  "collectionName": "guilds",
+  "info": {
+    "singularName": "guild",
+    "pluralName": "guilds",
+    "displayName": "公会",
+    "description": "公会组织数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 20,
+      "minLength": 2
+    },
+    "tag": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 6,
+      "minLength": 2
+    },
+    "level": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "max": 100
+    },
+    "experience": {
+      "type": "biginteger",
+      "required": true,
+      "default": 0,
+      "min": 0
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "announcement": {
+      "type": "text",
+      "maxLength": 1000
+    },
+    "language": {
+      "type": "string",
+      "default": "zh",
+      "maxLength": 10
+    },
+    "logo": {
+      "type": "string",
+      "description": "公会徽标URL"
+    },
+    "is_recruiting": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "requirements": {
+      "type": "json",
+      "description": "加入要求配置"
+    },
+    "settings": {
+      "type": "json",
+      "description": "公会设置"
+    },
+    "total_power": {
+      "type": "biginteger",
+      "default": 0,
+      "description": "公会总战力"
+    },
+    "member_count": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "max_members": {
+      "type": "integer",
+      "default": 30,
+      "min": 10,
+      "max": 100
+    },
+    "weekly_activity": {
+      "type": "integer",
+      "default": 0,
+      "description": "本周活跃度"
+    },
+    "leader": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

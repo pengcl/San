@@ -1,0 +1,70 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resource_transactions",
+  "info": {
+    "singularName": "resource-transaction",
+    "pluralName": "resource-transactions",
+    "displayName": "资源交易记录",
+    "description": "资源变动交易记录数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "resource_type": {
+      "type": "enumeration",
+      "enum": ["gold", "gems", "energy", "honor", "guild_coins", "arena_tokens", "event_tokens", "enhancement_stones", "skill_books", "awakening_crystals", "hero_fragments", "equipment_materials"],
+      "required": true,
+      "description": "资源类型"
+    },
+    "transaction_type": {
+      "type": "enumeration",
+      "enum": ["income", "expense", "purchase", "reward", "quest", "battle", "shop", "guild", "daily", "event", "system"],
+      "required": true,
+      "description": "交易类型"
+    },
+    "amount": {
+      "type": "biginteger",
+      "required": true,
+      "description": "变动数量（正数为增加，负数为减少）"
+    },
+    "before_amount": {
+      "type": "biginteger",
+      "required": true,
+      "default": 0,
+      "description": "变动前数量"
+    },
+    "after_amount": {
+      "type": "biginteger",
+      "required": true,
+      "default": 0,
+      "description": "变动后数量"
+    },
+    "source": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "description": "来源描述"
+    },
+    "source_id": {
+      "type": "string",
+      "maxLength": 50,
+      "description": "来源ID（可选）"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "详细描述"
+    },
+    "metadata": {
+      "type": "json",
+      "description": "额外数据"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

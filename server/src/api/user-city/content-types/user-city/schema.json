@@ -1,0 +1,204 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_cities",
+  "info": {
+    "singularName": "user-city",
+    "pluralName": "user-cities",
+    "displayName": "用户城池",
+    "description": "用户城池占领和发展数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "occupation_status": {
+      "type": "enumeration",
+      "enum": ["controlled", "contested", "neutral", "allied", "enemy"],
+      "default": "neutral",
+      "description": "占领状态"
+    },
+    "control_level": {
+      "type": "float",
+      "default": 0,
+      "min": 0,
+      "max": 1,
+      "description": "控制程度"
+    },
+    "occupied_at": {
+      "type": "datetime",
+      "description": "占领时间"
+    },
+    "last_battle_at": {
+      "type": "datetime",
+      "description": "最后战斗时间"
+    },
+    "current_population": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "当前人口"
+    },
+    "current_prosperity": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "description": "当前繁荣度"
+    },
+    "current_defense": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "description": "当前防御力"
+    },
+    "current_loyalty": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "description": "当前忠诚度"
+    },
+    "stored_resources": {
+      "type": "json",
+      "description": "储存的资源"
+    },
+    "daily_production": {
+      "type": "json",
+      "description": "日产量"
+    },
+    "tax_rate": {
+      "type": "float",
+      "default": 0.1,
+      "min": 0,
+      "max": 1,
+      "description": "税率"
+    },
+    "resource_efficiency": {
+      "type": "float",
+      "default": 1,
+      "min": 0,
+      "max": 2,
+      "description": "资源效率"
+    },
+    "total_investment": {
+      "type": "biginteger",
+      "default": 0,
+      "min": 0,
+      "description": "总投资"
+    },
+    "development_focus": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "发展重点"
+    },
+    "development_level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 100,
+      "description": "发展等级"
+    },
+    "development_points": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "发展点数"
+    },
+    "garrison_strength": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "驻军数量"
+    },
+    "defensive_improvements": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "防御改进等级"
+    },
+    "military_readiness": {
+      "type": "float",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "description": "军事准备度"
+    },
+    "administrative_efficiency": {
+      "type": "float",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "description": "行政效率"
+    },
+    "public_order": {
+      "type": "integer",
+      "default": 50,
+      "min": 0,
+      "max": 100,
+      "description": "治安状况"
+    },
+    "infrastructure_level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 10,
+      "description": "基础设施等级"
+    },
+    "battles_fought": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "战斗次数"
+    },
+    "battles_won": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "胜利次数"
+    },
+    "total_revenue": {
+      "type": "biginteger",
+      "default": 0,
+      "min": 0,
+      "description": "总收入"
+    },
+    "governance_score": {
+      "type": "integer",
+      "default": 50,
+      "min": 0,
+      "max": 100,
+      "description": "治理得分"
+    },
+    "reputation_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "声望得分"
+    },
+    "siege_status": {
+      "type": "enumeration",
+      "enum": ["none", "under_siege", "besieging"],
+      "default": "none",
+      "description": "围城状态"
+    },
+    "disaster_status": {
+      "type": "json",
+      "description": "灾害状态"
+    },
+    "special_events": {
+      "type": "json",
+      "description": "特殊事件"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "city": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::city.city"
+    }
+  }
+}

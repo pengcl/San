@@ -1,0 +1,145 @@
+name: 🚀 Feature Request
+description: 建议一个新功能或改进
+title: '[Feature]: '
+labels: ['enhancement', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您的功能建议！这将帮助我们改进游戏体验。
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认检查
+      description: 在提交之前，请确认以下内容
+      options:
+        - label: 我已经搜索了现有的issues，确认这不是重复建议
+          required: true
+        - label: 我已经查看了产品路线图
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题描述
+      description: 您遇到了什么问题？这个功能请求是否与问题相关？
+      placeholder: 描述您遇到的问题或不便之处...
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 建议的解决方案
+      description: 您希望实现什么功能？
+      placeholder: 详细描述您建议的功能...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案
+      description: 您是否考虑过其他替代解决方案？
+      placeholder: 描述您考虑过的其他方案...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 功能分类
+      description: 这个功能属于哪个分类？
+      options:
+        - 用户界面/用户体验
+        - 游戏机制
+        - 性能优化
+        - 无障碍访问
+        - 移动端体验
+        - 社交功能
+        - 数据分析
+        - 开发者工具
+        - 其他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级
+      description: 您认为这个功能的优先级如何？
+      options:
+        - 低 - 有了更好，没有也可以
+        - 中 - 会明显改善体验
+        - 高 - 重要的功能缺失
+        - 紧急 - 阻碍了基本使用
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 预估复杂度
+      description: 您认为实现这个功能的复杂度如何？
+      options:
+        - 简单 - 可能几小时内完成
+        - 中等 - 可能需要几天
+        - 复杂 - 可能需要几周
+        - 不确定
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: 使用场景
+      description: 描述这个功能的典型使用场景
+      placeholder: |
+        1. 作为用户，我想要...
+        2. 当我在...的时候，我希望...
+        3. 这样我就能...
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 验收标准
+      description: 如何确认这个功能已经正确实现？
+      placeholder: |
+        - [ ] 用户可以...
+        - [ ] 界面显示...
+        - [ ] 功能支持...
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: 界面设计或原型
+      description: 如果有设计稿、原型或参考图片，请提供
+
+  - type: textarea
+    id: technical-details
+    attributes:
+      label: 技术细节
+      description: 如果您有技术实现的想法，请分享
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: 目标平台
+      description: 这个功能应该在哪些平台上可用？
+      options:
+        - label: 桌面端
+        - label: 移动端
+        - label: 平板端
+        - label: PWA应用
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 其他信息
+      description: 添加任何其他相关信息、参考链接或相关issue
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 贡献意愿
+      description: 您是否愿意参与这个功能的开发？
+      options:
+        - label: 我愿意协助设计这个功能
+        - label: 我愿意协助开发这个功能
+        - label: 我愿意协助测试这个功能
+        - label: 我愿意协助文档编写

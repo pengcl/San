@@ -1,0 +1,388 @@
+{
+  "heroSystem": {
+    "version": "1.0.0", 
+    "description": "武将系统配置和成长公式",
+
+    "acquisitionMethods": [
+      {
+        "id": "summon_normal",
+        "name": "普通召唤",
+        "cost": {"gold": 10000},
+        "guarantees": "1_star_minimum",
+        "rates": {
+          "1_star": 0.6,
+          "2_star": 0.3,
+          "3_star": 0.09,
+          "4_star": 0.01,
+          "5_star": 0.001,
+          "6_star": 0.0001
+        }
+      },
+      {
+        "id": "summon_premium", 
+        "name": "高级召唤",
+        "cost": {"gems": 280},
+        "guarantees": "3_star_minimum",
+        "rates": {
+          "3_star": 0.6,
+          "4_star": 0.3,
+          "5_star": 0.08,
+          "6_star": 0.02
+        },
+        "pitySystem": {
+          "enabled": true,
+          "maxPulls": 100,
+          "guaranteedRarity": 5
+        }
+      },
+      {
+        "id": "fragment_fusion",
+        "name": "碎片合成",
+        "requirements": {
+          "fragments": 50,
+          "gold": 50000
+        },
+        "source": "elite_stages"
+      },
+      {
+        "id": "event_reward",
+        "name": "活动奖励",
+        "source": "special_events"
+      },
+      {
+        "id": "achievement_reward",
+        "name": "成就奖励", 
+        "source": "milestone_completion"
+      }
+    ],
+
+    "levelingSystem": {
+      "maxLevel": 100,
+      "experienceFormula": {
+        "base": 100,
+        "growth": 1.1,
+        "formula": "base * (level ^ growth)"
+      },
+      "statGrowth": {
+        "hp": {
+          "perLevel": 50,
+          "rarityMultiplier": [1.0, 1.2, 1.5, 2.0, 2.5, 3.0]
+        },
+        "attack": {
+          "perLevel": 10,
+          "rarityMultiplier": [1.0, 1.2, 1.5, 2.0, 2.5, 3.0]
+        },
+        "defense": {
+          "perLevel": 8,
+          "rarityMultiplier": [1.0, 1.2, 1.5, 2.0, 2.5, 3.0]
+        },
+        "speed": {
+          "perLevel": 2,
+          "rarityMultiplier": [1.0, 1.1, 1.25, 1.5, 1.75, 2.0]
+        }
+      }
+    },
+
+    "starUpgradeSystem": {
+      "requirements": [
+        {
+          "from": 1,
+          "to": 2,
+          "materials": {
+            "duplicates": 1,
+            "gold": 10000,
+            "upgradeStones": 5
+          },
+          "successRate": 1.0
+        },
+        {
+          "from": 2,
+          "to": 3,
+          "materials": {
+            "duplicates": 2,
+            "gold": 25000,
+            "upgradeStones": 15
+          },
+          "successRate": 0.8
+        },
+        {
+          "from": 3,
+          "to": 4,
+          "materials": {
+            "duplicates": 3,
+            "gold": 50000,
+            "upgradeStones": 30,
+            "rareGems": 5
+          },
+          "successRate": 0.6
+        },
+        {
+          "from": 4,
+          "to": 5,
+          "materials": {
+            "duplicates": 5,
+            "gold": 100000,
+            "upgradeStones": 50,
+            "rareGems": 15,
+            "epicCrystals": 3
+          },
+          "successRate": 0.4
+        },
+        {
+          "from": 5,
+          "to": 6,
+          "materials": {
+            "duplicates": 8,
+            "gold": 200000,
+            "upgradeStones": 100,
+            "rareGems": 30,
+            "epicCrystals": 10,
+            "legendaryEssence": 1
+          },
+          "successRate": 0.25
+        }
+      ],
+      "failureCompensation": {
+        "retainMaterials": 0.5,
+        "progressPoints": "accumulated"
+      }
+    },
+
+    "skillSystem": {
+      "skillTypes": [
+        {
+          "id": "passive",
+          "name": "被动技能",
+          "description": "永久生效的能力",
+          "activation": "always_active",
+          "maxLevel": 10
+        },
+        {
+          "id": "active",
+          "name": "主动技能", 
+          "description": "需要消耗能量释放",
+          "activation": "manual_cast",
+          "maxLevel": 10,
+          "cooldown": "variable"
+        },
+        {
+          "id": "ultimate",
+          "name": "必杀技",
+          "description": "终极技能，威力巨大",
+          "activation": "energy_full",
+          "maxLevel": 5,
+          "cooldown": "once_per_battle"
+        },
+        {
+          "id": "awakening",
+          "name": "觉醒技能",
+          "description": "高星级解锁的特殊能力",
+          "activation": "star_requirement",
+          "unlockStar": 4,
+          "maxLevel": 3
+        }
+      ],
+
+      "skillLeveling": {
+        "experienceFormula": "skill_base * level * 2",
+        "materialRequirements": [
+          {
+            "level": "1-3",
+            "materials": {"skillBooks": 1, "gold": 5000}
+          },
+          {
+            "level": "4-6", 
+            "materials": {"skillBooks": 3, "gold": 15000, "wisdomScrolls": 1}
+          },
+          {
+            "level": "7-9",
+            "materials": {"skillBooks": 5, "gold": 30000, "wisdomScrolls": 3, "masterTomes": 1}
+          },
+          {
+            "level": "10",
+            "materials": {"skillBooks": 10, "gold": 50000, "wisdomScrolls": 5, "masterTomes": 3}
+          }
+        ]
+      }
+    },
+
+    "equipmentSystem": {
+      "equipmentSlots": [
+        {
+          "id": "weapon",
+          "name": "武器",
+          "primaryStat": "attack",
+          "position": 0
+        },
+        {
+          "id": "armor",
+          "name": "护甲",
+          "primaryStat": "defense",
+          "position": 1
+        },
+        {
+          "id": "helmet",
+          "name": "头盔",
+          "primaryStat": "hp",
+          "position": 2
+        },
+        {
+          "id": "boots",
+          "name": "靴子",
+          "primaryStat": "speed",
+          "position": 3
+        },
+        {
+          "id": "accessory1",
+          "name": "饰品1",
+          "primaryStat": "critical",
+          "position": 4
+        },
+        {
+          "id": "accessory2", 
+          "name": "饰品2",
+          "primaryStat": "resistance",
+          "position": 5
+        }
+      ],
+
+      "enhancementSystem": {
+        "maxLevel": 15,
+        "costFormula": {
+          "gold": "base_cost * level * rarity_multiplier",
+          "materials": "enhancement_stones * level"
+        },
+        "successRates": [
+          {"level": "1-5", "rate": 1.0},
+          {"level": "6-10", "rate": 0.8},
+          {"level": "11-12", "rate": 0.6},
+          {"level": "13-14", "rate": 0.4},
+          {"level": "15", "rate": 0.2}
+        ],
+        "failureProtection": {
+          "enabled": true,
+          "from_level": 11,
+          "max_downgrade": 1
+        }
+      }
+    },
+
+    "awakeningSystem": {
+      "unlockRequirements": {
+        "minimumStar": 4,
+        "minimumLevel": 60,
+        "specialMaterials": true
+      },
+      "awakeningStages": [
+        {
+          "stage": 1,
+          "requirements": {
+            "awakening_crystals": 10,
+            "hero_essence": 5,
+            "gold": 500000
+          },
+          "benefits": {
+            "stat_boost": 0.2,
+            "new_passive": true
+          }
+        },
+        {
+          "stage": 2,
+          "requirements": {
+            "awakening_crystals": 25,
+            "hero_essence": 15,
+            "divine_fragments": 3,
+            "gold": 1000000
+          },
+          "benefits": {
+            "stat_boost": 0.4,
+            "skill_evolution": true
+          }
+        },
+        {
+          "stage": 3,
+          "requirements": {
+            "awakening_crystals": 50,
+            "hero_essence": 30,
+            "divine_fragments": 10,
+            "celestial_orb": 1,
+            "gold": 2000000
+          },
+          "benefits": {
+            "stat_boost": 0.6,
+            "ultimate_upgrade": true,
+            "unique_passive": true
+          }
+        }
+      ]
+    },
+
+    "specialSystems": {
+      "bondSystem": {
+        "description": "特定武将组合产生额外效果",
+        "bondTypes": [
+          {
+            "name": "桃园三结义",
+            "heroes": ["刘备", "关羽", "张飞"],
+            "effects": {
+              "hp_bonus": 0.15,
+              "brotherhood_aura": true
+            }
+          },
+          {
+            "name": "五虎上将",
+            "heroes": ["关羽", "张飞", "赵云", "马超", "黄忠"],
+            "effects": {
+              "attack_bonus": 0.2,
+              "formation_bonus": true
+            }
+          },
+          {
+            "name": "卧龙凤雏",
+            "heroes": ["诸葛亮", "庞统"],
+            "effects": {
+              "skill_damage": 0.25,
+              "wisdom_aura": true
+            }
+          }
+        ]
+      },
+
+      "transmigrationSystem": {
+        "description": "将低星武将的投入转移到高星武将",
+        "requirements": {
+          "source_min_level": 30,
+          "target_same_faction": true,
+          "transfer_cost": {"gems": 500}
+        },
+        "transferable": {
+          "experience": 0.8,
+          "skill_levels": "partially",
+          "equipment": false
+        }
+      },
+
+      "librarySystem": {
+        "description": "收集武将图鉴获得永久属性加成",
+        "bonuses": [
+          {
+            "collected": 10,
+            "bonus": {"attack": "2%"}
+          },
+          {
+            "collected": 25,
+            "bonus": {"hp": "3%"}
+          },
+          {
+            "collected": 50,
+            "bonus": {"defense": "2%", "speed": "1%"}
+          },
+          {
+            "collected": 100,
+            "bonus": {"all_stats": "5%"}
+          }
+        ]
+      }
+    }
+  }
+}

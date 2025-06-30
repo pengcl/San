@@ -1,0 +1,63 @@
+{
+  "kind": "collectionType",
+  "collectionName": "qualities",
+  "info": {
+    "singularName": "quality",
+    "pluralName": "qualities",
+    "displayName": "品质",
+    "description": "武将品质系统"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "quality_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "min": 1,
+      "max": 10
+    },
+    "name_zh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "color_hex": {
+      "type": "string",
+      "required": true,
+      "maxLength": 7,
+      "regex": "^#[0-9A-Fa-f]{6}$"
+    },
+    "star_count": {
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "max": 10
+    },
+    "rarity_weight": {
+      "type": "decimal",
+      "required": true,
+      "min": 0.01,
+      "max": 1.00
+    },
+    "description": {
+      "type": "text"
+    },
+    "effects": {
+      "type": "json"
+    },
+    "heroes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::hero.hero",
+      "mappedBy": "quality"
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "kind": "collectionType",
+  "collectionName": "battles",
+  "info": {
+    "singularName": "battle",
+    "pluralName": "battles",
+    "displayName": "战斗记录",
+    "description": "战斗系统数据模型"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "battle_id": {
+      "type": "uid",
+      "required": true
+    },
+    "battle_type": {
+      "type": "enumeration",
+      "enum": ["pve_normal", "pve_elite", "pvp_arena", "guild_war", "world_boss"],
+      "required": true
+    },
+    "stage_id": {
+      "type": "string"
+    },
+    "player_formation": {
+      "type": "json"
+    },
+    "enemy_formation": {
+      "type": "json"
+    },
+    "result": {
+      "type": "enumeration",
+      "enum": ["ongoing", "victory", "defeat", "draw", "timeout"],
+      "required": true,
+      "default": "ongoing"
+    },
+    "star_rating": {
+      "type": "integer",
+      "min": 0,
+      "max": 3
+    },
+    "duration": {
+      "type": "integer",
+      "default": 0
+    },
+    "turns": {
+      "type": "integer",
+      "default": 0
+    },
+    "battle_log": {
+      "type": "json"
+    },
+    "rewards": {
+      "type": "json"
+    },
+    "experience_gained": {
+      "type": "json"
+    },
+    "statistics": {
+      "type": "json"
+    },
+    "ended_at": {
+      "type": "datetime"
+    },
+    "player": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "opponent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "kind": "collectionType",
+  "collectionName": "skills",
+  "info": {
+    "singularName": "skill",
+    "pluralName": "skills",
+    "displayName": "技能",
+    "description": "Hero skills and abilities configuration"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "skill_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text"
+    },
+    "skill_type": {
+      "type": "enumeration",
+      "enum": ["active", "passive", "ultimate"],
+      "required": true
+    },
+    "damage_type": {
+      "type": "enumeration",
+      "enum": ["physical", "magical", "true", "healing"],
+      "required": true
+    },
+    "target_type": {
+      "type": "enumeration",
+      "enum": ["single", "multiple", "all_enemies", "all_allies", "self"],
+      "required": true
+    },
+    "cooldown": {
+      "type": "integer",
+      "default": 0
+    },
+    "cost": {
+      "type": "integer",
+      "default": 0
+    },
+    "base_damage": {
+      "type": "integer",
+      "default": 0
+    },
+    "damage_scaling": {
+      "type": "decimal",
+      "default": 1.0
+    },
+    "effects": {
+      "type": "json"
+    },
+    "animation_url": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "icon_url": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "unlock_level": {
+      "type": "integer",
+      "default": 1
+    },
+    "max_level": {
+      "type": "integer",
+      "default": 10
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "heroes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::hero.hero",
+      "mappedBy": "skills"
+    }
+  }
+}

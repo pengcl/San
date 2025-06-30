@@ -1,0 +1,548 @@
+{
+  "cityTypes": [
+    {
+      "type_id": "capital",
+      "name_zh": "都城",
+      "name_en": "Capital",
+      "description": "王朝都城，政治经济文化中心，拥有最高等级的建设能力",
+      "color_hex": "#FFD700",
+      "max_buildings": 50,
+      "population_capacity": 100000,
+      "defensive_bonus": 0.5,
+      "economic_bonus": 0.5,
+      "development_focus": "cultural",
+      "special_features": {
+        "imperial_palace": true,
+        "royal_guard": true,
+        "imperial_academy": true,
+        "treasury": true
+      },
+      "terrain_requirements": ["plains", "river"],
+      "display_order": 1,
+      "is_active": true
+    },
+    {
+      "type_id": "prefecture",
+      "name_zh": "郡城",
+      "name_en": "Prefecture",
+      "description": "重要的区域中心城市，具备完整的行政和军事功能",
+      "color_hex": "#4169E1",
+      "max_buildings": 35,
+      "population_capacity": 50000,
+      "defensive_bonus": 0.3,
+      "economic_bonus": 0.35,
+      "development_focus": "military",
+      "special_features": {
+        "governor_mansion": true,
+        "regional_army": true,
+        "tax_office": true
+      },
+      "terrain_requirements": ["plains", "hills", "river"],
+      "display_order": 2,
+      "is_active": true
+    },
+    {
+      "type_id": "county",
+      "name_zh": "县城",
+      "name_en": "County",
+      "description": "基础的行政城市，承担地方治理和资源收集职能",
+      "color_hex": "#32CD32",
+      "max_buildings": 25,
+      "population_capacity": 20000,
+      "defensive_bonus": 0.2,
+      "economic_bonus": 0.25,
+      "development_focus": "economic",
+      "special_features": {
+        "county_office": true,
+        "local_market": true,
+        "militia": true
+      },
+      "terrain_requirements": ["plains", "hills", "coastal"],
+      "display_order": 3,
+      "is_active": true
+    },
+    {
+      "type_id": "fortress",
+      "name_zh": "要塞",
+      "name_en": "Fortress",
+      "description": "专门的军事防御据点，具备强大的防御能力",
+      "color_hex": "#B22222",
+      "max_buildings": 20,
+      "population_capacity": 5000,
+      "defensive_bonus": 0.8,
+      "economic_bonus": 0.1,
+      "development_focus": "military",
+      "special_features": {
+        "thick_walls": true,
+        "watchtowers": true,
+        "armory": true,
+        "siege_defense": true
+      },
+      "terrain_requirements": ["mountain", "hills"],
+      "display_order": 4,
+      "is_active": true
+    },
+    {
+      "type_id": "pass",
+      "name_zh": "关隘",
+      "name_en": "Strategic Pass",
+      "description": "控制交通要道的关键据点，易守难攻",
+      "color_hex": "#8B4513",
+      "max_buildings": 15,
+      "population_capacity": 3000,
+      "defensive_bonus": 1.0,
+      "economic_bonus": 0.2,
+      "development_focus": "defensive",
+      "special_features": {
+        "narrow_passage": true,
+        "gate_towers": true,
+        "chokepoint": true
+      },
+      "terrain_requirements": ["mountain", "hills"],
+      "display_order": 5,
+      "is_active": true
+    },
+    {
+      "type_id": "port",
+      "name_zh": "港口",
+      "name_en": "Port City",
+      "description": "重要的海上贸易中心，具备强大的商业功能",
+      "color_hex": "#4682B4",
+      "max_buildings": 30,
+      "population_capacity": 30000,
+      "defensive_bonus": 0.15,
+      "economic_bonus": 0.6,
+      "development_focus": "economic",
+      "special_features": {
+        "harbor": true,
+        "shipyard": true,
+        "lighthouse": true,
+        "customs": true
+      },
+      "terrain_requirements": ["coastal"],
+      "display_order": 6,
+      "is_active": true
+    }
+  ],
+  "cities": [
+    {
+      "city_id": 1001,
+      "name": "洛阳",
+      "type_id": "capital",
+      "region": "中原",
+      "sub_region": "河洛",
+      "coordinates": {"x": 0, "y": 0},
+      "terrain_type": "plains",
+      "base_population": 80000,
+      "base_prosperity": 95,
+      "base_defense": 70,
+      "base_loyalty": 85,
+      "resource_production": {
+        "gold": 1000,
+        "food": 800,
+        "iron": 300,
+        "wood": 200
+      },
+      "trade_routes": ["丝绸之路", "洛水水运"],
+      "strategic_value": 10,
+      "historical_importance": "capital",
+      "historical_events": ["迁都洛阳", "董卓之乱"],
+      "famous_residents": ["汉光武帝", "董卓"],
+      "dynasty_control": "wei",
+      "natural_defenses": {
+        "river_defense": "洛水",
+        "mountain_barrier": "熊耳山"
+      },
+      "siege_difficulty": "hard",
+      "garrison_capacity": 5000,
+      "trade_specialties": ["silk", "porcelain", "bronze_ware"],
+      "resource_richness": "very_rich",
+      "tax_efficiency": 1.2,
+      "unlock_level": 1,
+      "unlock_conditions": {},
+      "is_capturable": true,
+      "capture_difficulty": 9,
+      "cultural_traits": ["政治中心", "文化繁荣"],
+      "local_specialties": ["洛阳纸", "牡丹花"],
+      "is_active": true
+    },
+    {
+      "city_id": 1002,
+      "name": "邺城",
+      "type_id": "prefecture",
+      "region": "河北",
+      "sub_region": "魏郡",
+      "coordinates": {"x": 100, "y": 200},
+      "terrain_type": "plains",
+      "base_population": 45000,
+      "base_prosperity": 80,
+      "base_defense": 85,
+      "base_loyalty": 90,
+      "resource_production": {
+        "gold": 600,
+        "food": 1200,
+        "iron": 800,
+        "wood": 400
+      },
+      "trade_routes": ["漳水运输"],
+      "strategic_value": 9,
+      "historical_importance": "capital",
+      "historical_events": ["曹操定都", "建安文学"],
+      "famous_residents": ["曹操", "曹丕", "曹植"],
+      "dynasty_control": "wei",
+      "natural_defenses": {
+        "river_defense": "漳水",
+        "fortified_walls": true
+      },
+      "siege_difficulty": "very_hard",
+      "garrison_capacity": 4000,
+      "trade_specialties": ["grain", "iron_weapons", "war_horses"],
+      "resource_richness": "rich",
+      "tax_efficiency": 1.1,
+      "unlock_level": 1,
+      "unlock_conditions": {},
+      "is_capturable": true,
+      "capture_difficulty": 8,
+      "cultural_traits": ["军事重镇", "文学中心"],
+      "local_specialties": ["邺城铁器", "建安诗文"],
+      "is_active": true
+    },
+    {
+      "city_id": 2001,
+      "name": "成都",
+      "type_id": "capital",
+      "region": "益州",
+      "sub_region": "蜀郡",
+      "coordinates": {"x": -200, "y": -100},
+      "terrain_type": "plains",
+      "base_population": 60000,
+      "base_prosperity": 90,
+      "base_defense": 65,
+      "base_loyalty": 95,
+      "resource_production": {
+        "gold": 700,
+        "food": 1000,
+        "iron": 200,
+        "wood": 600
+      },
+      "trade_routes": ["岷江水运", "蜀道"],
+      "strategic_value": 10,
+      "historical_importance": "capital",
+      "historical_events": ["刘备称帝", "诸葛亮治蜀"],
+      "famous_residents": ["刘备", "诸葛亮", "关羽", "张飞"],
+      "dynasty_control": "shu",
+      "natural_defenses": {
+        "mountain_surrounding": "四川盆地",
+        "river_network": "岷江水系"
+      },
+      "siege_difficulty": "very_hard",
+      "garrison_capacity": 4000,
+      "trade_specialties": ["silk", "tea", "bamboo_products"],
+      "resource_richness": "rich",
+      "tax_efficiency": 1.0,
+      "unlock_level": 1,
+      "unlock_conditions": {},
+      "is_capturable": true,
+      "capture_difficulty": 8,
+      "cultural_traits": ["天府之国", "巴蜀文化"],
+      "local_specialties": ["蜀锦", "川茶"],
+      "is_active": true
+    },
+    {
+      "city_id": 3001,
+      "name": "建业",
+      "type_id": "capital",
+      "region": "扬州",
+      "sub_region": "丹阳",
+      "coordinates": {"x": 200, "y": -50},
+      "terrain_type": "river",
+      "base_population": 55000,
+      "base_prosperity": 85,
+      "base_defense": 60,
+      "base_loyalty": 80,
+      "resource_production": {
+        "gold": 800,
+        "food": 600,
+        "iron": 150,
+        "wood": 400
+      },
+      "trade_routes": ["长江水运", "海上贸易"],
+      "strategic_value": 10,
+      "historical_importance": "capital",
+      "historical_events": ["孙权建都", "赤壁之战"],
+      "famous_residents": ["孙权", "周瑜", "陆逊"],
+      "dynasty_control": "wu",
+      "natural_defenses": {
+        "river_defense": "长江天险",
+        "water_network": "江南水系"
+      },
+      "siege_difficulty": "hard",
+      "garrison_capacity": 3500,
+      "trade_specialties": ["silk", "tea", "porcelain", "shipbuilding"],
+      "resource_richness": "rich",
+      "tax_efficiency": 1.15,
+      "unlock_level": 1,
+      "unlock_conditions": {},
+      "is_capturable": true,
+      "capture_difficulty": 7,
+      "cultural_traits": ["江南水乡", "商业繁荣"],
+      "local_specialties": ["建业丝绸", "江南茶叶"],
+      "is_active": true
+    },
+    {
+      "city_id": 4001,
+      "name": "函谷关",
+      "type_id": "pass",
+      "region": "关中",
+      "sub_region": "弘农",
+      "coordinates": {"x": -100, "y": 0},
+      "terrain_type": "mountain",
+      "base_population": 3000,
+      "base_prosperity": 30,
+      "base_defense": 95,
+      "base_loyalty": 90,
+      "resource_production": {
+        "gold": 100,
+        "food": 200,
+        "iron": 50,
+        "wood": 100
+      },
+      "trade_routes": ["关中商道"],
+      "strategic_value": 9,
+      "historical_importance": "major",
+      "historical_events": ["商鞅变法关口", "秦国东出"],
+      "famous_residents": ["关尹子"],
+      "dynasty_control": "wei",
+      "natural_defenses": {
+        "natural_fortress": "峡谷地形",
+        "single_passage": true
+      },
+      "siege_difficulty": "very_hard",
+      "garrison_capacity": 800,
+      "trade_specialties": ["toll_collection", "strategic_control"],
+      "resource_richness": "poor",
+      "tax_efficiency": 0.8,
+      "unlock_level": 2,
+      "unlock_conditions": {"player_level": 10},
+      "is_capturable": true,
+      "capture_difficulty": 9,
+      "cultural_traits": ["军事要塞", "关隘文化"],
+      "local_specialties": ["关口税收"],
+      "is_active": true
+    }
+  ],
+  "cityPolicies": [
+    {
+      "policy_id": "light_taxation",
+      "name_zh": "轻徭薄赋",
+      "name_en": "Light Taxation",
+      "description": "减少税收负担，提升民心但降低财政收入",
+      "category": "taxation",
+      "policy_type": "economic",
+      "sub_type": "benevolent",
+      "policy_effects": {
+        "tax_rate": -0.30,
+        "loyalty_bonus": 0.25,
+        "population_growth": 0.15
+      },
+      "cost_modifiers": {
+        "administrative_cost": -0.20
+      },
+      "population_effects": {
+        "happiness": 0.3,
+        "growth_rate": 0.15
+      },
+      "loyalty_effects": {
+        "loyalty_gain": 0.25
+      },
+      "min_city_level": 1,
+      "min_population": 1000,
+      "required_buildings": {},
+      "required_technologies": {},
+      "unlock_conditions": {},
+      "implementation_cost": {
+        "gold": 1000
+      },
+      "daily_maintenance": {
+        "gold": 50
+      },
+      "duration_days": 0,
+      "conflicting_policies": ["heavy_taxation"],
+      "prerequisite_policies": {},
+      "applicable_city_types": ["capital", "prefecture", "county"],
+      "min_governance_level": 0,
+      "historical_context": "轻徭薄赋是仁政的体现，汉朝初期常采用此政策休养生息",
+      "dynasty_origin": "han",
+      "effectiveness_rating": 7,
+      "difficulty_level": 2,
+      "is_active": true
+    },
+    {
+      "policy_id": "heavy_taxation",
+      "name_zh": "厚敛重税",
+      "name_en": "Heavy Taxation",
+      "description": "增加税收获取更多财政收入，但会降低民心",
+      "category": "taxation",
+      "policy_type": "economic",
+      "sub_type": "harsh",
+      "policy_effects": {
+        "tax_rate": 0.50,
+        "loyalty_penalty": -0.30,
+        "rebellion_risk": 0.20
+      },
+      "cost_modifiers": {
+        "administrative_cost": 0.30
+      },
+      "population_effects": {
+        "happiness": -0.4,
+        "migration": -0.2
+      },
+      "loyalty_effects": {
+        "loyalty_loss": -0.30
+      },
+      "min_city_level": 1,
+      "min_population": 5000,
+      "required_buildings": {},
+      "required_technologies": {},
+      "unlock_conditions": {},
+      "implementation_cost": {
+        "gold": 2000
+      },
+      "daily_maintenance": {
+        "gold": 100
+      },
+      "duration_days": 0,
+      "conflicting_policies": ["light_taxation"],
+      "prerequisite_policies": {},
+      "applicable_city_types": ["capital", "prefecture", "county"],
+      "min_governance_level": 3,
+      "historical_context": "重税政策虽可快速敛财，但易引发民变，需谨慎使用",
+      "dynasty_origin": "general",
+      "effectiveness_rating": 6,
+      "difficulty_level": 7,
+      "is_active": true
+    }
+  ],
+  "cityDevelopmentPaths": [
+    {
+      "path_id": "military_fortress",
+      "name_zh": "军事要塞",
+      "name_en": "Military Fortress",
+      "description": "专注军事防御，建设坚固的防御体系",
+      "development_type": "military_fortress",
+      "specialization_focus": "defense",
+      "milestone_buildings": ["city_walls", "barracks", "armory", "watchtower", "garrison_quarters"],
+      "development_stages": {
+        "stage1": "基础防御建设",
+        "stage2": "军事设施完善",
+        "stage3": "要塞化完成"
+      },
+      "stage_requirements": {
+        "stage1": {"gold": 10000, "buildings": 3},
+        "stage2": {"gold": 30000, "buildings": 8},
+        "stage3": {"gold": 80000, "buildings": 15}
+      },
+      "primary_benefits": {
+        "defense_rating": 2.0,
+        "garrison_capacity": 1.5,
+        "siege_resistance": 1.8
+      },
+      "secondary_benefits": {
+        "military_training": 1.3,
+        "weapon_production": 1.2
+      },
+      "late_game_bonuses": {
+        "fortress_aura": 1.5,
+        "strategic_control": 2.0
+      },
+      "unique_abilities": {
+        "siege_immunity": "short_term",
+        "rapid_recruitment": true
+      },
+      "total_investment_estimate": 50000000,
+      "time_investment_estimate": 180,
+      "resource_requirements": {
+        "stone": 10000,
+        "iron": 5000,
+        "wood": 3000
+      },
+      "recommended_for": ["defensive_players", "border_cities", "strategic_locations"],
+      "optimal_city_types": ["fortress", "pass"],
+      "synergy_cities": ["supply_bases", "recruitment_centers"],
+      "development_risks": ["high_cost", "long_build_time"],
+      "maintenance_challenges": ["garrison_upkeep", "equipment_maintenance"],
+      "vulnerability_factors": ["siege_warfare", "supply_disruption"],
+      "early_priorities": ["walls", "basic_defenses"],
+      "mid_game_focus": ["advanced_fortifications", "siege_weapons"],
+      "late_game_objectives": ["fortress_network", "regional_control"],
+      "historical_examples": ["函谷关", "剑门关"],
+      "famous_implementations": ["长城防线", "蜀道要塞"],
+      "success_rate": 0.8,
+      "difficulty_rating": 7,
+      "popularity_score": 0.6,
+      "strategy_guide": "适合边境城市和战略要地，重点投资防御建筑和军事设施。前期注重基础防御，中期完善军事体系，后期形成区域防御网络。",
+      "display_order": 1,
+      "is_active": true
+    },
+    {
+      "path_id": "trade_hub",
+      "name_zh": "贸易中心",
+      "name_en": "Trade Hub",
+      "description": "发展为重要的商业贸易中心",
+      "development_type": "trade_hub",
+      "specialization_focus": "commerce",
+      "milestone_buildings": ["market", "warehouse", "mint", "embassy", "merchant_quarter"],
+      "development_stages": {
+        "stage1": "基础市场建设",
+        "stage2": "贸易网络扩展",
+        "stage3": "区域贸易中心"
+      },
+      "stage_requirements": {
+        "stage1": {"gold": 8000, "buildings": 2},
+        "stage2": {"gold": 25000, "buildings": 6},
+        "stage3": {"gold": 60000, "buildings": 12}
+      },
+      "primary_benefits": {
+        "trade_income": 2.5,
+        "resource_circulation": 2.0,
+        "diplomatic_influence": 1.5
+      },
+      "secondary_benefits": {
+        "tax_efficiency": 1.4,
+        "population_growth": 1.3
+      },
+      "late_game_bonuses": {
+        "merchant_networks": 2.0,
+        "luxury_access": 1.8
+      },
+      "unique_abilities": {
+        "trade_monopoly": "regional",
+        "diplomatic_immunity": true
+      },
+      "total_investment_estimate": 60000000,
+      "time_investment_estimate": 200,
+      "resource_requirements": {
+        "gold": 50000,
+        "wood": 5000,
+        "luxury_goods": 1000
+      },
+      "recommended_for": ["economic_players", "coastal_cities", "river_cities"],
+      "optimal_city_types": ["port", "county"],
+      "synergy_cities": ["resource_producers", "manufacturing_centers"],
+      "development_risks": ["market_fluctuation", "trade_wars"],
+      "maintenance_challenges": ["merchant_relations", "trade_route_security"],
+      "vulnerability_factors": ["economic_warfare", "piracy"],
+      "early_priorities": ["basic_market", "storage"],
+      "mid_game_focus": ["trade_routes", "diplomatic_ties"],
+      "late_game_objectives": ["trade_empire", "economic_dominance"],
+      "historical_examples": ["建业港", "洛阳市"],
+      "famous_implementations": ["丝绸之路", "长江贸易"],
+      "success_rate": 0.75,
+      "difficulty_rating": 5,
+      "popularity_score": 0.8,
+      "strategy_guide": "适合具备地理优势的城市，重点发展商业和贸易设施。前期建立基础市场，中期扩展贸易网络，后期形成区域经济中心。",
+      "display_order": 2,
+      "is_active": true
+    }
+  ]
+}

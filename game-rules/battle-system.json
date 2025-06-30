@@ -1,0 +1,372 @@
+{
+  "battleSystem": {
+    "version": "1.0.0",
+    "description": "战斗系统规则和算法配置",
+    
+    "battleTypes": [
+      {
+        "id": "pve_normal",
+        "name": "普通副本",
+        "description": "主线剧情关卡",
+        "energyCost": 6,
+        "maxAttempts": -1,
+        "rewards": {
+          "experience": "stage_level * 10",
+          "gold": "stage_level * 50",
+          "items": "random_by_stage"
+        },
+        "difficultyScaling": 1.0
+      },
+      {
+        "id": "pve_elite",
+        "name": "精英副本",
+        "description": "困难关卡，产出武将碎片",
+        "energyCost": 12,
+        "maxAttempts": 3,
+        "rewards": {
+          "experience": "stage_level * 15",
+          "gold": "stage_level * 75",
+          "heroFragments": "specific_hero",
+          "items": "elite_materials"
+        },
+        "difficultyScaling": 1.5
+      },
+      {
+        "id": "pvp_arena",
+        "name": "竞技场",
+        "description": "玩家对战",
+        "energyCost": 0,
+        "maxAttempts": 5,
+        "rewards": {
+          "honor": "rank_based",
+          "gold": "victory_bonus"
+        },
+        "difficultyScaling": "player_based"
+      },
+      {
+        "id": "guild_war",
+        "name": "公会战",
+        "description": "公会间大规模战斗",
+        "energyCost": 0,
+        "maxAttempts": 3,
+        "rewards": {
+          "honor": "contribution_based",
+          "guildCoins": "participation_reward"
+        },
+        "special": "multi_stage"
+      },
+      {
+        "id": "world_boss",
+        "name": "世界Boss",
+        "description": "全服协作击败巨型Boss",
+        "energyCost": 20,
+        "maxAttempts": 1,
+        "rewards": {
+          "experience": "damage_based",
+          "rareItems": "ranking_reward"
+        },
+        "special": "damage_accumulation"
+      }
+    ],
+
+    "formationSystem": {
+      "gridSize": {
+        "rows": 3,
+        "columns": 3,
+        "totalPositions": 9
+      },
+      "positionTypes": {
+        "frontRow": [0, 1, 2],
+        "middleRow": [3, 4, 5],
+        "backRow": [6, 7, 8]
+      },
+      "positionBonuses": {
+        "frontRow": {
+          "tauntChance": 0.3,
+          "damageReduction": 0.1
+        },
+        "middleRow": {
+          "balancedStats": 0.05
+        },
+        "backRow": {
+          "criticalChance": 0.1,
+          "spellPower": 0.15
+        }
+      },
+      "adjacencyBonuses": {
+        "sameFaction": {
+          "allStats": 0.08
+        },
+        "complementaryTypes": {
+          "infantryArcher": 0.05,
+          "cavalryStrategist": 0.05
+        }
+      }
+    },
+
+    "turnSystem": {
+      "initiative": {
+        "formula": "hero.speed * (0.9 + random(0.2)) + position_bonus",
+        "positionBonus": {
+          "backRow": 5,
+          "middleRow": 0,
+          "frontRow": -5
+        }
+      },
+      "actionTypes": [
+        {
+          "id": "basic_attack",
+          "name": "普通攻击",
+          "priority": 1,
+          "energyCost": 0,
+          "cooldown": 0,
+          "effects": ["damage"]
+        },
+        {
+          "id": "active_skill",
+          "name": "主动技能",
+          "priority": 2,
+          "energyCost": "skill_specific",
+          "cooldown": "skill_specific",
+          "effects": ["damage", "heal", "buff", "debuff"]
+        },
+        {
+          "id": "ultimate_skill",
+          "name": "必杀技",
+          "priority": 3,
+          "energyCost": 100,
+          "cooldown": "once_per_battle",
+          "effects": ["massive_damage", "special_effects"]
+        }
+      ]
+    },
+
+    "combatMechanics": {
+      "damageTypes": [
+        {
+          "id": "physical",
+          "name": "物理伤害",
+          "formula": "max(1, (attack + weapon_damage) * skill_multiplier - target_defense)",
+          "canCrit": true,
+          "canDodge": true,
+          "canBlock": true
+        },
+        {
+          "id": "magical",
+          "name": "法术伤害", 
+          "formula": "max(1, spell_power * skill_multiplier * (1 - magic_resist))",
+          "canCrit": true,
+          "canDodge": false,
+          "canBlock": false
+        },
+        {
+          "id": "true",
+          "name": "真实伤害",
+          "formula": "attack * skill_multiplier",
+          "canCrit": false,
+          "canDodge": false,
+          "canBlock": false
+        },
+        {
+          "id": "heal",
+          "name": "治疗",
+          "formula": "max(1, spell_power * heal_multiplier + heal_flat)",
+          "canCrit": true,
+          "target": "friendly"
+        }
+      ],
+
+      "statusEffects": [
+        {
+          "id": "poison",
+          "name": "中毒",
+          "type": "debuff",
+          "duration": 3,
+          "effect": "lose_hp_per_turn",
+          "value": "5% max_hp",
+          "stackable": false
+        },
+        {
+          "id": "burn",
+          "name": "燃烧",
+          "type": "debuff", 
+          "duration": 2,
+          "effect": "lose_hp_per_turn",
+          "value": "caster_attack * 0.3",
+          "stackable": true
+        },
+        {
+          "id": "stun",
+          "name": "眩晕",
+          "type": "debuff",
+          "duration": 1,
+          "effect": "skip_turn",
+          "stackable": false
+        },
+        {
+          "id": "silence",
+          "name": "沉默",
+          "type": "debuff",
+          "duration": 2,
+          "effect": "disable_skills",
+          "stackable": false
+        },
+        {
+          "id": "attack_boost",
+          "name": "攻击提升",
+          "type": "buff",
+          "duration": 3,
+          "effect": "increase_attack",
+          "value": "30%",
+          "stackable": false
+        },
+        {
+          "id": "defense_boost",
+          "name": "防御提升",
+          "type": "buff",
+          "duration": 3,
+          "effect": "increase_defense",
+          "value": "30%",
+          "stackable": false
+        },
+        {
+          "id": "speed_boost",
+          "name": "速度提升",
+          "type": "buff",
+          "duration": 2,
+          "effect": "increase_speed",
+          "value": "25%",
+          "stackable": false
+        }
+      ],
+
+      "specialMechanics": {
+        "critical": {
+          "baseChance": 0.05,
+          "damageMultiplier": 1.5,
+          "cannotCritTypes": ["true_damage"]
+        },
+        "dodge": {
+          "baseChance": 0.03,
+          "speedInfluence": 0.001,
+          "maxChance": 0.3
+        },
+        "block": {
+          "baseChance": 0.02,
+          "defenseInfluence": 0.0005,
+          "damageReduction": 0.5,
+          "maxChance": 0.25
+        },
+        "counter": {
+          "baseChance": 0.01,
+          "triggerConditions": ["melee_attack"],
+          "damagePercent": 0.7
+        }
+      }
+    },
+
+    "aiSystem": {
+      "difficultyLevels": [
+        {
+          "name": "简单",
+          "statMultiplier": 0.8,
+          "aiStrategy": "random",
+          "skillUsageChance": 0.3
+        },
+        {
+          "name": "普通",
+          "statMultiplier": 1.0,
+          "aiStrategy": "basic",
+          "skillUsageChance": 0.5
+        },
+        {
+          "name": "困难",
+          "statMultiplier": 1.3,
+          "aiStrategy": "smart",
+          "skillUsageChance": 0.7
+        },
+        {
+          "name": "噩梦",
+          "statMultiplier": 1.6,
+          "aiStrategy": "optimal",
+          "skillUsageChance": 0.9
+        }
+      ],
+      
+      "aiStrategies": {
+        "random": {
+          "description": "随机选择行动",
+          "targetPriority": "random"
+        },
+        "basic": {
+          "description": "优先攻击低血量敌人",
+          "targetPriority": ["lowest_hp", "highest_threat"]
+        },
+        "smart": {
+          "description": "智能使用技能和定位",
+          "targetPriority": ["strategic_value", "lowest_hp"],
+          "skillUsage": "conditional"
+        },
+        "optimal": {
+          "description": "计算最优解",
+          "targetPriority": ["maximize_damage", "minimize_healing"],
+          "skillUsage": "optimal",
+          "formation": "adaptive"
+        }
+      }
+    },
+
+    "victoryConditions": {
+      "standard": {
+        "condition": "eliminate_all_enemies",
+        "timeout": 300
+      },
+      "survival": {
+        "condition": "survive_time_limit",
+        "timeLimit": 180
+      },
+      "objective": {
+        "condition": "complete_objectives",
+        "objectives": ["protect_target", "reach_position", "collect_items"]
+      },
+      "boss": {
+        "condition": "defeat_boss",
+        "phases": "multiple",
+        "timeLimit": 600
+      }
+    },
+
+    "rewardCalculation": {
+      "baseRewards": {
+        "victory": {
+          "experienceMultiplier": 1.0,
+          "goldMultiplier": 1.0
+        },
+        "defeat": {
+          "experienceMultiplier": 0.3,
+          "goldMultiplier": 0.1
+        }
+      },
+      
+      "bonusMultipliers": {
+        "perfectVictory": 1.5,
+        "quickVictory": 1.2,
+        "noDeaths": 1.3,
+        "firstClear": 2.0,
+        "threeStar": 1.8
+      },
+      
+      "starRating": {
+        "threeStars": {
+          "conditions": ["victory", "no_deaths", "time_under_60s"]
+        },
+        "twoStars": {
+          "conditions": ["victory", "max_one_death"]
+        },
+        "oneStar": {
+          "conditions": ["victory"]
+        }
+      }
+    }
+  }
+}

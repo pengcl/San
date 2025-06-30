@@ -1,0 +1,83 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_stage_progresses",
+  "info": {
+    "singularName": "user-stage-progress",
+    "pluralName": "user-stage-progresses",
+    "displayName": "用户关卡进度",
+    "description": "用户关卡通关进度数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "stars": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0,
+      "max": 3,
+      "description": "获得星数"
+    },
+    "best_score": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "最佳分数"
+    },
+    "clear_count": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0,
+      "description": "通关次数"
+    },
+    "daily_attempts": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "今日挑战次数"
+    },
+    "first_clear_at": {
+      "type": "datetime",
+      "description": "首次通关时间"
+    },
+    "last_clear_at": {
+      "type": "datetime",
+      "description": "最近通关时间"
+    },
+    "three_star_at": {
+      "type": "datetime",
+      "description": "三星通关时间"
+    },
+    "fastest_clear_time": {
+      "type": "integer",
+      "description": "最快通关时间（秒）"
+    },
+    "is_unlocked": {
+      "type": "boolean",
+      "required": true,
+      "default": false,
+      "description": "是否已解锁"
+    },
+    "rewards_claimed": {
+      "type": "json",
+      "description": "已领取的奖励记录"
+    },
+    "battle_statistics": {
+      "type": "json",
+      "description": "战斗统计数据"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "stage": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::stage.stage"
+    }
+  }
+}

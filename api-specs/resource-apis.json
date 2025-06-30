@@ -1,0 +1,576 @@
+{
+  "resourceApis": {
+    "version": "1.0.0",
+    "description": "资源管理相关API规范",
+    "baseUrl": "/api/resources",
+
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "name": "获取资源概览",
+        "description": "获取玩家所有资源信息",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "primaryResources": {
+                "gold": "number",
+                "gems": "number",
+                "energy": "number",
+                "maxEnergy": "number",
+                "energyRegenRate": "number",
+                "nextEnergyTime": "string"
+              },
+              "materials": {
+                "enhancementStones": "number",
+                "skillBooks": "number",
+                "awakeningCrystals": "number",
+                "heroFragments": "number",
+                "equipmentMaterials": "number"
+              },
+              "currencies": {
+                "honor": "number",
+                "guildCoins": "number",
+                "arenaTokens": "number",
+                "eventTokens": "number"
+              },
+              "items": [
+                {
+                  "itemId": "number",
+                  "name": "string",
+                  "category": "string",
+                  "quantity": "number",
+                  "rarity": "number",
+                  "icon": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/energy/purchase",
+        "name": "购买体力",
+        "description": "使用元宝购买体力",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "quantity": {
+              "type": "number",
+              "enum": [60, 120, 180],
+              "required": true
+            },
+            "useGems": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "energyAdded": "number",
+              "currentEnergy": "number",
+              "maxEnergy": "number",
+              "gemsUsed": "number",
+              "dailyPurchaseCount": "number",
+              "nextPurchaseCost": "number"
+            }
+          },
+          "error": {
+            "400": "元宝不足 | 已达每日购买上限",
+            "403": "VIP等级不足"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/items",
+        "name": "获取背包物品",
+        "description": "获取玩家背包中的物品",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "category": {
+              "type": "string",
+              "enum": ["all", "materials", "consumables", "equipment", "fragments"]
+            },
+            "rarity": {
+              "type": "number",
+              "min": 1,
+              "max": 6
+            },
+            "page": {
+              "type": "number",
+              "default": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 50,
+              "max": 100
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "items": [
+                {
+                  "id": "number",
+                  "itemId": "number",
+                  "name": "string",
+                  "description": "string",
+                  "category": "string",
+                  "rarity": "number",
+                  "quantity": "number",
+                  "maxStack": "number",
+                  "icon": "string",
+                  "sellPrice": "number",
+                  "usable": "boolean",
+                  "effects": ["string"],
+                  "acquiredAt": "string"
+                }
+              ],
+              "storage": {
+                "used": "number",
+                "capacity": "number",
+                "expansionCost": "number"
+              },
+              "pagination": "object"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/items/{itemId}/use",
+        "name": "使用物品",
+        "description": "使用背包中的消耗品",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "itemId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "quantity": {
+              "type": "number",
+              "min": 1,
+              "default": 1
+            },
+            "targetHeroId": {
+              "type": "number",
+              "required": false,
+              "description": "对特定武将使用时必需"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "itemUsed": "object",
+              "quantityUsed": "number",
+              "effects": [
+                {
+                  "type": "string",
+                  "value": "number",
+                  "target": "string"
+                }
+              ],
+              "updatedResources": "object",
+              "updatedHero": "object|null"
+            }
+          },
+          "error": {
+            "400": "物品不可使用 | 数量不足",
+            "404": "物品不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/items/{itemId}/sell",
+        "name": "出售物品",
+        "description": "出售背包物品获得金币",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "itemId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "quantity": {
+              "type": "number",
+              "min": 1,
+              "required": true
+            },
+            "confirm": {
+              "type": "boolean",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "itemsSold": "object",
+              "goldEarned": "number",
+              "currentGold": "number"
+            }
+          },
+          "error": {
+            "400": "物品不可出售 | 数量不足",
+            "404": "物品不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/storage/expand",
+        "name": "扩展背包",
+        "description": "使用元宝扩展背包容量",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "slots": {
+              "type": "number",
+              "enum": [10, 20, 50],
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "slotsAdded": "number",
+              "newCapacity": "number",
+              "gemsUsed": "number",
+              "nextExpansionCost": "number"
+            }
+          },
+          "error": {
+            "400": "元宝不足 | 已达最大容量"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/shop",
+        "name": "获取商店信息",
+        "description": "获取各种商店的商品列表",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "shopType": {
+              "type": "string",
+              "enum": ["general", "arena", "guild", "event", "vip"],
+              "default": "general"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "shop": {
+                "type": "string",
+                "name": "string",
+                "refreshTime": "string",
+                "currency": "string"
+              },
+              "items": [
+                {
+                  "id": "number",
+                  "itemId": "number",
+                  "name": "string",
+                  "description": "string",
+                  "quantity": "number",
+                  "price": "number",
+                  "currency": "string",
+                  "originalPrice": "number",
+                  "discount": "number",
+                  "limitType": "string",
+                  "limitQuantity": "number",
+                  "purchased": "number",
+                  "available": "boolean",
+                  "rarity": "number",
+                  "icon": "string"
+                }
+              ],
+              "playerCurrency": "number",
+              "refreshCost": "number",
+              "freeRefreshes": "number"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/shop/purchase",
+        "name": "购买商品",
+        "description": "从商店购买物品",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "shopType": {
+              "type": "string",
+              "enum": ["general", "arena", "guild", "event", "vip"],
+              "required": true
+            },
+            "itemId": {
+              "type": "number",
+              "required": true
+            },
+            "quantity": {
+              "type": "number",
+              "min": 1,
+              "default": 1
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "purchasedItem": "object",
+              "totalCost": "number",
+              "currency": "string",
+              "remainingCurrency": "number",
+              "itemsObtained": ["object"]
+            }
+          },
+          "error": {
+            "400": "货币不足 | 购买数量超过限制",
+            "404": "商品不存在或已售罄"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/shop/refresh",
+        "name": "刷新商店",
+        "description": "刷新商店商品列表",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "shopType": {
+              "type": "string",
+              "enum": ["general", "arena", "guild", "event"],
+              "required": true
+            },
+            "useGems": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "newItems": ["object"],
+              "refreshCost": "number",
+              "currency": "string",
+              "nextFreeRefresh": "string",
+              "remainingFreeRefreshes": "number"
+            }
+          },
+          "error": {
+            "400": "元宝不足 | 已达刷新上限"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/transactions",
+        "name": "交易历史",
+        "description": "获取资源交易记录",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "type": {
+              "type": "string",
+              "enum": ["all", "income", "expense", "purchase", "reward"]
+            },
+            "resource": {
+              "type": "string",
+              "enum": ["gold", "gems", "energy", "materials", "items"]
+            },
+            "page": {
+              "type": "number",
+              "default": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 50,
+              "max": 100
+            },
+            "dateFrom": {
+              "type": "string",
+              "format": "date"
+            },
+            "dateTo": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "transactions": [
+                {
+                  "id": "number",
+                  "type": "string",
+                  "resource": "string",
+                  "amount": "number",
+                  "before": "number",
+                  "after": "number",
+                  "source": "string",
+                  "description": "string",
+                  "createdAt": "string"
+                }
+              ],
+              "summary": {
+                "totalIncome": "number",
+                "totalExpense": "number",
+                "netChange": "number"
+              },
+              "pagination": "object"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/daily-login",
+        "name": "每日签到",
+        "description": "领取每日登录奖励",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "loginDay": "number",
+              "streakDay": "number",
+              "rewards": [
+                {
+                  "type": "string",
+                  "quantity": "number",
+                  "name": "string"
+                }
+              ],
+              "bonusReward": "object|null",
+              "nextDayReward": "object",
+              "canClaimTomorrow": "string"
+            }
+          },
+          "error": {
+            "400": "今日已签到"
+          }
+        }
+      }
+    ],
+
+    "dataModels": {
+      "UserResource": {
+        "tableName": "user_resources",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "resourceType": "string",
+          "quantity": "integer_default_0",
+          "maxQuantity": "integer_nullable",
+          "lastUpdate": "timestamp",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["userId", "resourceType"]
+      },
+      "UserItem": {
+        "tableName": "user_items",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "itemId": "foreign_key_items",
+          "quantity": "integer_default_1",
+          "acquiredAt": "timestamp",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["userId", "itemId"]
+      },
+      "ItemTemplate": {
+        "tableName": "items",
+        "fields": {
+          "id": "primary_key",
+          "name": "string",
+          "description": "text",
+          "category": "enum",
+          "rarity": "integer",
+          "maxStack": "integer_default_99",
+          "sellPrice": "integer_default_0",
+          "isUsable": "boolean_default_false",
+          "effects": "json_array",
+          "icon": "string",
+          "isActive": "boolean_default_true",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["category", "rarity", "isActive"]
+      },
+      "ResourceTransaction": {
+        "tableName": "resource_transactions",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "resourceType": "string",
+          "transactionType": "enum",
+          "amount": "integer",
+          "beforeAmount": "integer",
+          "afterAmount": "integer",
+          "source": "string",
+          "sourceId": "string_nullable",
+          "description": "string",
+          "createdAt": "timestamp"
+        },
+        "indexes": ["userId", "resourceType", "transactionType", "createdAt"]
+      }
+    },
+
+    "businessLogic": {
+      "energyRegeneration": "1 energy per 6 minutes",
+      "dailyEnergyPurchaseLimit": "based on VIP level",
+      "shopRefreshCost": "increases with each refresh",
+      "itemStackLimits": "varies by item type and rarity",
+      "sellPriceRatio": "30% of original value"
+    }
+  }
+}

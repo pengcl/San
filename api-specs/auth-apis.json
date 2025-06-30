@@ -1,0 +1,494 @@
+{
+  "authApis": {
+    "version": "1.0.0",
+    "description": "认证相关API规范",
+    "baseUrl": "/api/auth",
+
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/register",
+        "name": "用户注册",
+        "description": "创建新用户账户",
+        "request": {
+          "body": {
+            "username": {
+              "type": "string",
+              "required": true,
+              "minLength": 3,
+              "maxLength": 20,
+              "pattern": "^[a-zA-Z0-9_]+$"
+            },
+            "email": {
+              "type": "string",
+              "required": true,
+              "format": "email"
+            },
+            "password": {
+              "type": "string",
+              "required": true,
+              "minLength": 6,
+              "maxLength": 50
+            },
+            "confirmPassword": {
+              "type": "string",
+              "required": true,
+              "mustMatch": "password"
+            },
+            "inviteCode": {
+              "type": "string",
+              "required": false,
+              "length": 8
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 201,
+            "body": {
+              "user": {
+                "id": "number",
+                "username": "string",
+                "email": "string",
+                "level": "number",
+                "experience": "number",
+                "gold": "number",
+                "gems": "number",
+                "energy": "number",
+                "maxEnergy": "number",
+                "vipLevel": "number",
+                "avatar": "string|null",
+                "createdAt": "string",
+                "lastLogin": "string"
+              },
+              "token": "string",
+              "refreshToken": "string",
+              "expiresIn": "number"
+            }
+          },
+          "error": {
+            "400": "用户名已存在 | 邮箱已注册 | 密码不匹配",
+            "422": "输入验证失败"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/login",
+        "name": "用户登录",
+        "description": "用户身份验证",
+        "request": {
+          "body": {
+            "identifier": {
+              "type": "string",
+              "required": true,
+              "description": "用户名或邮箱"
+            },
+            "password": {
+              "type": "string",
+              "required": true
+            },
+            "rememberMe": {
+              "type": "boolean",
+              "required": false,
+              "default": false
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "user": {
+                "id": "number",
+                "username": "string",
+                "email": "string",
+                "level": "number",
+                "experience": "number",
+                "gold": "number",
+                "gems": "number",
+                "energy": "number",
+                "maxEnergy": "number",
+                "vipLevel": "number",
+                "avatar": "string|null",
+                "lastLogin": "string",
+                "dailyLoginStreak": "number",
+                "totalLoginDays": "number"
+              },
+              "token": "string",
+              "refreshToken": "string",
+              "expiresIn": "number"
+            }
+          },
+          "error": {
+            "400": "用户名或密码错误",
+            "401": "账户已被禁用",
+            "429": "登录尝试过于频繁"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/refresh",
+        "name": "刷新令牌",
+        "description": "使用刷新令牌获取新的访问令牌",
+        "request": {
+          "body": {
+            "refreshToken": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "token": "string",
+              "refreshToken": "string",
+              "expiresIn": "number"
+            }
+          },
+          "error": {
+            "401": "刷新令牌无效或已过期"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/logout",
+        "name": "用户登出",
+        "description": "注销用户会话",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "refreshToken": {
+              "type": "string",
+              "required": false
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "message": "登出成功"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/me",
+        "name": "获取当前用户信息",
+        "description": "获取已认证用户的详细信息",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "id": "number",
+              "username": "string",
+              "email": "string",
+              "level": "number",
+              "experience": "number",
+              "gold": "number",
+              "gems": "number",
+              "energy": "number",
+              "maxEnergy": "number",
+              "energyLastUpdate": "string",
+              "vipLevel": "number",
+              "vipExperience": "number",
+              "avatar": "string|null",
+              "createdAt": "string",
+              "lastLogin": "string",
+              "dailyLoginStreak": "number",
+              "totalLoginDays": "number",
+              "settings": {
+                "soundEnabled": "boolean",
+                "musicEnabled": "boolean",
+                "notificationsEnabled": "boolean",
+                "language": "string"
+              },
+              "statistics": {
+                "totalBattles": "number",
+                "totalVictories": "number",
+                "winRate": "number",
+                "highestArenaRank": "number",
+                "totalHeroes": "number",
+                "totalPlayTime": "number"
+              }
+            }
+          },
+          "error": {
+            "401": "未认证"
+          }
+        }
+      },
+
+      {
+        "method": "PUT",
+        "path": "/profile",
+        "name": "更新用户资料",
+        "description": "更新用户个人信息",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "username": {
+              "type": "string",
+              "required": false,
+              "minLength": 3,
+              "maxLength": 20
+            },
+            "avatar": {
+              "type": "string",
+              "required": false,
+              "format": "url"
+            },
+            "settings": {
+              "type": "object",
+              "required": false,
+              "properties": {
+                "soundEnabled": "boolean",
+                "musicEnabled": "boolean",
+                "notificationsEnabled": "boolean",
+                "language": "string"
+              }
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "user": "UserObject",
+              "message": "资料更新成功"
+            }
+          },
+          "error": {
+            "400": "用户名已被使用",
+            "422": "输入验证失败"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/change-password",
+        "name": "修改密码",
+        "description": "更改用户密码",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "currentPassword": {
+              "type": "string",
+              "required": true
+            },
+            "newPassword": {
+              "type": "string",
+              "required": true,
+              "minLength": 6,
+              "maxLength": 50
+            },
+            "confirmPassword": {
+              "type": "string",
+              "required": true,
+              "mustMatch": "newPassword"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "message": "密码修改成功"
+            }
+          },
+          "error": {
+            "400": "当前密码错误",
+            "422": "密码格式不正确"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/forgot-password",
+        "name": "忘记密码",
+        "description": "发送密码重置邮件",
+        "request": {
+          "body": {
+            "email": {
+              "type": "string",
+              "required": true,
+              "format": "email"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "message": "密码重置邮件已发送"
+            }
+          },
+          "error": {
+            "404": "邮箱不存在",
+            "429": "请求过于频繁"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/reset-password",
+        "name": "重置密码",
+        "description": "使用重置令牌重置密码",
+        "request": {
+          "body": {
+            "token": {
+              "type": "string",
+              "required": true
+            },
+            "newPassword": {
+              "type": "string",
+              "required": true,
+              "minLength": 6,
+              "maxLength": 50
+            },
+            "confirmPassword": {
+              "type": "string",
+              "required": true,
+              "mustMatch": "newPassword"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "message": "密码重置成功"
+            }
+          },
+          "error": {
+            "400": "重置令牌无效或已过期",
+            "422": "密码格式不正确"
+          }
+        }
+      },
+
+      {
+        "method": "DELETE",
+        "path": "/account",
+        "name": "删除账户",
+        "description": "删除用户账户（需要确认）",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "password": {
+              "type": "string",
+              "required": true
+            },
+            "confirmation": {
+              "type": "string",
+              "required": true,
+              "mustEqual": "DELETE_MY_ACCOUNT"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "message": "账户删除成功"
+            }
+          },
+          "error": {
+            "400": "密码错误或确认文本不正确"
+          }
+        }
+      }
+    ],
+
+    "middleware": {
+      "authentication": {
+        "type": "JWT",
+        "header": "Authorization",
+        "prefix": "Bearer",
+        "expiration": 3600
+      },
+      "rateLimiting": {
+        "login": "5 attempts per 15 minutes",
+        "register": "3 attempts per hour",
+        "forgotPassword": "3 attempts per hour"
+      },
+      "validation": {
+        "library": "joi",
+        "sanitization": true,
+        "strictMode": true
+      }
+    },
+
+    "security": {
+      "passwordHashing": "bcrypt",
+      "saltRounds": 12,
+      "tokenSecurity": {
+        "algorithm": "HS256",
+        "issuer": "sanguo-game",
+        "audience": "game-client"
+      },
+      "sessionManagement": {
+        "maxConcurrentSessions": 3,
+        "sessionTimeout": 86400
+      }
+    },
+
+    "dataModels": {
+      "User": {
+        "tableName": "users",
+        "fields": {
+          "id": "primary_key",
+          "username": "unique_string",
+          "email": "unique_email",
+          "password": "hashed_string",
+          "level": "integer_default_1",
+          "experience": "integer_default_0",
+          "gold": "integer_default_10000",
+          "gems": "integer_default_100",
+          "energy": "integer_default_120",
+          "maxEnergy": "integer_default_120",
+          "vipLevel": "integer_default_0",
+          "vipExperience": "integer_default_0",
+          "avatar": "nullable_string",
+          "emailVerified": "boolean_default_false",
+          "status": "enum_active_suspended_banned",
+          "lastLogin": "timestamp",
+          "dailyLoginStreak": "integer_default_0",
+          "totalLoginDays": "integer_default_0",
+          "settings": "json_object",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["username", "email", "level", "vipLevel"]
+      },
+      "UserSession": {
+        "tableName": "user_sessions",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "token": "string",
+          "refreshToken": "string",
+          "deviceInfo": "json_object",
+          "ipAddress": "string",
+          "expiresAt": "timestamp",
+          "createdAt": "timestamp"
+        },
+        "indexes": ["userId", "token", "refreshToken"]
+      }
+    }
+  }
+}

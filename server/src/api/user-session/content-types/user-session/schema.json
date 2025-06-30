@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_sessions",
+  "info": {
+    "singularName": "user-session",
+    "pluralName": "user-sessions",
+    "displayName": "用户会话",
+    "description": "用户登录会话管理数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "token": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "访问令牌"
+    },
+    "refresh_token": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "刷新令牌"
+    },
+    "device_info": {
+      "type": "json",
+      "description": "设备信息",
+      "default": {}
+    },
+    "ip_address": {
+      "type": "string",
+      "maxLength": 45,
+      "description": "IP地址（支持IPv6）"
+    },
+    "user_agent": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "用户代理信息"
+    },
+    "expires_at": {
+      "type": "datetime",
+      "required": true,
+      "description": "会话过期时间"
+    },
+    "last_active": {
+      "type": "datetime",
+      "description": "最后活跃时间"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "会话是否有效"
+    },
+    "login_type": {
+      "type": "enumeration",
+      "enum": ["email", "username", "guest", "social"],
+      "default": "email",
+      "description": "登录方式"
+    },
+    "metadata": {
+      "type": "json",
+      "description": "额外会话数据"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

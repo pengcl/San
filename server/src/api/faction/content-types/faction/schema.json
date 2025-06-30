@@ -1,0 +1,81 @@
+{
+  "kind": "collectionType",
+  "collectionName": "factions",
+  "info": {
+    "singularName": "faction",
+    "pluralName": "factions",
+    "displayName": "阵营",
+    "description": "Three Kingdoms faction configuration"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "faction_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 10
+    },
+    "name_zh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "color_hex": {
+      "type": "string",
+      "required": true,
+      "maxLength": 7
+    },
+    "banner_color": {
+      "type": "string",
+      "required": true,
+      "maxLength": 7
+    },
+    "emblem_url": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "historical_period": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text"
+    },
+    "founding_emperor": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "capital_city": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "territory_bonus": {
+      "type": "json"
+    },
+    "faction_bonus": {
+      "type": "json"
+    },
+    "display_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "heroes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::hero.hero",
+      "mappedBy": "faction"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "sanguo-server",
+  "version": "1.0.0",
+  "description": "三国群英传卡牌争霸服务端",
+  "main": "index.js",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi",
+    "db:create": "mysql -u root -p < ../database/schema.sql",
+    "db:init": "mysql -u root -p < ../database/init_data.sql"
+  },
+  "keywords": [
+    "strapi",
+    "game",
+    "sanguo",
+    "card"
+  ],
+  "author": "Pengcl",
+  "license": "MIT",
+  "dependencies": {
+    "@strapi/plugin-documentation": "^5.16.1",
+    "@strapi/plugin-users-permissions": "^5.16.1",
+    "@strapi/strapi": "^5.16.1",
+    "@types/ws": "^8.18.1",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "mysql2": "^3.14.1",
+    "protobufjs": "^7.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1",
+    "redis": "^4.6.11",
+    "socket.io": "^4.8.1",
+    "styled-components": "^6.1.19",
+    "uuid": "^11.1.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/uuid": "^10.0.0",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  }
+}

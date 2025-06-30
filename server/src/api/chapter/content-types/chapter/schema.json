@@ -1,0 +1,98 @@
+{
+  "kind": "collectionType",
+  "collectionName": "chapters",
+  "info": {
+    "singularName": "chapter",
+    "pluralName": "chapters",
+    "displayName": "游戏章节",
+    "description": "游戏剧情章节数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "chapter_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "description": "章节ID"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "description": "章节名称"
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 200,
+      "description": "章节描述"
+    },
+    "unlock_level": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "max": 120,
+      "description": "解锁等级"
+    },
+    "total_stages": {
+      "type": "integer",
+      "required": true,
+      "default": 10,
+      "min": 1,
+      "max": 30,
+      "description": "章节关卡总数"
+    },
+    "difficulty": {
+      "type": "enumeration",
+      "enum": ["tutorial", "easy", "normal", "hard", "nightmare", "hell"],
+      "required": true,
+      "default": "normal",
+      "description": "难度等级"
+    },
+    "prev_chapter_id": {
+      "type": "integer",
+      "description": "前置章节ID"
+    },
+    "required_stars": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "需要的前置章节星数"
+    },
+    "first_clear_rewards": {
+      "type": "json",
+      "description": "首次通关奖励"
+    },
+    "three_star_rewards": {
+      "type": "json",
+      "description": "三星通关奖励"
+    },
+    "background_image": {
+      "type": "string",
+      "description": "章节背景图"
+    },
+    "story_intro": {
+      "type": "text",
+      "description": "剧情介绍"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "是否开放"
+    },
+    "sort_order": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "description": "排序顺序"
+    },
+    "special_rules": {
+      "type": "json",
+      "description": "特殊规则配置"
+    }
+  }
+}

@@ -1,0 +1,693 @@
+{
+  "heroApis": {
+    "version": "1.0.0",
+    "description": "武将相关API规范",
+    "baseUrl": "/api/heroes",
+
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "name": "获取武将列表",
+        "description": "获取玩家拥有的武将列表",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "page": {
+              "type": "number",
+              "default": 1,
+              "min": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 20,
+              "min": 1,
+              "max": 100
+            },
+            "sort": {
+              "type": "string",
+              "enum": ["level", "rarity", "faction", "power", "created"],
+              "default": "power"
+            },
+            "order": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            },
+            "faction": {
+              "type": "string",
+              "enum": ["shu", "wei", "wu", "qunxiong", "yizu"]
+            },
+            "rarity": {
+              "type": "number",
+              "min": 1,
+              "max": 6
+            },
+            "unitType": {
+              "type": "string",
+              "enum": ["infantry", "cavalry", "archer", "strategist"]
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "heroes": [
+                {
+                  "id": "number",
+                  "heroId": "number",
+                  "name": "string",
+                  "level": "number",
+                  "experience": "number",
+                  "rarity": "number",
+                  "faction": "string",
+                  "unitType": "string",
+                  "power": "number",
+                  "stats": {
+                    "hp": "number",
+                    "attack": "number",
+                    "defense": "number",
+                    "speed": "number"
+                  },
+                  "skills": ["SkillObject"],
+                  "equipment": ["EquipmentObject"],
+                  "awakening": {
+                    "stage": "number",
+                    "isAwakened": "boolean"
+                  },
+                  "avatar": "string",
+                  "acquiredAt": "string"
+                }
+              ],
+              "pagination": {
+                "page": "number",
+                "limit": "number",
+                "total": "number",
+                "totalPages": "number"
+              }
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/{heroId}",
+        "name": "获取武将详情",
+        "description": "获取指定武将的详细信息",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "id": "number",
+              "heroId": "number",
+              "name": "string",
+              "title": "string",
+              "description": "string",
+              "level": "number",
+              "experience": "number",
+              "maxExperience": "number",
+              "rarity": "number",
+              "faction": "string",
+              "unitType": "string",
+              "power": "number",
+              "baseStats": {
+                "hp": "number",
+                "attack": "number",
+                "defense": "number",
+                "speed": "number"
+              },
+              "currentStats": {
+                "hp": "number",
+                "attack": "number",
+                "defense": "number",
+                "speed": "number"
+              },
+              "skills": [
+                {
+                  "id": "number",
+                  "name": "string",
+                  "description": "string",
+                  "level": "number",
+                  "maxLevel": "number",
+                  "type": "string",
+                  "cooldown": "number",
+                  "energyCost": "number",
+                  "effects": ["string"]
+                }
+              ],
+              "equipment": [
+                {
+                  "slot": "string",
+                  "item": "EquipmentObject|null"
+                }
+              ],
+              "awakening": {
+                "stage": "number",
+                "isAwakened": "boolean",
+                "nextStageRequirements": "object|null"
+              },
+              "bonds": [
+                {
+                  "name": "string",
+                  "description": "string",
+                  "requiredHeroes": ["string"],
+                  "isActive": "boolean",
+                  "effects": ["string"]
+                }
+              ],
+              "avatar": "string",
+              "cardImage": "string",
+              "acquiredAt": "string",
+              "lastUsed": "string"
+            }
+          },
+          "error": {
+            "404": "武将不存在或不属于当前用户"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{heroId}/level-up",
+        "name": "武将升级",
+        "description": "使用经验道具或金币升级武将",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "useItems": {
+              "type": "array",
+              "items": {
+                "itemId": "number",
+                "quantity": "number"
+              }
+            },
+            "useGold": {
+              "type": "number",
+              "min": 0
+            },
+            "targetLevel": {
+              "type": "number",
+              "min": 1
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "hero": "HeroObject",
+              "levelsGained": "number",
+              "experienceGained": "number",
+              "costsUsed": {
+                "gold": "number",
+                "items": ["object"]
+              },
+              "statsIncrease": {
+                "hp": "number",
+                "attack": "number",
+                "defense": "number",
+                "speed": "number"
+              },
+              "newSkillsUnlocked": ["SkillObject"]
+            }
+          },
+          "error": {
+            "400": "资源不足 | 已达到最大等级",
+            "404": "武将不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{heroId}/star-up",
+        "name": "武将升星",
+        "description": "提升武将星级",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "materials": {
+              "type": "object",
+              "properties": {
+                "duplicates": "number",
+                "upgradeStones": "number",
+                "rareGems": "number",
+                "epicCrystals": "number",
+                "legendaryEssence": "number"
+              }
+            },
+            "gold": {
+              "type": "number",
+              "required": true
+            },
+            "confirm": {
+              "type": "boolean",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "hero": "HeroObject",
+              "success": "boolean",
+              "newRarity": "number",
+              "materialsUsed": "object",
+              "goldUsed": "number",
+              "statsIncrease": "object",
+              "newSkillsUnlocked": ["SkillObject"],
+              "compensationItems": ["object"]
+            }
+          },
+          "error": {
+            "400": "材料不足 | 已达到最高星级",
+            "404": "武将不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{heroId}/skills/{skillId}/upgrade",
+        "name": "技能升级",
+        "description": "升级武将技能",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            },
+            "skillId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "materials": {
+              "skillBooks": "number",
+              "wisdomScrolls": "number",
+              "masterTomes": "number"
+            },
+            "gold": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "skill": "SkillObject",
+              "newLevel": "number",
+              "materialsUsed": "object",
+              "goldUsed": "number",
+              "skillEffectIncrease": "object"
+            }
+          },
+          "error": {
+            "400": "材料不足 | 已达到最高等级",
+            "404": "武将或技能不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{heroId}/awaken",
+        "name": "武将觉醒",
+        "description": "武将觉醒升阶",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "materials": {
+              "awakeningCrystals": "number",
+              "heroEssence": "number",
+              "divineFragments": "number",
+              "celestialOrb": "number"
+            },
+            "gold": {
+              "type": "number",
+              "required": true
+            },
+            "targetStage": {
+              "type": "number",
+              "min": 1,
+              "max": 3
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "hero": "HeroObject",
+              "newAwakeningStage": "number",
+              "materialsUsed": "object",
+              "goldUsed": "number",
+              "statsIncrease": "object",
+              "newPassives": ["string"],
+              "skillEvolutions": ["object"]
+            }
+          },
+          "error": {
+            "400": "不满足觉醒条件 | 材料不足",
+            "404": "武将不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/{heroId}/equipment/{slot}/equip",
+        "name": "装备穿戴",
+        "description": "为武将装备道具",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            },
+            "slot": {
+              "type": "string",
+              "enum": ["weapon", "armor", "helmet", "boots", "accessory1", "accessory2"],
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "equipmentId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "hero": "HeroObject",
+              "equippedItem": "EquipmentObject",
+              "previousItem": "EquipmentObject|null",
+              "statsChange": "object"
+            }
+          },
+          "error": {
+            "400": "装备不兼容 | 装备已被使用",
+            "404": "武将或装备不存在"
+          }
+        }
+      },
+
+      {
+        "method": "DELETE",
+        "path": "/{heroId}/equipment/{slot}",
+        "name": "卸下装备",
+        "description": "卸下武将装备",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            },
+            "slot": {
+              "type": "string",
+              "enum": ["weapon", "armor", "helmet", "boots", "accessory1", "accessory2"],
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "hero": "HeroObject",
+              "unequippedItem": "EquipmentObject",
+              "statsChange": "object"
+            }
+          },
+          "error": {
+            "404": "武将不存在或该装备槽为空"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/summon",
+        "name": "武将召唤",
+        "description": "召唤新武将",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "summonType": {
+              "type": "string",
+              "enum": ["normal", "premium", "faction", "event"],
+              "required": true
+            },
+            "quantity": {
+              "type": "number",
+              "enum": [1, 10],
+              "default": 1
+            },
+            "useTickets": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "results": [
+                {
+                  "isNew": "boolean",
+                  "hero": "HeroObject|null",
+                  "fragments": {
+                    "heroId": "number",
+                    "quantity": "number"
+                  },
+                  "rarity": "number"
+                }
+              ],
+              "costsUsed": {
+                "gold": "number",
+                "gems": "number",
+                "tickets": "number"
+              },
+              "pityCounter": "number",
+              "guaranteeProgress": "object"
+            }
+          },
+          "error": {
+            "400": "资源不足",
+            "404": "召唤类型不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/fragments/combine",
+        "name": "碎片合成",
+        "description": "使用碎片合成武将",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "heroId": {
+              "type": "number",
+              "required": true
+            },
+            "fragmentsToUse": {
+              "type": "number",
+              "required": true,
+              "min": 50
+            },
+            "gold": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "hero": "HeroObject",
+              "fragmentsUsed": "number",
+              "goldUsed": "number",
+              "isFirstTime": "boolean"
+            }
+          },
+          "error": {
+            "400": "碎片不足 | 金币不足",
+            "404": "武将模板不存在"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/library",
+        "name": "武将图鉴",
+        "description": "获取所有武将的图鉴信息",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "faction": {
+              "type": "string",
+              "enum": ["shu", "wei", "wu", "qunxiong", "yizu"]
+            },
+            "rarity": {
+              "type": "number",
+              "min": 1,
+              "max": 6
+            },
+            "owned": {
+              "type": "boolean"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "heroes": [
+                {
+                  "id": "number",
+                  "name": "string",
+                  "title": "string",
+                  "faction": "string",
+                  "rarity": "number",
+                  "unitType": "string",
+                  "avatar": "string",
+                  "isOwned": "boolean",
+                  "maxRarityOwned": "number|null",
+                  "obtainMethods": ["string"]
+                }
+              ],
+              "collectionStats": {
+                "total": "number",
+                "owned": "number",
+                "percentage": "number",
+                "bonuses": [
+                  {
+                    "threshold": "number",
+                    "bonus": "object",
+                    "isUnlocked": "boolean"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ],
+
+    "dataModels": {
+      "UserHero": {
+        "tableName": "user_heroes",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "heroId": "foreign_key_heroes",
+          "level": "integer_default_1",
+          "experience": "integer_default_0",
+          "rarity": "integer_default_1",
+          "awakeningStage": "integer_default_0",
+          "equipment": "json_object",
+          "skillLevels": "json_object",
+          "acquiredAt": "timestamp",
+          "lastUsed": "timestamp",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["userId", "heroId", "level", "rarity"]
+      },
+      "HeroTemplate": {
+        "tableName": "heroes",
+        "fields": {
+          "id": "primary_key",
+          "name": "string",
+          "title": "string",
+          "description": "text",
+          "faction": "enum",
+          "unitType": "enum",
+          "baseStats": "json_object",
+          "skills": "json_array",
+          "avatar": "string",
+          "cardImage": "string",
+          "obtainMethods": "json_array",
+          "isActive": "boolean_default_true",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["faction", "unitType", "isActive"]
+      },
+      "HeroFragment": {
+        "tableName": "hero_fragments",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "heroId": "foreign_key_heroes",
+          "quantity": "integer_default_0",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["userId", "heroId"]
+      }
+    },
+
+    "businessLogic": {
+      "levelUpFormula": "base_exp * level * growth_rate",
+      "powerCalculation": "hp * 0.3 + attack * 1.0 + defense * 0.8 + speed * 0.5",
+      "starUpSuccessRate": "base_rate * (1 - failure_count * 0.1)",
+      "skillDamageFormula": "attack * skill_multiplier + skill_base_damage",
+      "awakeningRequirements": "minimum_level + minimum_rarity + special_materials"
+    }
+  }
+}

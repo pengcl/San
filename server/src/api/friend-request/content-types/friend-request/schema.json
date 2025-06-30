@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "friend_requests",
+  "info": {
+    "singularName": "friend-request",
+    "pluralName": "friend-requests",
+    "displayName": "好友申请",
+    "description": "好友申请数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "message": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "accepted", "rejected", "expired"],
+      "required": true,
+      "default": "pending"
+    },
+    "expires_at": {
+      "type": "datetime",
+      "description": "申请过期时间"
+    },
+    "responded_at": {
+      "type": "datetime",
+      "description": "回应时间"
+    },
+    "from_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "to_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

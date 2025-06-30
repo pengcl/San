@@ -1,0 +1,99 @@
+# 开发环境Dockerfile
+FROM node:18-alpine AS development
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装系统依赖
+RUN apk add --no-cache \
+    git \
+    curl \
+    vim
+
+# 创建非root用户
+RUN addgroup -g 1001 -S nodegroup && \
+    adduser -S nodeuser -u 1001 -G nodegroup
+
+# 复制package文件
+COPY package*.json ./
+
+# 安装依赖（包括开发依赖）
+RUN npm ci
+
+# 复制源代码
+COPY . .
+
+# 设置权限
+RUN chown -R nodeuser:nodegroup /app
+
+# 切换到非root用户
+USER nodeuser
+
+# 暴露端口
+EXPOSE 3000 24678
+
+# 开发环境启动命令
+CMD ["npm", "run", "dev"]
+
+# 生产构建阶段
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# 安装系统依赖
+RUN apk add --no-cache git
+
+# 复制package文件
+COPY package*.json ./
+
+# 安装生产依赖
+RUN npm ci --only=production --silent
+
+# 复制源代码
+COPY . .
+
+# 构建应用
+RUN npm run build
+
+# 生产运行阶段
+FROM nginx:alpine AS production
+
+# 安装curl用于健康检查
+RUN apk add --no-cache curl
+
+# 复制nginx配置
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.default.conf /etc/nginx/conf.d/default.conf
+
+# 从构建阶段复制构建产物
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 复制启动脚本
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# 创建非root用户
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# 设置权限
+RUN chown -R appuser:appgroup /usr/share/nginx/html && \
+    chown -R appuser:appgroup /var/cache/nginx && \
+    chown -R appuser:appgroup /var/log/nginx && \
+    chown -R appuser:appgroup /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown appuser:appgroup /var/run/nginx.pid
+
+# 暴露端口
+EXPOSE 8080
+
+# 切换到非root用户
+USER appuser
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# 启动命令
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,101 @@
+{
+  "kind": "collectionType",
+  "collectionName": "city_types",
+  "info": {
+    "singularName": "city-type",
+    "pluralName": "city-types",
+    "displayName": "城池类型",
+    "description": "城池类型定义数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 20,
+      "description": "类型ID"
+    },
+    "name_zh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "中文名称"
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "英文名称"
+    },
+    "description": {
+      "type": "text",
+      "description": "类型描述"
+    },
+    "color_hex": {
+      "type": "string",
+      "required": true,
+      "maxLength": 7,
+      "description": "代表颜色"
+    },
+    "icon_url": {
+      "type": "string",
+      "description": "图标URL"
+    },
+    "max_buildings": {
+      "type": "integer",
+      "default": 20,
+      "min": 5,
+      "max": 100,
+      "description": "最大建筑数"
+    },
+    "population_capacity": {
+      "type": "integer",
+      "default": 10000,
+      "min": 1000,
+      "description": "人口容量"
+    },
+    "defensive_bonus": {
+      "type": "float",
+      "default": 0,
+      "min": 0,
+      "max": 2,
+      "description": "防御加成"
+    },
+    "economic_bonus": {
+      "type": "float",
+      "default": 0,
+      "min": 0,
+      "max": 2,
+      "description": "经济加成"
+    },
+    "development_focus": {
+      "type": "enumeration",
+      "enum": ["military", "economic", "cultural", "defensive"],
+      "required": true,
+      "description": "发展重点"
+    },
+    "special_features": {
+      "type": "json",
+      "description": "特殊功能"
+    },
+    "terrain_requirements": {
+      "type": "json",
+      "description": "地形要求"
+    },
+    "display_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "显示顺序"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "是否启用"
+    }
+  }
+}

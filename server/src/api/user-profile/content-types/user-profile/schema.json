@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_profiles",
+  "info": {
+    "singularName": "user-profile",
+    "pluralName": "user-profiles",
+    "displayName": "用户档案",
+    "description": "用户游戏档案"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "nickname": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 100
+    },
+    "exp": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "vip_level": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "gold": {
+      "type": "biginteger",
+      "default": 50000
+    },
+    "diamond": {
+      "type": "integer",
+      "default": 500
+    },
+    "stamina": {
+      "type": "integer",
+      "default": 120
+    },
+    "stamina_update_time": {
+      "type": "datetime",
+      "default": null
+    },
+    "arena_coin": {
+      "type": "integer",
+      "default": 0
+    },
+    "guild_coin": {
+      "type": "integer",
+      "default": 0
+    },
+    "friend_point": {
+      "type": "integer",
+      "default": 0
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "last_login_time": {
+      "type": "datetime"
+    },
+    "total_login_days": {
+      "type": "integer",
+      "default": 0
+    },
+    "power": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

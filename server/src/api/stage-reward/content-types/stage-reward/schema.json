@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "stage_rewards",
+  "info": {
+    "singularName": "stage-reward",
+    "pluralName": "stage-rewards",
+    "displayName": "关卡奖励",
+    "description": "关卡奖励配置数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "reward_type": {
+      "type": "enumeration",
+      "enum": ["first_clear", "three_star", "normal_drop", "elite_drop", "daily_bonus"],
+      "required": true,
+      "description": "奖励类型"
+    },
+    "resource_type": {
+      "type": "enumeration",
+      "enum": ["gold", "gems", "energy", "hero", "hero_fragment", "item", "equipment", "skill_book", "enhancement_stone", "awakening_crystal"],
+      "required": true,
+      "description": "资源类型"
+    },
+    "resource_id": {
+      "type": "string",
+      "description": "资源ID（如英雄ID、物品ID）"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "description": "数量"
+    },
+    "drop_rate": {
+      "type": "float",
+      "default": 100,
+      "min": 0,
+      "max": 100,
+      "description": "掉落概率（百分比）"
+    },
+    "is_guaranteed": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否必得"
+    },
+    "conditions": {
+      "type": "json",
+      "description": "获得条件"
+    },
+    "stage": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::stage.stage"
+    }
+  }
+}

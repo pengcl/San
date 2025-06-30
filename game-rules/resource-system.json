@@ -1,0 +1,372 @@
+{
+  "resourceSystem": {
+    "version": "1.0.0",
+    "description": "资源获得和消耗规则配置",
+
+    "primaryResources": {
+      "gold": {
+        "name": "金币",
+        "icon": "gold_coin",
+        "description": "基础货币，广泛用于游戏内各种功能",
+        "maxStorage": 99999999,
+        "sources": [
+          {
+            "id": "stage_completion",
+            "name": "关卡完成",
+            "amount": "stage_level * 50 + star_rating * 25",
+            "frequency": "per_battle"
+          },
+          {
+            "id": "daily_login",
+            "name": "每日登录",
+            "amount": "player_level * 100",
+            "frequency": "daily"
+          },
+          {
+            "id": "quest_completion",
+            "name": "任务完成",
+            "amount": "quest_tier * 500",
+            "frequency": "per_quest"
+          },
+          {
+            "id": "arena_victory",
+            "name": "竞技场胜利",
+            "amount": "rank_based * 200",
+            "frequency": "per_victory"
+          },
+          {
+            "id": "building_production",
+            "name": "建筑产出",
+            "amount": "building_level * 100",
+            "frequency": "hourly"
+          },
+          {
+            "id": "item_sale",
+            "name": "出售物品",
+            "amount": "item_value * 0.6",
+            "frequency": "on_demand"
+          }
+        ],
+        "sinks": [
+          {
+            "id": "hero_upgrade",
+            "name": "武将升级",
+            "cost": "level * level * 100",
+            "frequency": "per_upgrade"
+          },
+          {
+            "id": "equipment_enhance",
+            "name": "装备强化",
+            "cost": "equipment_level * rarity * 1000",
+            "frequency": "per_enhancement"
+          },
+          {
+            "id": "skill_upgrade", 
+            "name": "技能升级",
+            "cost": "skill_level * 5000",
+            "frequency": "per_skill_level"
+          },
+          {
+            "id": "building_upgrade",
+            "name": "建筑升级",
+            "cost": "building_level * building_level * 10000",
+            "frequency": "per_building_upgrade"
+          }
+        ]
+      },
+
+      "gems": {
+        "name": "元宝",
+        "icon": "gem",
+        "description": "高级货币，主要通过充值获得",
+        "maxStorage": 99999999,
+        "sources": [
+          {
+            "id": "purchase",
+            "name": "充值购买",
+            "amount": "package_dependent",
+            "frequency": "on_demand"
+          },
+          {
+            "id": "achievement",
+            "name": "成就奖励",
+            "amount": "achievement_tier * 50",
+            "frequency": "one_time"
+          },
+          {
+            "id": "event_reward",
+            "name": "活动奖励",
+            "amount": "event_specific",
+            "frequency": "event_based"
+          },
+          {
+            "id": "first_clear",
+            "name": "首次通关",
+            "amount": "stage_difficulty * 10",
+            "frequency": "one_time_per_stage"
+          },
+          {
+            "id": "daily_quest",
+            "name": "日常任务",
+            "amount": "20",
+            "frequency": "daily"
+          }
+        ],
+        "sinks": [
+          {
+            "id": "premium_summon",
+            "name": "高级召唤",
+            "cost": "280",
+            "frequency": "per_summon"
+          },
+          {
+            "id": "energy_refill",
+            "name": "体力购买",
+            "cost": "50 * refill_count",
+            "frequency": "on_demand",
+            "maxDaily": 10
+          },
+          {
+            "id": "premium_shop",
+            "name": "高级商店",
+            "cost": "item_specific",
+            "frequency": "on_demand"
+          },
+          {
+            "id": "speed_up",
+            "name": "加速道具",
+            "cost": "time_dependent",
+            "frequency": "on_demand"
+          }
+        ]
+      },
+
+      "energy": {
+        "name": "体力",
+        "icon": "energy_bolt",
+        "description": "用于参与战斗的消耗性资源",
+        "maxStorage": "120 + vip_bonus",
+        "baseRegeneration": {
+          "amount": 1,
+          "interval": 300,
+          "description": "每5分钟恢复1点"
+        },
+        "sources": [
+          {
+            "id": "natural_regen",
+            "name": "自然恢复",
+            "amount": "1",
+            "frequency": "every_5_minutes"
+          },
+          {
+            "id": "daily_gift",
+            "name": "每日赠送",
+            "amount": "vip_level * 20",
+            "frequency": "daily"
+          },
+          {
+            "id": "friend_gift",
+            "name": "好友赠送",
+            "amount": "5",
+            "frequency": "per_friend",
+            "maxDaily": 50
+          },
+          {
+            "id": "gem_purchase",
+            "name": "元宝购买",
+            "amount": "60",
+            "cost": "50 * purchase_count",
+            "frequency": "on_demand"
+          },
+          {
+            "id": "item_use",
+            "name": "道具使用",
+            "amount": "item_specific",
+            "frequency": "on_demand"
+          }
+        ],
+        "sinks": [
+          {
+            "id": "normal_stage",
+            "name": "普通关卡",
+            "cost": "6",
+            "frequency": "per_battle"
+          },
+          {
+            "id": "elite_stage",
+            "name": "精英关卡", 
+            "cost": "12",
+            "frequency": "per_battle"
+          },
+          {
+            "id": "world_boss",
+            "name": "世界Boss",
+            "cost": "20",
+            "frequency": "per_attempt"
+          }
+        ]
+      },
+
+      "honor": {
+        "name": "荣誉",
+        "icon": "honor_medal",
+        "description": "PVP专用货币",
+        "maxStorage": 99999999,
+        "sources": [
+          {
+            "id": "arena_win",
+            "name": "竞技场胜利",
+            "amount": "opponent_rank / 1000 + 50",
+            "frequency": "per_victory"
+          },
+          {
+            "id": "guild_war",
+            "name": "公会战贡献",
+            "amount": "damage_dealt / 10000",
+            "frequency": "per_battle"
+          },
+          {
+            "id": "ranking_reward",
+            "name": "排行榜奖励",
+            "amount": "rank_tier * 100",
+            "frequency": "weekly"
+          }
+        ],
+        "sinks": [
+          {
+            "id": "honor_shop",
+            "name": "荣誉商店",
+            "items": "pvp_exclusive_items",
+            "frequency": "on_demand"
+          }
+        ]
+      }
+    },
+
+    "secondaryResources": {
+      "experience": {
+        "name": "经验值",
+        "types": ["player_exp", "hero_exp", "skill_exp"],
+        "sources": [
+          {
+            "id": "battle_completion",
+            "name": "战斗完成",
+            "amount": "enemy_level * 10 + victory_bonus"
+          },
+          {
+            "id": "quest_completion",
+            "name": "任务完成",
+            "amount": "quest_tier * 100"
+          }
+        ]
+      },
+
+      "materials": {
+        "enhancementStones": {
+          "name": "强化石",
+          "description": "用于装备强化",
+          "sources": ["stages", "daily_rewards", "shop"],
+          "usage": ["equipment_enhancement"]
+        },
+        "skillBooks": {
+          "name": "技能书",
+          "description": "用于技能升级",
+          "sources": ["elite_stages", "guild_shop", "events"],
+          "usage": ["skill_upgrade"]
+        },
+        "awakeningCrystals": {
+          "name": "觉醒水晶",
+          "description": "用于武将觉醒",
+          "sources": ["world_boss", "high_level_stages", "premium_shop"],
+          "usage": ["hero_awakening"]
+        },
+        "heroFragments": {
+          "name": "武将碎片",
+          "description": "用于合成武将",
+          "sources": ["elite_stages", "events", "achievement"],
+          "usage": ["hero_synthesis"]
+        }
+      }
+    },
+
+    "dailyLimits": {
+      "energyPurchase": {
+        "vip0": 0,
+        "vip1": 1,
+        "vip3": 2,
+        "vip5": 3,
+        "vip8": 5,
+        "vip12": 10
+      },
+      "arenaAttempts": {
+        "base": 5,
+        "vipBonus": "vip_level >= 3 ? 2 : 0"
+      },
+      "eliteStageAttempts": {
+        "base": 3,
+        "vipBonus": "vip_level >= 5 ? 1 : 0"
+      }
+    },
+
+    "economicBalance": {
+      "inflationControl": {
+        "goldSinkRatio": 0.7,
+        "description": "70%的金币产出应该有对应消耗"
+      },
+      "premiumCurrency": {
+        "freeRatio": 0.15,
+        "description": "15%的元宝可以通过游戏内活动获得"
+      },
+      "progression": {
+        "bottleneckResources": ["hero_fragments", "awakening_materials"],
+        "description": "特定资源应该成为进度瓶颈"
+      }
+    },
+
+    "eventRewards": {
+      "dailyTasks": [
+        {
+          "task": "完成3场战斗",
+          "reward": {"gold": 5000, "energy": 20}
+        },
+        {
+          "task": "升级1次武将",
+          "reward": {"gold": 3000, "skill_books": 1}
+        },
+        {
+          "task": "参与1次竞技场",
+          "reward": {"honor": 100, "gems": 10}
+        },
+        {
+          "task": "登录游戏",
+          "reward": {"gold": 2000, "energy": 10}
+        }
+      ],
+      
+      "weeklyTasks": [
+        {
+          "task": "完成20场战斗",
+          "reward": {"gems": 100, "enhancement_stones": 10}
+        },
+        {
+          "task": "获得5次竞技场胜利",
+          "reward": {"honor": 500, "rare_materials": 3}
+        },
+        {
+          "task": "升级5次技能",
+          "reward": {"gold": 50000, "skill_books": 5}
+        }
+      ],
+
+      "loginRewards": {
+        "day1": {"gold": 10000, "energy": 50},
+        "day2": {"gems": 50, "enhancement_stones": 5},
+        "day3": {"hero_fragments": 10, "gold": 15000},
+        "day4": {"gems": 80, "skill_books": 3},
+        "day5": {"energy": 100, "honor": 200},
+        "day6": {"gold": 25000, "rare_materials": 5},
+        "day7": {"gems": 200, "epic_hero_fragment": 5}
+      }
+    }
+  }
+}

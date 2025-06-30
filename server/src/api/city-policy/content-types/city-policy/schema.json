@@ -1,0 +1,158 @@
+{
+  "kind": "collectionType",
+  "collectionName": "city_policies",
+  "info": {
+    "singularName": "city-policy",
+    "pluralName": "city-policies",
+    "displayName": "城池政策",
+    "description": "城池政策配置数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "policy_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 30,
+      "description": "政策ID"
+    },
+    "name_zh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "中文名称"
+    },
+    "name_en": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "英文名称"
+    },
+    "description": {
+      "type": "text",
+      "description": "政策描述"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["taxation", "military", "trade", "culture", "development", "diplomacy"],
+      "required": true,
+      "description": "政策分类"
+    },
+    "policy_type": {
+      "type": "enumeration",
+      "enum": ["economic", "social", "military", "diplomatic", "administrative"],
+      "required": true,
+      "description": "政策类型"
+    },
+    "sub_type": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "子类型"
+    },
+    "policy_effects": {
+      "type": "json",
+      "description": "政策效果"
+    },
+    "cost_modifiers": {
+      "type": "json",
+      "description": "成本修正"
+    },
+    "population_effects": {
+      "type": "json",
+      "description": "人口影响"
+    },
+    "loyalty_effects": {
+      "type": "json",
+      "description": "忠诚度影响"
+    },
+    "min_city_level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "description": "最低城市等级"
+    },
+    "min_population": {
+      "type": "integer",
+      "default": 1000,
+      "min": 0,
+      "description": "最低人口要求"
+    },
+    "required_buildings": {
+      "type": "json",
+      "description": "所需建筑"
+    },
+    "required_technologies": {
+      "type": "json",
+      "description": "所需科技"
+    },
+    "unlock_conditions": {
+      "type": "json",
+      "description": "解锁条件"
+    },
+    "implementation_cost": {
+      "type": "json",
+      "description": "实施成本"
+    },
+    "daily_maintenance": {
+      "type": "json",
+      "description": "日常维护费"
+    },
+    "duration_days": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "持续天数（0为永久）"
+    },
+    "conflicting_policies": {
+      "type": "json",
+      "description": "冲突政策"
+    },
+    "prerequisite_policies": {
+      "type": "json",
+      "description": "前置政策"
+    },
+    "applicable_city_types": {
+      "type": "json",
+      "description": "适用城池类型"
+    },
+    "min_governance_level": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "description": "最低治理等级"
+    },
+    "historical_context": {
+      "type": "text",
+      "description": "历史背景"
+    },
+    "dynasty_origin": {
+      "type": "enumeration",
+      "enum": ["han", "wei", "shu", "wu", "general"],
+      "default": "general",
+      "description": "起源朝代"
+    },
+    "effectiveness_rating": {
+      "type": "integer",
+      "default": 5,
+      "min": 1,
+      "max": 10,
+      "description": "效果评级"
+    },
+    "difficulty_level": {
+      "type": "integer",
+      "default": 3,
+      "min": 1,
+      "max": 10,
+      "description": "难度等级"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "是否启用"
+    }
+  }
+}

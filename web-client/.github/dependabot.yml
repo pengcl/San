@@ -1,0 +1,80 @@
+version: 2
+updates:
+  # NPM依赖更新
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Shanghai'
+    open-pull-requests-limit: 10
+    reviewers:
+      - 'your-username'
+    assignees:
+      - 'your-username'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'npm'
+    ignore:
+      # 忽略主版本更新（需要手动处理）
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    groups:
+      # 将相关依赖分组
+      react-ecosystem:
+        patterns:
+          - 'react*'
+          - '@types/react*'
+      testing:
+        patterns:
+          - 'jest*'
+          - '@testing-library/*'
+          - 'playwright'
+          - '@playwright/*'
+      build-tools:
+        patterns:
+          - 'vite*'
+          - '@vitejs/*'
+          - 'typescript'
+          - 'eslint*'
+          - 'prettier'
+      ui-libraries:
+        patterns:
+          - 'antd'
+          - 'tailwindcss'
+          - 'framer-motion'
+          - '@heroicons/*'
+
+  # GitHub Actions更新
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '10:00'
+      timezone: 'Asia/Shanghai'
+    commit-message:
+      prefix: 'ci'
+      include: 'scope'
+    labels:
+      - 'github-actions'
+      - 'ci/cd'
+
+  # Docker更新
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '11:00'
+      timezone: 'Asia/Shanghai'
+    commit-message:
+      prefix: 'docker'
+      include: 'scope'
+    labels:
+      - 'docker'
+      - 'infrastructure'

@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "guild_members",
+  "info": {
+    "singularName": "guild-member",
+    "pluralName": "guild-members",
+    "displayName": "公会成员",
+    "description": "公会成员关系数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "role": {
+      "type": "enumeration",
+      "enum": ["leader", "officer", "elite", "member"],
+      "required": true,
+      "default": "member"
+    },
+    "contribution_points": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0,
+      "description": "总贡献点数"
+    },
+    "weekly_contribution": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0,
+      "description": "本周贡献点数"
+    },
+    "total_contribution": {
+      "type": "biginteger",
+      "required": true,
+      "default": 0,
+      "min": 0,
+      "description": "历史总贡献"
+    },
+    "joined_at": {
+      "type": "datetime",
+      "required": true,
+      "description": "加入公会时间"
+    },
+    "last_donation_at": {
+      "type": "datetime",
+      "description": "上次捐献时间"
+    },
+    "permissions": {
+      "type": "json",
+      "description": "成员权限配置",
+      "default": []
+    },
+    "notes": {
+      "type": "text",
+      "maxLength": 500,
+      "description": "管理员备注"
+    },
+    "guild": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::guild.guild"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

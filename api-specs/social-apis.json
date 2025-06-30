@@ -1,0 +1,763 @@
+{
+  "socialApis": {
+    "version": "1.0.0",
+    "description": "社交系统相关API规范",
+    "baseUrl": "/api/social",
+
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/friends",
+        "name": "获取好友列表",
+        "description": "获取玩家的好友列表",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "status": {
+              "type": "string",
+              "enum": ["all", "online", "offline"],
+              "default": "all"
+            },
+            "page": {
+              "type": "number",
+              "default": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 50,
+              "max": 100
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "friends": [
+                {
+                  "userId": "number",
+                  "username": "string",
+                  "level": "number",
+                  "avatar": "string",
+                  "isOnline": "boolean",
+                  "lastOnline": "string",
+                  "power": "number",
+                  "vipLevel": "number",
+                  "friendshipLevel": "number",
+                  "dailyInteraction": "boolean",
+                  "topHero": {
+                    "name": "string",
+                    "level": "number",
+                    "rarity": "number",
+                    "avatar": "string"
+                  },
+                  "addedAt": "string"
+                }
+              ],
+              "summary": {
+                "totalFriends": "number",
+                "onlineFriends": "number",
+                "maxFriends": "number",
+                "dailyInteractionsLeft": "number"
+              },
+              "pagination": "object"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/friends/add",
+        "name": "添加好友",
+        "description": "发送好友申请",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "targetUser": {
+              "type": "string",
+              "required": true,
+              "description": "用户名或用户ID"
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "requestSent": "boolean",
+              "targetUser": "object",
+              "message": "string"
+            }
+          },
+          "error": {
+            "400": "用户不存在 | 已是好友 | 好友数量已满",
+            "403": "用户拒绝接收好友申请"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/friends/requests",
+        "name": "获取好友申请",
+        "description": "获取收到的好友申请列表",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "receivedRequests": [
+                {
+                  "id": "number",
+                  "fromUser": {
+                    "userId": "number",
+                    "username": "string",
+                    "level": "number",
+                    "avatar": "string",
+                    "power": "number"
+                  },
+                  "message": "string",
+                  "createdAt": "string"
+                }
+              ],
+              "sentRequests": [
+                {
+                  "id": "number",
+                  "toUser": {
+                    "userId": "number",
+                    "username": "string",
+                    "level": "number",
+                    "avatar": "string"
+                  },
+                  "status": "string",
+                  "createdAt": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/friends/requests/{requestId}/respond",
+        "name": "回应好友申请",
+        "description": "接受或拒绝好友申请",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "requestId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "action": {
+              "type": "string",
+              "enum": ["accept", "reject"],
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "action": "string",
+              "newFriend": "object|null",
+              "message": "string"
+            }
+          },
+          "error": {
+            "400": "好友数量已满",
+            "404": "申请不存在或已处理"
+          }
+        }
+      },
+
+      {
+        "method": "DELETE",
+        "path": "/friends/{userId}",
+        "name": "删除好友",
+        "description": "从好友列表中删除好友",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "userId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "removed": "boolean",
+              "message": "string"
+            }
+          },
+          "error": {
+            "404": "好友关系不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/friends/{userId}/interact",
+        "name": "好友互动",
+        "description": "与好友进行日常互动",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "userId": {
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "interactionType": {
+              "type": "string",
+              "enum": ["send_energy", "send_gift", "give_like"],
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "interactionType": "string",
+              "rewardGiven": "object",
+              "rewardReceived": "object",
+              "friendshipPointsGained": "number",
+              "dailyInteractionsLeft": "number"
+            }
+          },
+          "error": {
+            "400": "今日已互动 | 互动次数已用完",
+            "404": "好友不存在"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/guilds",
+        "name": "搜索公会",
+        "description": "搜索可加入的公会",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "search": {
+              "type": "string",
+              "description": "公会名称或标签搜索"
+            },
+            "minLevel": {
+              "type": "number",
+              "min": 1
+            },
+            "maxLevel": {
+              "type": "number",
+              "max": 120
+            },
+            "language": {
+              "type": "string"
+            },
+            "isRecruiting": {
+              "type": "boolean",
+              "default": true
+            },
+            "sort": {
+              "type": "string",
+              "enum": ["level", "members", "activity", "power"],
+              "default": "power"
+            },
+            "page": {
+              "type": "number",
+              "default": 1
+            },
+            "limit": {
+              "type": "number",
+              "default": 20,
+              "max": 50
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "guilds": [
+                {
+                  "id": "number",
+                  "name": "string",
+                  "tag": "string",
+                  "level": "number",
+                  "memberCount": "number",
+                  "maxMembers": "number",
+                  "totalPower": "number",
+                  "description": "string",
+                  "language": "string",
+                  "isRecruiting": "boolean",
+                  "requirements": {
+                    "minLevel": "number",
+                    "minPower": "number",
+                    "approval": "boolean"
+                  },
+                  "leader": {
+                    "username": "string",
+                    "level": "number",
+                    "lastOnline": "string"
+                  },
+                  "logo": "string",
+                  "createdAt": "string"
+                }
+              ],
+              "pagination": "object"
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/guild",
+        "name": "获取公会信息",
+        "description": "获取玩家所在公会的详细信息",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "guild": {
+                "id": "number",
+                "name": "string",
+                "tag": "string",
+                "level": "number",
+                "experience": "number",
+                "maxExperience": "number",
+                "memberCount": "number",
+                "maxMembers": "number",
+                "totalPower": "number",
+                "description": "string",
+                "announcement": "string",
+                "language": "string",
+                "logo": "string",
+                "createdAt": "string"
+              },
+              "playerRole": "string",
+              "contributionPoints": "number",
+              "weeklyContribution": "number",
+              "permissions": ["string"],
+              "guildBuffs": [
+                {
+                  "type": "string",
+                  "level": "number",
+                  "effect": "string",
+                  "duration": "number"
+                }
+              ]
+            }
+          },
+          "error": {
+            "404": "未加入公会"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/guild/members",
+        "name": "获取公会成员",
+        "description": "获取公会成员列表",
+        "authentication": "required",
+        "parameters": {
+          "query": {
+            "sort": {
+              "type": "string",
+              "enum": ["contribution", "power", "level", "lastOnline"],
+              "default": "contribution"
+            },
+            "order": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "members": [
+                {
+                  "userId": "number",
+                  "username": "string",
+                  "level": "number",
+                  "power": "number",
+                  "role": "string",
+                  "contributionPoints": "number",
+                  "weeklyContribution": "number",
+                  "totalContribution": "number",
+                  "lastOnline": "string",
+                  "joinedAt": "string",
+                  "avatar": "string",
+                  "isOnline": "boolean"
+                }
+              ],
+              "roleStats": {
+                "leader": "number",
+                "officers": "number",
+                "elites": "number",
+                "members": "number"
+              }
+            }
+          },
+          "error": {
+            "404": "未加入公会"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/guild/join",
+        "name": "申请加入公会",
+        "description": "申请加入指定公会",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "guildId": {
+              "type": "number",
+              "required": true
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 200
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "applicationSent": "boolean",
+              "autoJoined": "boolean",
+              "guild": "object|null",
+              "message": "string"
+            }
+          },
+          "error": {
+            "400": "已在公会中 | 不满足加入条件",
+            "404": "公会不存在或不招人"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/guild/leave",
+        "name": "退出公会",
+        "description": "退出当前公会",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "confirm": {
+              "type": "boolean",
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "left": "boolean",
+              "message": "string"
+            }
+          },
+          "error": {
+            "400": "会长不能直接退出公会",
+            "404": "未加入公会"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/guild/donate",
+        "name": "公会捐献",
+        "description": "向公会捐献资源",
+        "authentication": "required",
+        "request": {
+          "body": {
+            "donationType": {
+              "type": "string",
+              "enum": ["gold", "gems", "materials"],
+              "required": true
+            },
+            "amount": {
+              "type": "number",
+              "min": 1,
+              "required": true
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "donated": "object",
+              "contributionGained": "number",
+              "guildCoinsEarned": "number",
+              "dailyDonationLeft": "number",
+              "guildExperienceGained": "number"
+            }
+          },
+          "error": {
+            "400": "资源不足 | 已达每日捐献上限",
+            "404": "未加入公会"
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/chat/channels",
+        "name": "获取聊天频道",
+        "description": "获取可用的聊天频道列表",
+        "authentication": "required",
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "channels": [
+                {
+                  "id": "string",
+                  "name": "string",
+                  "type": "string",
+                  "description": "string",
+                  "memberCount": "number",
+                  "isActive": "boolean",
+                  "cooldown": "number",
+                  "permissions": ["string"]
+                }
+              ],
+              "playerChannels": ["string"]
+            }
+          }
+        }
+      },
+
+      {
+        "method": "GET",
+        "path": "/chat/{channelId}/messages",
+        "name": "获取聊天记录",
+        "description": "获取指定频道的聊天消息",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "channelId": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "query": {
+            "limit": {
+              "type": "number",
+              "default": 50,
+              "max": 100
+            },
+            "before": {
+              "type": "string",
+              "description": "获取指定消息之前的消息"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 200,
+            "body": {
+              "messages": [
+                {
+                  "id": "string",
+                  "channelId": "string",
+                  "userId": "number",
+                  "username": "string",
+                  "level": "number",
+                  "vipLevel": "number",
+                  "avatar": "string",
+                  "content": "string",
+                  "messageType": "string",
+                  "attachments": ["object"],
+                  "reactions": ["object"],
+                  "createdAt": "string"
+                }
+              ],
+              "hasMore": "boolean",
+              "nextCursor": "string"
+            }
+          },
+          "error": {
+            "403": "无权限访问该频道",
+            "404": "频道不存在"
+          }
+        }
+      },
+
+      {
+        "method": "POST",
+        "path": "/chat/{channelId}/send",
+        "name": "发送消息",
+        "description": "在指定频道发送消息",
+        "authentication": "required",
+        "parameters": {
+          "path": {
+            "channelId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "request": {
+          "body": {
+            "content": {
+              "type": "string",
+              "required": true,
+              "maxLength": 500
+            },
+            "messageType": {
+              "type": "string",
+              "enum": ["text", "system", "announcement"],
+              "default": "text"
+            }
+          }
+        },
+        "response": {
+          "success": {
+            "status": 201,
+            "body": {
+              "message": "object",
+              "cooldownRemaining": "number"
+            }
+          },
+          "error": {
+            "400": "消息内容违规 | 发言冷却中",
+            "403": "无权限在该频道发言",
+            "404": "频道不存在"
+          }
+        }
+      }
+    ],
+
+    "webSocketEvents": {
+      "friend.online": {
+        "description": "好友上线通知",
+        "payload": {
+          "friendId": "number",
+          "username": "string",
+          "avatar": "string"
+        }
+      },
+      "friend.request": {
+        "description": "收到好友申请",
+        "payload": {
+          "requestId": "number",
+          "fromUser": "object",
+          "message": "string"
+        }
+      },
+      "guild.announcement": {
+        "description": "公会公告更新",
+        "payload": {
+          "guildId": "number",
+          "announcement": "string",
+          "author": "string"
+        }
+      },
+      "chat.message": {
+        "description": "新聊天消息",
+        "payload": {
+          "channelId": "string",
+          "message": "object"
+        }
+      }
+    },
+
+    "dataModels": {
+      "Friendship": {
+        "tableName": "friendships",
+        "fields": {
+          "id": "primary_key",
+          "userId": "foreign_key_users",
+          "friendId": "foreign_key_users",
+          "friendshipLevel": "integer_default_1",
+          "dailyInteracted": "boolean_default_false",
+          "lastInteraction": "timestamp_nullable",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["userId", "friendId", "friendshipLevel"]
+      },
+      "FriendRequest": {
+        "tableName": "friend_requests",
+        "fields": {
+          "id": "primary_key",
+          "fromUserId": "foreign_key_users",
+          "toUserId": "foreign_key_users",
+          "message": "string_nullable",
+          "status": "enum_pending_accepted_rejected",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["fromUserId", "toUserId", "status"]
+      },
+      "Guild": {
+        "tableName": "guilds",
+        "fields": {
+          "id": "primary_key",
+          "name": "unique_string",
+          "tag": "unique_string",
+          "level": "integer_default_1",
+          "experience": "integer_default_0",
+          "description": "text",
+          "announcement": "text",
+          "language": "string_default_zh",
+          "logo": "string",
+          "isRecruiting": "boolean_default_true",
+          "requirements": "json_object",
+          "settings": "json_object",
+          "createdAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["name", "tag", "level", "isRecruiting"]
+      },
+      "GuildMember": {
+        "tableName": "guild_members",
+        "fields": {
+          "id": "primary_key",
+          "guildId": "foreign_key_guilds",
+          "userId": "foreign_key_users",
+          "role": "enum_leader_officer_elite_member",
+          "contributionPoints": "integer_default_0",
+          "weeklyContribution": "integer_default_0",
+          "totalContribution": "integer_default_0",
+          "joinedAt": "timestamp",
+          "updatedAt": "timestamp"
+        },
+        "indexes": ["guildId", "userId", "role", "contributionPoints"]
+      }
+    }
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "progressionSystem": {
+    "version": "1.0.0",
+    "description": "进度系统和解锁条件配置",
+
+    "playerProgression": {
+      "levelCap": 120,
+      "experienceTable": [
+        {"level": 1, "totalExp": 0, "nextLevelExp": 100},
+        {"level": 2, "totalExp": 100, "nextLevelExp": 150},
+        {"level": 3, "totalExp": 250, "nextLevelExp": 200},
+        {"level": 5, "totalExp": 750, "nextLevelExp": 350},
+        {"level": 10, "totalExp": 5000, "nextLevelExp": 800},
+        {"level": 20, "totalExp": 25000, "nextLevelExp": 2000},
+        {"level": 30, "totalExp": 75000, "nextLevelExp": 3500},
+        {"level": 50, "totalExp": 250000, "nextLevelExp": 8000},
+        {"level": 80, "totalExp": 800000, "nextLevelExp": 15000},
+        {"level": 100, "totalExp": 1500000, "nextLevelExp": 25000},
+        {"level": 120, "totalExp": 3000000, "nextLevelExp": 0}
+      ],
+      "levelRewards": [
+        {"level": 5, "rewards": {"gems": 100, "energy": 50}},
+        {"level": 10, "rewards": {"hero_summon_ticket": 1, "gold": 50000}},
+        {"level": 15, "rewards": {"gems": 200, "arena_unlock": true}},
+        {"level": 20, "rewards": {"elite_stages_unlock": true, "enhancement_stones": 20}},
+        {"level": 25, "rewards": {"world_boss_unlock": true, "gems": 300}},
+        {"level": 30, "rewards": {"guild_unlock": true, "rare_materials": 10}},
+        {"level": 40, "rewards": {"cross_server_unlock": true, "gems": 500}},
+        {"level": 50, "rewards": {"legendary_hero_fragment": 10, "gems": 800}},
+        {"level": 80, "rewards": {"mythic_materials": 5, "gems": 1500}},
+        {"level": 100, "rewards": {"exclusive_title": true, "gems": 3000}}
+      ]
+    },
+
+    "stageProgression": {
+      "chapters": [
+        {
+          "id": 1,
+          "name": "桃园结义",
+          "description": "初入乱世，三兄弟立下誓言",
+          "unlockLevel": 1,
+          "stages": 10,
+          "difficulty": "tutorial",
+          "rewards": {
+            "firstClear": {"hero": "刘备", "gold": 10000},
+            "threeStar": {"gems": 50, "energy": 30}
+          }
+        },
+        {
+          "id": 2,
+          "name": "黄巾起义",
+          "description": "太平道张角作乱，群雄并起",
+          "unlockLevel": 5,
+          "stages": 12,
+          "difficulty": "easy",
+          "requirements": {"prevChapter": 1, "stars": 15},
+          "rewards": {
+            "firstClear": {"hero": "关羽", "gold": 15000},
+            "threeStar": {"gems": 80, "skill_books": 5}
+          }
+        },
+        {
+          "id": 3,
+          "name": "董卓乱政",
+          "description": "董卓专权，十八路诸侯讨董",
+          "unlockLevel": 10,
+          "stages": 15,
+          "difficulty": "normal",
+          "requirements": {"prevChapter": 2, "stars": 25},
+          "rewards": {
+            "firstClear": {"hero": "张飞", "gold": 25000},
+            "threeStar": {"gems": 120, "enhancement_stones": 10}
+          }
+        },
+        {
+          "id": 5,
+          "name": "群雄逐鹿",
+          "description": "各路诸侯割据一方",
+          "unlockLevel": 20,
+          "stages": 20,
+          "difficulty": "hard",
+          "requirements": {"prevChapter": 4, "stars": 45},
+          "rewards": {
+            "firstClear": {"epic_hero": "random", "gold": 50000},
+            "threeStar": {"gems": 200, "rare_materials": 8}
+          }
+        },
+        {
+          "id": 10,
+          "name": "三国鼎立",
+          "description": "魏蜀吴三分天下",
+          "unlockLevel": 40,
+          "stages": 25,
+          "difficulty": "nightmare",
+          "requirements": {"prevChapter": 9, "stars": 90},
+          "rewards": {
+            "firstClear": {"legendary_hero": "random", "gold": 100000},
+            "threeStar": {"gems": 500, "awakening_crystals": 15}
+          }
+        }
+      ],
+
+      "eliteStages": {
+        "unlockLevel": 20,
+        "requirements": "complete_normal_stage",
+        "dailyAttempts": 3,
+        "specialRewards": {
+          "hero_fragments": "specific_heroes",
+          "rare_materials": true,
+          "higher_experience": 1.5
+        }
+      },
+
+      "heroicStages": {
+        "unlockLevel": 35,
+        "requirements": {"normal_completion": true, "elite_stars": 45},
+        "dailyAttempts": 2,
+        "specialRewards": {
+          "legendary_materials": true,
+          "epic_hero_fragments": true,
+          "massive_experience": 2.0
+        }
+      }
+    },
+
+    "featureUnlocks": {
+      "arena": {
+        "unlockLevel": 15,
+        "description": "玩家对战系统",
+        "requirements": {"story_stage": "2-5"},
+        "tutorial": true
+      },
+      "guild": {
+        "unlockLevel": 30,
+        "description": "公会系统",
+        "requirements": {"story_stage": "4-10", "arena_rank": 1000},
+        "tutorial": true
+      },
+      "worldBoss": {
+        "unlockLevel": 25,
+        "description": "世界Boss挑战",
+        "requirements": {"story_stage": "3-15", "guild_member": true},
+        "tutorial": true
+      },
+      "heroTraining": {
+        "unlockLevel": 8,
+        "description": "武将培养系统",
+        "requirements": {"story_stage": "1-8"},
+        "tutorial": true
+      },
+      "equipmentEnhancement": {
+        "unlockLevel": 12,
+        "description": "装备强化系统",
+        "requirements": {"story_stage": "2-2", "equipment_obtained": 1},
+        "tutorial": true
+      },
+      "formation": {
+        "unlockLevel": 6,
+        "description": "阵容编辑",
+        "requirements": {"story_stage": "1-6", "heroes_count": 3},
+        "tutorial": true
+      },
+      "shop": {
+        "unlockLevel": 5,
+        "description": "商店系统",
+        "requirements": {"story_stage": "1-5"},
+        "tutorial": false
+      },
+      "achievement": {
+        "unlockLevel": 3,
+        "description": "成就系统",
+        "requirements": {"story_stage": "1-3"},
+        "tutorial": false
+      }
+    },
+
+    "achievementSystem": {
+      "categories": [
+        {
+          "id": "combat",
+          "name": "战斗成就",
+          "achievements": [
+            {
+              "id": "first_victory",
+              "name": "初出茅庐",
+              "description": "赢得第一场战斗",
+              "requirement": {"battles_won": 1},
+              "reward": {"gems": 50, "gold": 5000}
+            },
+            {
+              "id": "hundred_victories",
+              "name": "百战不殆",
+              "description": "赢得100场战斗",
+              "requirement": {"battles_won": 100},
+              "reward": {"gems": 500, "epic_hero": "random"}
+            },
+            {
+              "id": "perfect_battles",
+              "name": "完美战士",
+              "description": "获得50次完美胜利",
+              "requirement": {"perfect_victories": 50},
+              "reward": {"gems": 300, "rare_materials": 20}
+            }
+          ]
+        },
+        {
+          "id": "collection",
+          "name": "收集成就",
+          "achievements": [
+            {
+              "id": "hero_collector",
+              "name": "武将收藏家",
+              "description": "收集50名不同武将",
+              "requirement": {"unique_heroes": 50},
+              "reward": {"gems": 800, "legendary_summon_ticket": 1}
+            },
+            {
+              "id": "max_star_hero",
+              "name": "六星传说",
+              "description": "拥有一名6星武将",
+              "requirement": {"six_star_heroes": 1},
+              "reward": {"gems": 1000, "awakening_crystals": 50}
+            }
+          ]
+        },
+        {
+          "id": "progression",
+          "name": "进度成就",
+          "achievements": [
+            {
+              "id": "level_milestone",
+              "name": "等级里程碑",
+              "description": "达到指定等级",
+              "tiers": [
+                {"level": 20, "reward": {"gems": 200}},
+                {"level": 50, "reward": {"gems": 500}},
+                {"level": 80, "reward": {"gems": 1000}},
+                {"level": 100, "reward": {"gems": 2000}}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "social",
+          "name": "社交成就",
+          "achievements": [
+            {
+              "id": "guild_member",
+              "name": "公会新兵",
+              "description": "加入一个公会",
+              "requirement": {"guild_joined": true},
+              "reward": {"gems": 100, "guild_coins": 500}
+            },
+            {
+              "id": "friend_maker",
+              "name": "广交朋友",
+              "description": "添加10个好友",
+              "requirement": {"friends_count": 10},
+              "reward": {"gems": 150, "energy": 100}
+            }
+          ]
+        }
+      ]
+    },
+
+    "dailyQuests": {
+      "resetTime": "05:00:00",
+      "quests": [
+        {
+          "id": "daily_battle",
+          "name": "每日征战",
+          "description": "完成3场战斗",
+          "requirement": {"battles_completed": 3},
+          "reward": {"gold": 10000, "energy": 20},
+          "priority": 1
+        },
+        {
+          "id": "daily_upgrade",
+          "name": "每日强化",
+          "description": "升级任意武将1次",
+          "requirement": {"hero_upgrades": 1},
+          "reward": {"gold": 8000, "skill_books": 2},
+          "priority": 2
+        },
+        {
+          "id": "daily_arena",
+          "name": "每日切磋",
+          "description": "参与1次竞技场战斗",
+          "requirement": {"arena_battles": 1},
+          "reward": {"honor": 200, "gems": 20},
+          "priority": 3,
+          "unlockLevel": 15
+        },
+        {
+          "id": "daily_enhance",
+          "name": "每日锻造",
+          "description": "强化装备1次",
+          "requirement": {"equipment_enhancements": 1},
+          "reward": {"gold": 5000, "enhancement_stones": 3},
+          "priority": 4,
+          "unlockLevel": 12
+        }
+      ],
+      "completionReward": {
+        "threshold": 3,
+        "reward": {"gems": 50, "energy": 30}
+      }
+    },
+
+    "weeklyQuests": {
+      "resetTime": "monday_05:00:00",
+      "quests": [
+        {
+          "id": "weekly_victories",
+          "name": "周胜利者",
+          "description": "赢得20场战斗",
+          "requirement": {"battles_won": 20},
+          "reward": {"gems": 200, "rare_materials": 10}
+        },
+        {
+          "id": "weekly_arena",
+          "name": "周竞技者",
+          "description": "获得5次竞技场胜利",
+          "requirement": {"arena_wins": 5},
+          "reward": {"honor": 1000, "gems": 150}
+        },
+        {
+          "id": "weekly_progression",
+          "name": "周进步者",
+          "description": "累计升级武将10次",
+          "requirement": {"total_upgrades": 10},
+          "reward": {"gold": 100000, "skill_books": 15}
+        }
+      ]
+    },
+
+    "seasons": {
+      "duration": "3_months",
+      "seasonalContent": {
+        "exclusiveHeroes": true,
+        "limitedEvents": true,
+        "specialRewards": true,
+        "leaderboards": true
+      },
+      "seasonEndRewards": {
+        "participation": {"gems": 500, "seasonal_currency": 1000},
+        "top_1000": {"exclusive_title": true, "legendary_hero": 1},
+        "top_100": {"mythic_materials": 10, "gems": 5000},
+        "top_10": {"seasonal_exclusive_hero": 1, "gems": 20000}
+      }
+    }
+  }
+}

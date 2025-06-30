@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "friendships",
+  "info": {
+    "singularName": "friendship",
+    "pluralName": "friendships",
+    "displayName": "好友关系",
+    "description": "用户好友关系数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "friendship_level": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "max": 10
+    },
+    "daily_interacted": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "last_interaction": {
+      "type": "datetime"
+    },
+    "total_interactions": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "friendship_points": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "friend": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

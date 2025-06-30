@@ -1,0 +1,186 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cities",
+  "info": {
+    "singularName": "city",
+    "pluralName": "cities",
+    "displayName": "城池信息",
+    "description": "游戏城池配置数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "city_id": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "description": "城池ID"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "description": "城池名称"
+    },
+    "region": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "description": "所属地区"
+    },
+    "sub_region": {
+      "type": "string",
+      "maxLength": 30,
+      "description": "子区域"
+    },
+    "coordinates": {
+      "type": "json",
+      "description": "坐标信息"
+    },
+    "terrain_type": {
+      "type": "enumeration",
+      "enum": ["plains", "hills", "mountain", "river", "coastal", "desert"],
+      "required": true,
+      "description": "地形类型"
+    },
+    "base_population": {
+      "type": "integer",
+      "default": 1000,
+      "min": 0,
+      "description": "基础人口"
+    },
+    "base_prosperity": {
+      "type": "integer",
+      "default": 100,
+      "min": 0,
+      "max": 100,
+      "description": "基础繁荣度"
+    },
+    "base_defense": {
+      "type": "integer",
+      "default": 50,
+      "min": 0,
+      "max": 100,
+      "description": "基础防御力"
+    },
+    "base_loyalty": {
+      "type": "integer",
+      "default": 80,
+      "min": 0,
+      "max": 100,
+      "description": "基础忠诚度"
+    },
+    "resource_production": {
+      "type": "json",
+      "description": "资源产出配置"
+    },
+    "trade_routes": {
+      "type": "json",
+      "description": "贸易路线"
+    },
+    "strategic_value": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 10,
+      "description": "战略价值"
+    },
+    "historical_importance": {
+      "type": "enumeration",
+      "enum": ["capital", "major", "important", "minor"],
+      "default": "minor",
+      "description": "历史重要性"
+    },
+    "historical_events": {
+      "type": "json",
+      "description": "历史事件"
+    },
+    "famous_residents": {
+      "type": "json",
+      "description": "名人故事"
+    },
+    "dynasty_control": {
+      "type": "enumeration",
+      "enum": ["han", "wei", "shu", "wu", "neutral"],
+      "default": "neutral",
+      "description": "初始控制势力"
+    },
+    "natural_defenses": {
+      "type": "json",
+      "description": "自然防御"
+    },
+    "siege_difficulty": {
+      "type": "enumeration",
+      "enum": ["very_easy", "easy", "medium", "hard", "very_hard"],
+      "default": "medium",
+      "description": "攻城难度"
+    },
+    "garrison_capacity": {
+      "type": "integer",
+      "default": 1000,
+      "min": 0,
+      "description": "驻军容量"
+    },
+    "trade_specialties": {
+      "type": "json",
+      "description": "特产商品"
+    },
+    "resource_richness": {
+      "type": "enumeration",
+      "enum": ["poor", "average", "rich", "very_rich"],
+      "default": "average",
+      "description": "资源丰富度"
+    },
+    "tax_efficiency": {
+      "type": "float",
+      "default": 1,
+      "min": 0,
+      "max": 2,
+      "description": "税收效率"
+    },
+    "unlock_level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 120,
+      "description": "解锁等级"
+    },
+    "unlock_conditions": {
+      "type": "json",
+      "description": "解锁条件"
+    },
+    "is_capturable": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否可占领"
+    },
+    "capture_difficulty": {
+      "type": "integer",
+      "default": 5,
+      "min": 1,
+      "max": 10,
+      "description": "占领难度"
+    },
+    "cultural_traits": {
+      "type": "json",
+      "description": "文化特征"
+    },
+    "local_specialties": {
+      "type": "json",
+      "description": "地方特色"
+    },
+    "is_active": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "是否启用"
+    },
+    "city_type": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::city-type.city-type"
+    }
+  }
+}

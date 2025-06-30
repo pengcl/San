@@ -1,0 +1,333 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  NODE_VERSION: '18'
+  DOCKER_REGISTRY: 'registry.hub.docker.com'
+  IMAGE_NAME: 'three-kingdoms-web-client'
+
+jobs:
+  # 创建发布版本
+  create-release:
+    runs-on: ubuntu-latest
+    name: Create Release
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v4.3.1
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## 🎮 三国卡牌游戏 ${{ github.ref_name }}
+
+            ### 📝 更新内容
+            ${{ steps.changelog.outputs.changelog }}
+
+            ### 🚀 部署信息
+            - 构建时间: ${{ github.event.head_commit.timestamp }}
+            - 提交SHA: ${{ github.sha }}
+            - 发布分支: ${{ github.ref_name }}
+
+            ### 📦 资源下载
+            - [源代码](https://github.com/${{ github.repository }}/archive/${{ github.ref_name }}.zip)
+            - [Docker镜像](https://hub.docker.com/r/${{ env.IMAGE_NAME }})
+
+            ### 🔧 技术栈
+            - React 19.1.0
+            - TypeScript 5.8.3
+            - Vite 7.0.0
+            - Redux Toolkit 2.8.2
+            - Tailwind CSS 4.1.11
+
+            ### 📱 支持平台
+            - 现代浏览器 (Chrome, Firefox, Safari, Edge)
+            - 移动端浏览器
+            - PWA支持
+
+            ---
+            🤖 此发布由 GitHub Actions 自动生成
+          draft: false
+          prerelease: false
+
+  # 构建发布资源
+  build-release:
+    runs-on: ubuntu-latest
+    name: Build Release Assets
+    needs: create-release
+
+    strategy:
+      matrix:
+        include:
+          - name: 'web-client'
+            build_command: 'npm run build:prod'
+            artifact_path: 'dist'
+            zip_name: 'three-kingdoms-web-client'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Optimize images
+        run: npm run optimize-images
+
+      - name: Build ${{ matrix.name }}
+        run: ${{ matrix.build_command }}
+        env:
+          NODE_ENV: production
+          CI: true
+          VITE_APP_VERSION: ${{ github.ref_name }}
+          VITE_BUILD_DATE: ${{ github.event.head_commit.timestamp }}
+
+      - name: Create deployment package
+        run: |
+          cd ${{ matrix.artifact_path }}
+          zip -r ../${{ matrix.zip_name }}-${{ github.ref_name }}.zip .
+          cd ..
+
+          # 创建 Docker Compose 部署包
+          mkdir -p deploy
+          cp docker-compose.yml deploy/
+          cp nginx.conf deploy/
+          cp nginx.default.conf deploy/
+          cp docker-entrypoint.sh deploy/
+          cp scripts/docker-run.sh deploy/
+
+          # 创建部署说明
+          cat > deploy/README.md << 'EOF'
+          # 三国卡牌游戏部署包
+
+          ## 快速部署
+
+          1. 解压部署包
+          2. 运行: `docker-compose up -d`
+          3. 访问: http://localhost:8080
+
+          ## 配置说明
+
+          - 修改 docker-compose.yml 中的环境变量
+          - 配置 nginx.conf 进行自定义设置
+
+          ## 命令说明
+
+          ```bash
+          # 启动服务
+          docker-compose up -d
+
+          # 查看日志
+          docker-compose logs -f
+
+          # 停止服务
+          docker-compose down
+
+          # 更新镜像
+          docker-compose pull && docker-compose up -d
+          ```
+          EOF
+
+          zip -r deploy-${{ github.ref_name }}.zip deploy/
+
+      - name: Generate build info
+        run: |
+          cat > build-info.json << EOF
+          {
+            "version": "${{ github.ref_name }}",
+            "buildDate": "${{ github.event.head_commit.timestamp }}",
+            "commitSha": "${{ github.sha }}",
+            "repository": "${{ github.repository }}",
+            "nodeVersion": "${{ env.NODE_VERSION }}",
+            "buildEnvironment": "GitHub Actions",
+            "artifacts": {
+              "webClient": "${{ matrix.zip_name }}-${{ github.ref_name }}.zip",
+              "deployment": "deploy-${{ github.ref_name }}.zip"
+            }
+          }
+          EOF
+
+      - name: Upload web client package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./${{ matrix.zip_name }}-${{ github.ref_name }}.zip
+          asset_name: ${{ matrix.zip_name }}-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload deployment package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./deploy-${{ github.ref_name }}.zip
+          asset_name: deploy-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload build info
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./build-info.json
+          asset_name: build-info.json
+          asset_content_type: application/json
+
+  # Docker发布
+  docker-release:
+    runs-on: ubuntu-latest
+    name: Docker Release
+    needs: create-release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "major_minor=$(echo $VERSION | cut -d. -f1-2)" >> $GITHUB_OUTPUT
+          echo "major=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.major_minor }}
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.major }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_VERSION=${{ steps.version.outputs.version }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ env.IMAGE_NAME }}
+          short-description: '三国卡牌游戏 Web 客户端'
+          readme-filepath: ./README.md
+
+  # 通知发布完成
+  notify-release:
+    runs-on: ubuntu-latest
+    name: Notify Release
+    needs: [build-release, docker-release]
+    if: always()
+
+    steps:
+      - name: Notify Slack on success
+        if: needs.build-release.result == 'success' && needs.docker-release.result == 'success'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            🎉 新版本发布成功！
+
+            📦 版本: ${{ github.ref_name }}
+            🔗 发布页面: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+            🐳 Docker镜像: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+
+            ✅ 所有构建和测试通过
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on failure
+        if: needs.build-release.result == 'failure' || needs.docker-release.result == 'failure'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            ❌ 版本发布失败！
+
+            📦 版本: ${{ github.ref_name }}
+            🔗 构建日志: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            请检查构建日志并重新发布
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Create deployment issue
+        if: needs.build-release.result == 'success' && needs.docker-release.result == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `部署 ${context.payload.ref} 到生产环境`,
+              body: `
+              ## 🚀 部署清单
+
+              **版本信息**
+              - 版本号: ${context.payload.ref}
+              - 发布时间: ${new Date().toISOString()}
+              - 构建ID: ${context.runId}
+
+              **部署步骤**
+              - [ ] 检查生产环境状态
+              - [ ] 备份当前版本
+              - [ ] 部署新版本
+              - [ ] 验证功能正常
+              - [ ] 监控系统指标
+              - [ ] 通知用户更新
+
+              **回滚计划**
+              如果部署出现问题，可以回滚到上一个稳定版本
+
+              **相关链接**
+              - [发布页面](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${context.payload.ref})
+              - [Docker镜像](https://${process.env.DOCKER_REGISTRY}/${process.env.IMAGE_NAME}:${context.payload.ref})
+              `,
+              labels: ['deployment', 'production']
+            });

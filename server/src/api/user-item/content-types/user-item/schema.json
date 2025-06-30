@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_items",
+  "info": {
+    "singularName": "user-item",
+    "pluralName": "user-items",
+    "displayName": "用户物品",
+    "description": "用户背包物品数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 0
+    },
+    "acquired_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "last_used": {
+      "type": "datetime"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否锁定防止误操作"
+    },
+    "metadata": {
+      "type": "json",
+      "description": "额外数据，如强化等级等"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "item_template": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::item-template.item-template"
+    }
+  }
+}
