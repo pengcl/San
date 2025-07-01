@@ -1,18 +1,19 @@
 /**
  * 战斗系统路由配置
  * 基于API规范 battle-apis.json 实现
+ * 使用自定义JWT中间件绕过Strapi权限系统
  */
 
-module.exports = {
+export default {
   routes: [
     {
       method: 'GET',
       path: '/battles/stages',
       handler: 'battle.getStages',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 关闭Strapi默认认证，使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -20,9 +21,9 @@ module.exports = {
       path: '/battles/start',
       handler: 'battle.startBattle',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 关闭Strapi默认认证，使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -30,9 +31,9 @@ module.exports = {
       path: '/battles/:battleId/action',
       handler: 'battle.executeAction',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 关闭Strapi默认认证，使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -40,9 +41,9 @@ module.exports = {
       path: '/battles/:battleId/auto',
       handler: 'battle.autoBattle',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 关闭Strapi默认认证，使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -50,9 +51,9 @@ module.exports = {
       path: '/battles/:battleId/result',
       handler: 'battle.getBattleResult',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 关闭Strapi默认认证，使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     }
   ]

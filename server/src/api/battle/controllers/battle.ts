@@ -188,8 +188,9 @@ module.exports = {
             currentHp: calculateHeroHp(hero.hero, hero.level, hero.star),
             maxHp: calculateHeroHp(hero.hero, hero.level, hero.star),
             stats: calculateHeroStats(hero.hero, hero.level, hero.star),
-            skills: [], // TODO: 实现技能系统
-            buffs: []
+            skills: initializeHeroSkills(hero.hero, hero),
+            buffs: [],
+            cooldowns: {}
           }))
         },
         enemyTeam: {
@@ -206,8 +207,9 @@ module.exports = {
               defense: enemy.defense,
               speed: enemy.speed
             },
-            skills: [],
-            buffs: []
+            skills: initializeEnemySkills(enemy),
+            buffs: [],
+            cooldowns: {}
           }))
         },
         battleState: {
@@ -585,26 +587,67 @@ function calculateTurnOrder(battle: any) {
     }))
     .sort((a, b) => b.initiative - a.initiative);
 
-  return allHeroes.map(hero => ({
-    heroId: hero.heroId,
-    actionType: 'waiting',
-    availableTargets: hero.isPlayer ? 
-      battle.enemyTeam.heroes.filter(h => h.currentHp > 0).map(h => h.id) :
-      battle.playerTeam.heroes.filter(h => h.currentHp > 0).map(h => h.id),
-    availableSkills: [] // TODO: 实现技能系统
-  }));
+  return allHeroes.map(hero => {
+    const heroData = [...battle.playerTeam.heroes, ...battle.enemyTeam.heroes]
+      .find(h => h.id === hero.heroId);
+    
+    return {
+      heroId: hero.heroId,
+      actionType: 'waiting',
+      availableTargets: hero.isPlayer ? 
+        battle.enemyTeam.heroes.filter(h => h.currentHp > 0).map(h => h.id) :
+        battle.playerTeam.heroes.filter(h => h.currentHp > 0).map(h => h.id),
+      availableSkills: getAvailableSkills(heroData),
+      cooldowns: heroData?.cooldowns || {}
+    };
+  });
 }
 
 async function executeActionLogic(battle: any, activeHero: any, action: any) {
-  const { actionType, target } = action;
+  const { actionType, target, skillId } = action;
   
   let damage = 0;
   let healing = 0;
   let criticalHit = false;
   let dodged = false;
   let blocked = false;
+  let effects = [];
+  let skillUsed = null;
 
-  if (actionType === 'attack' && target) {
+  if (actionType === 'skill' && skillId) {
+    // 查找技能
+    const skill = activeHero.skills?.find(s => s.id === skillId);
+    if (!skill) {
+      return {
+        success: false,
+        error: '技能不存在',
+        damage: 0,
+        healing: 0,
+        effects: [],
+        criticalHit: false,
+        dodged: false,
+        blocked: false
+      };
+    }
+    
+    // 检查冷却时间
+    const cooldown = activeHero.cooldowns?.[skillId] || 0;
+    if (cooldown > 0) {
+      return {
+        success: false,
+        error: '技能正在冷却中',
+        damage: 0,
+        healing: 0,
+        effects: [],
+        criticalHit: false,
+        dodged: false,
+        blocked: false
+      };
+    }
+    
+    // 执行技能
+    return await executeSkillLogic(battle, activeHero, skill, target);
+  } else if (actionType === 'attack' && target) {
     // 计算基础伤害
     const baseDamage = Math.max(1, activeHero.stats.attack - target.stats.defense);
     
@@ -642,16 +685,22 @@ async function executeActionLogic(battle: any, activeHero: any, action: any) {
       duration: 1,
       value: 0.5
     });
+    effects.push({
+      type: 'defense_boost',
+      target: activeHero.name,
+      description: '防御姿态，减少受到的伤害'
+    });
   }
 
   return {
     success: true,
     damage,
     healing,
-    effects: [],
+    effects,
     criticalHit,
     dodged,
-    blocked
+    blocked,
+    skillUsed
   };
 }
 
@@ -762,7 +811,7 @@ function calculateStarRating(battle: any) {
 }
 
 async function executeAutoBattle(battle: any) {
-  // 简单的自动战斗逻辑
+  // 智能自动战斗逻辑
   while (!battle.battleState.battleEnded) {
     const turnOrder = calculateTurnOrder(battle);
     
@@ -774,27 +823,19 @@ async function executeAutoBattle(battle: any) {
       
       if (!hero || hero.currentHp <= 0) continue;
       
-      // 选择目标
-      const targets = action.availableTargets;
-      if (targets.length === 0) continue;
+      // 智能选择行动
+      const battleAction = selectBestAction(battle, hero, action);
       
-      const targetId = targets[Math.floor(Math.random() * targets.length)];
-      const target = [...battle.playerTeam.heroes, ...battle.enemyTeam.heroes]
-        .find(h => h.id === targetId);
-      
-      // 执行攻击
-      const actionResult = await executeActionLogic(battle, hero, {
-        actionType: 'attack',
-        target
-      });
+      // 执行动作
+      const actionResult = await executeActionLogic(battle, hero, battleAction);
       
       // 更新战斗日志
       battle.battleLog.push({
         turn: battle.battleState.turn,
         heroId: hero.id,
         heroName: hero.name,
-        actionType: 'attack',
-        target: target.name,
+        actionType: battleAction.actionType,
+        target: battleAction.target ? battleAction.target.name : null,
         result: actionResult,
         timestamp: new Date()
       });
@@ -809,6 +850,8 @@ async function executeAutoBattle(battle: any) {
       }
     }
     
+    // 处理回合结束效果
+    processTurnEndEffects(battle);
     battle.battleState.turn++;
     
     // 防止无限循环
@@ -828,4 +871,363 @@ async function executeAutoBattle(battle: any) {
     result: battle.battleState.winner,
     turns: battle.battleState.turn
   };
+}
+
+// 技能系统相关函数
+
+function getAvailableSkills(hero: any) {
+  if (!hero || !hero.skills) return [];
+  
+  return hero.skills.filter(skill => {
+    // 检查技能是否在冷却中
+    const cooldown = hero.cooldowns?.[skill.id] || 0;
+    return cooldown <= 0 && hero.level >= (skill.unlock_level || 1);
+  }).map(skill => ({
+    skillId: skill.id,
+    name: skill.name,
+    type: skill.skill_type,
+    cooldown: skill.cooldown || 0,
+    manaCost: skill.mana_cost || 0,
+    description: skill.description
+  }));
+}
+
+function initializeHeroSkills(hero: any, userHero: any) {
+  // 初始化武将技能
+  const skills = [
+    {
+      id: `${hero.hero_id}_1`,
+      name: `${hero.name}·猛击`,
+      skill_type: 'active',
+      damage_type: 'physical',
+      unlock_level: 1,
+      cooldown: 2,
+      mana_cost: 20,
+      base_power: 1.2,
+      description: '对单个敌人造成120%攻击力的物理伤害'
+    },
+    {
+      id: `${hero.hero_id}_2`,
+      name: `${hero.name}·铁壁`,
+      skill_type: 'active',
+      damage_type: 'buff',
+      unlock_level: 10,
+      cooldown: 3,
+      mana_cost: 25,
+      base_power: 0,
+      description: '提高自身30%防御力，持续2回合'
+    },
+    {
+      id: `${hero.hero_id}_3`,
+      name: `${hero.name}·必杀`,
+      skill_type: 'ultimate',
+      damage_type: 'physical',
+      unlock_level: 20,
+      cooldown: 5,
+      mana_cost: 50,
+      base_power: 2.0,
+      description: '对单个敌人造成200%攻击力的必杀伤害，100%暴击'
+    }
+  ];
+  
+  return skills.filter(skill => userHero.level >= skill.unlock_level);
+}
+
+function initializeEnemySkills(enemy: any) {
+  // 为敌人初始化基础技能
+  const skills = [
+    {
+      id: `enemy_${enemy.name}_1`,
+      name: `${enemy.name}·攻击`,
+      skill_type: 'active',
+      damage_type: 'physical',
+      unlock_level: 1,
+      cooldown: 3,
+      mana_cost: 0,
+      base_power: 1.3,
+      description: '强力攻击，造成额外伤害'
+    }
+  ];
+  
+  // 高级敌人有更多技能
+  if (enemy.level >= 8) {
+    skills.push({
+      id: `enemy_${enemy.name}_2`,
+      name: `${enemy.name}·重击`,
+      skill_type: 'ultimate',
+      damage_type: 'physical',
+      unlock_level: 8,
+      cooldown: 5,
+      mana_cost: 0,
+      base_power: 1.8,
+      description: '致命重击，造成大量伤害'
+    });
+  }
+  
+  return skills;
+}
+
+async function executeSkillLogic(battle: any, caster: any, skill: any, target: any) {
+  let damage = 0;
+  let healing = 0;
+  let effects = [];
+  let criticalHit = false;
+  let dodged = false;
+  let blocked = false;
+
+  // 检查技能类型
+  switch (skill.damage_type) {
+    case 'physical':
+      const result = calculatePhysicalDamage(caster, target, skill);
+      damage = result.damage;
+      criticalHit = result.criticalHit;
+      dodged = result.dodged;
+      blocked = result.blocked;
+      break;
+      
+    case 'magical':
+      const magicResult = calculateMagicalDamage(caster, target, skill);
+      damage = magicResult.damage;
+      criticalHit = magicResult.criticalHit;
+      dodged = magicResult.dodged;
+      break;
+      
+    case 'healing':
+      healing = calculateHealing(caster, target, skill);
+      break;
+      
+    case 'buff':
+      effects = applyBuff(target, skill);
+      break;
+      
+    case 'debuff':
+      effects = applyDebuff(target, skill);
+      break;
+  }
+
+  // 应用伤害/治疗
+  if (damage > 0 && !dodged) {
+    target.currentHp = Math.max(0, target.currentHp - damage);
+  }
+  
+  if (healing > 0) {
+    target.currentHp = Math.min(target.maxHp, target.currentHp + healing);
+  }
+
+  // 设置技能冷却
+  caster.cooldowns = caster.cooldowns || {};
+  caster.cooldowns[skill.id] = skill.cooldown;
+
+  return {
+    success: true,
+    damage,
+    healing,
+    effects,
+    criticalHit,
+    dodged,
+    blocked,
+    skillUsed: skill.name
+  };
+}
+
+function calculatePhysicalDamage(attacker: any, target: any, skill: any) {
+  const baseDamage = attacker.stats.attack * (skill.base_power || 1.0);
+  const defense = target.stats.defense;
+  const finalAttack = Math.max(1, baseDamage - defense);
+  
+  // 检查闪避
+  const dodgeChance = BATTLE_SYSTEM_CONFIG.combatMechanics.dodge.baseChance + 
+                    target.stats.speed * BATTLE_SYSTEM_CONFIG.combatMechanics.dodge.speedInfluence;
+  const dodged = Math.random() < Math.min(dodgeChance, BATTLE_SYSTEM_CONFIG.combatMechanics.dodge.maxChance);
+  
+  if (dodged) {
+    return { damage: 0, criticalHit: false, dodged: true, blocked: false };
+  }
+  
+  // 检查格挡
+  const blockChance = BATTLE_SYSTEM_CONFIG.combatMechanics.block.baseChance + 
+                     target.stats.defense * BATTLE_SYSTEM_CONFIG.combatMechanics.block.defenseInfluence;
+  const blocked = Math.random() < Math.min(blockChance, BATTLE_SYSTEM_CONFIG.combatMechanics.block.maxChance);
+  
+  // 检查暴击
+  const critChance = skill.skill_type === 'ultimate' ? 1.0 : BATTLE_SYSTEM_CONFIG.combatMechanics.critical.baseChance;
+  const criticalHit = Math.random() < critChance;
+  
+  let damage = finalAttack;
+  if (criticalHit) {
+    damage *= BATTLE_SYSTEM_CONFIG.combatMechanics.critical.damageMultiplier;
+  }
+  if (blocked) {
+    damage *= (1 - BATTLE_SYSTEM_CONFIG.combatMechanics.block.damageReduction);
+  }
+  
+  return {
+    damage: Math.floor(damage),
+    criticalHit,
+    dodged: false,
+    blocked
+  };
+}
+
+function calculateMagicalDamage(attacker: any, target: any, skill: any) {
+  const baseDamage = attacker.stats.attack * (skill.base_power || 1.0) * 0.8; // 法术伤害稍低
+  const magicResist = target.stats.defense * 0.5; // 防御力的一半作为魔抗
+  const finalDamage = Math.max(1, baseDamage - magicResist);
+  
+  // 法术伤害减少物理闪避几率
+  const dodgeChance = BATTLE_SYSTEM_CONFIG.combatMechanics.dodge.baseChance * 0.5;
+  const dodged = Math.random() < dodgeChance;
+  
+  if (dodged) {
+    return { damage: 0, criticalHit: false, dodged: true };
+  }
+  
+  // 检查法术暴击
+  const criticalHit = Math.random() < BATTLE_SYSTEM_CONFIG.combatMechanics.critical.baseChance;
+  let damage = finalDamage;
+  if (criticalHit) {
+    damage *= BATTLE_SYSTEM_CONFIG.combatMechanics.critical.damageMultiplier;
+  }
+  
+  return {
+    damage: Math.floor(damage),
+    criticalHit,
+    dodged: false
+  };
+}
+
+function calculateHealing(caster: any, target: any, skill: any) {
+  const baseHealing = caster.stats.attack * (skill.base_power || 0.5);
+  return Math.floor(baseHealing);
+}
+
+function applyBuff(target: any, skill: any) {
+  target.buffs = target.buffs || [];
+  
+  const buff = {
+    type: 'attack_boost',
+    duration: 2,
+    value: 0.3,
+    source: skill.name
+  };
+  
+  target.buffs.push(buff);
+  return [buff];
+}
+
+function applyDebuff(target: any, skill: any) {
+  target.buffs = target.buffs || [];
+  
+  const debuff = {
+    type: 'defense_debuff',
+    duration: 2,
+    value: -0.2,
+    source: skill.name
+  };
+  
+  target.buffs.push(debuff);
+  return [debuff];
+}
+
+// 战斗AI系统
+
+function selectBestAction(battle: any, hero: any, actionOptions: any) {
+  const isPlayerHero = battle.playerTeam.heroes.includes(hero);
+  const enemyTeam = isPlayerHero ? battle.enemyTeam.heroes : battle.playerTeam.heroes;
+  const validTargets = enemyTeam.filter(h => h.currentHp > 0);
+  
+  if (validTargets.length === 0) {
+    return { actionType: 'defend', target: null };
+  }
+  
+  // AI优先级：
+  // 1. 如果有终极技能且可用，优先使用
+  // 2. 如果生命值低于30%，优先防御或使用治疗技能
+  // 3. 选择最佳攻击目标
+  
+  const hpPercentage = hero.currentHp / hero.maxHp;
+  const availableSkills = actionOptions.availableSkills || [];
+  
+  // 生命值过低，防御优先
+  if (hpPercentage < 0.3) {
+    const healingSkill = availableSkills.find(s => s.type === 'healing');
+    if (healingSkill) {
+      return {
+        actionType: 'skill',
+        skillId: healingSkill.skillId,
+        target: hero
+      };
+    }
+    return { actionType: 'defend', target: null };
+  }
+  
+  // 使用终极技能
+  const ultimateSkill = availableSkills.find(s => s.type === 'ultimate');
+  if (ultimateSkill) {
+    const target = selectBestTarget(validTargets, 'damage');
+    return {
+      actionType: 'skill',
+      skillId: ultimateSkill.skillId,
+      target
+    };
+  }
+  
+  // 使用主动技能
+  const activeSkill = availableSkills.find(s => s.type === 'active');
+  if (activeSkill && Math.random() < 0.7) {
+    const target = selectBestTarget(validTargets, 'damage');
+    return {
+      actionType: 'skill',
+      skillId: activeSkill.skillId,
+      target
+    };
+  }
+  
+  // 普通攻击
+  const target = selectBestTarget(validTargets, 'damage');
+  return {
+    actionType: 'attack',
+    target
+  };
+}
+
+function selectBestTarget(targets: any[], intent: string) {
+  if (targets.length === 0) return null;
+  
+  switch (intent) {
+    case 'damage':
+      // 优先攻击血量最少的敌人
+      return targets.reduce((prev, current) => 
+        prev.currentHp < current.currentHp ? prev : current
+      );
+    case 'heal':
+      // 治疗血量最少的队友
+      return targets.reduce((prev, current) => 
+        prev.currentHp < current.currentHp ? prev : current
+      );
+    default:
+      return targets[Math.floor(Math.random() * targets.length)];
+  }
+}
+
+function processTurnEndEffects(battle: any) {
+  // 处理所有武将的buff/debuff效果
+  const allHeroes = [...battle.playerTeam.heroes, ...battle.enemyTeam.heroes];
+  
+  allHeroes.forEach(hero => {
+    // 减少冷却时间
+    if (hero.cooldowns) {
+      Object.keys(hero.cooldowns).forEach(skillId => {
+        hero.cooldowns[skillId] = Math.max(0, hero.cooldowns[skillId] - 1);
+      });
+    }
+    
+    // 处理buff/debuff
+    if (hero.buffs && hero.buffs.length > 0) {
+      hero.buffs = hero.buffs.filter(buff => {
+        buff.duration--;
+        return buff.duration > 0;
+      });
+    }
+  });
 }

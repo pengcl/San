@@ -24,7 +24,7 @@ export const FormationPage = lazy(() => import('../pages/game/FormationPage'));
 export const FormationPageMUI = lazy(() => import('../pages/game/FormationPageMUI'));
 export const SettingsPage = lazy(() => import('../pages/game/SettingsPage'));
 export const SettingsPageMUI = lazy(() => import('../pages/game/SettingsPageMUI'));
-export const HeroTrainingPage = lazy(() => import('../pages/game/HeroTrainingPage'));
+export const HeroTrainingPage = lazy(() => import('../pages/game/HeroTrainingPageMUI'));
 export const EquipmentPage = lazy(() => import('../pages/game/EquipmentPage'));
 export const FormationPresetsPage = lazy(() => import('../pages/game/FormationPresetsPage'));
 export const BuildingManagementPage = lazy(() => import('../pages/game/BuildingManagementPageMUI'));

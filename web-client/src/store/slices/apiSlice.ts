@@ -109,6 +109,26 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Hero', id }],
     }),
+
+    // 武将升星API
+    starUpHero: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/heroes/${id}/star-up`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Hero', id }],
+    }),
+
+    // 武将觉醒API
+    awakenHero: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/heroes/${id}/awaken`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Hero', id }],
+    }),
     
     // 武将召唤API
     summonHeroes: builder.mutation({
@@ -462,6 +482,8 @@ export const {
   useGetHeroTemplateQuery,
   useGetHeroLibraryQuery,
   useLevelUpHeroMutation,
+  useStarUpHeroMutation,
+  useAwakenHeroMutation,
   useSummonHeroesMutation,
   useNewbieSummonMutation,
   // 用户档案

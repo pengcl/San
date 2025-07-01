@@ -28,7 +28,7 @@ export default {
       // 'uk',
       // 'vi',
       // 'zh-Hans',
-      // 'zh',
+      'zh'
     ],
   },
   bootstrap(app: StrapiApp) {

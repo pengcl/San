@@ -30,6 +30,15 @@ import {
   AccordionSummary,
   AccordionDetails,
   ButtonGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Slider,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Badge,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -48,6 +57,11 @@ import {
   Settings,
   Info,
   Military,
+  StarBorder,
+  Diamond,
+  MonetizationOn,
+  Psychology,
+  Flare,
   EmojiEvents,
   Whatshot,
   Psychology,
@@ -58,7 +72,11 @@ import { addNotification } from '../../store/slices/uiSlice';
 import {
   useGetHeroTemplateQuery,
   useLevelUpHeroMutation,
+  useStarUpHeroMutation,
+  useAwakenHeroMutation,
+  useGetUserProfileQuery,
 } from '../../store/slices/apiSlice';
+import HeroCultivation from '../../components/game/HeroCultivation';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -92,7 +110,10 @@ const HeroDetailPageMUI: React.FC = () => {
   const dispatch = useAppDispatch();
   
   const { data: heroData, error: heroError, isLoading } = useGetHeroTemplateQuery(heroId || '');
+  const { data: userProfile } = useGetUserProfileQuery({});
   const [levelUpHero, { isLoading: levelingUp }] = useLevelUpHeroMutation();
+  const [starUpHero] = useStarUpHeroMutation();
+  const [awakenHero] = useAwakenHeroMutation();
 
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -148,19 +169,17 @@ const HeroDetailPageMUI: React.FC = () => {
   };
 
   // 处理升级
-  const handleLevelUp = async () => {
-    if (!hero) return;
-
+  const handleLevelUp = async (heroId: number, data: any) => {
     try {
       await levelUpHero({
-        id: hero.id,
-        levels: 1
+        id: heroId,
+        ...data
       }).unwrap();
 
       dispatch(addNotification({
         type: 'success',
         title: '升级成功',
-        message: `${hero.name} 升级成功！`,
+        message: `武将升级成功！`,
         duration: 3000,
       }));
     } catch (error) {
@@ -168,6 +187,54 @@ const HeroDetailPageMUI: React.FC = () => {
         type: 'error',
         title: '升级失败',
         message: '武将升级失败，请稍后重试',
+        duration: 3000,
+      }));
+    }
+  };
+
+  // 处理升星
+  const handleStarUp = async (heroId: number, data: any) => {
+    try {
+      await starUpHero({
+        id: heroId,
+        ...data
+      }).unwrap();
+
+      dispatch(addNotification({
+        type: 'success',
+        title: '升星成功',
+        message: `武将升星成功！属性大幅提升！`,
+        duration: 3000,
+      }));
+    } catch (error) {
+      dispatch(addNotification({
+        type: 'error',
+        title: '升星失败',
+        message: '武将升星失败，请检查材料是否充足',
+        duration: 3000,
+      }));
+    }
+  };
+
+  // 处理觉醒
+  const handleAwaken = async (heroId: number, data: any) => {
+    try {
+      await awakenHero({
+        id: heroId,
+        ...data
+      }).unwrap();
+
+      dispatch(addNotification({
+        type: 'success',
+        title: '觉醒成功',
+        message: `武将觉醒成功！获得强大的觉醒能力！`,
+        duration: 3000,
+      }));
+    } catch (error) {
+      dispatch(addNotification({
+        type: 'error',
+        title: '觉醒失败',
+        message: '武将觉醒失败，请检查材料和等级要求',
         duration: 3000,
       }));
     }
@@ -442,6 +509,7 @@ const HeroDetailPageMUI: React.FC = () => {
             >
               <Tab icon={<Info />} label="属性" />
               <Tab icon={<AutoAwesome />} label="技能" />
+              <Tab icon={<TrendingUp />} label="培养" />
               <Tab icon={<EmojiEvents />} label="成就" />
               <Tab icon={<Psychology />} label="分析" />
             </Tabs>
@@ -664,8 +732,25 @@ const HeroDetailPageMUI: React.FC = () => {
             </Grid>
           </TabPanel>
 
-          {/* 成就页面 */}
+          {/* 培养页面 */}
           <TabPanel value={selectedTab} index={2}>
+            <HeroCultivation
+              hero={hero}
+              userResources={{
+                gold: userProfile?.data?.gold || 0,
+                diamond: userProfile?.data?.diamond || 0,
+                stardust: userProfile?.data?.stardust || 0,
+                heroFragments: userProfile?.data?.heroFragments || 0,
+                experience: userProfile?.data?.experience || 0
+              }}
+              onLevelUp={handleLevelUp}
+              onStarUp={handleStarUp}
+              onAwaken={handleAwaken}
+            />
+          </TabPanel>
+
+          {/* 成就页面 */}
+          <TabPanel value={selectedTab} index={3}>
             <Typography variant="h6" sx={{ color: 'white', mb: 3 }}>
               武将成就
             </Typography>
@@ -682,7 +767,7 @@ const HeroDetailPageMUI: React.FC = () => {
           </TabPanel>
 
           {/* 分析页面 */}
-          <TabPanel value={selectedTab} index={3}>
+          <TabPanel value={selectedTab} index={4}>
             <Typography variant="h6" sx={{ color: 'white', mb: 3 }}>
               武将分析
             </Typography>

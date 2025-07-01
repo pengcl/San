@@ -66,6 +66,26 @@ export default {
         middlewares: [],
         policies: []
       }
+    },
+    {
+      method: 'POST',
+      path: '/heroes/:id/star-up',
+      handler: 'hero.starUp',
+      config: {
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
+      }
+    },
+    {
+      method: 'POST',
+      path: '/heroes/:id/awaken',
+      handler: 'hero.awaken',
+      config: {
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
+      }
     }
   ]
 };

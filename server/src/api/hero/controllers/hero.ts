@@ -334,6 +334,239 @@ export default {
   },
 
   /**
+   * 武将升星
+   */
+  async starUp(ctx: Context) {
+    try {
+      const user = ctx.state.user;
+      if (!user) {
+        return ctx.unauthorized('未认证');
+      }
+
+      const { id } = ctx.params;
+      const { useFragments = 0, useDuplicates = [] } = ctx.request.body;
+
+      // 获取用户武将
+      const userHero = await strapi.db.query('api::user-hero.user-hero').findOne({
+        where: { id: Number(id), user: user.id },
+        populate: { hero: true }
+      });
+
+      if (!userHero) {
+        return ctx.badRequest('武将不存在');
+      }
+
+      const currentStar = userHero.star;
+      const maxStar = 6; // 最高6星
+
+      if (currentStar >= maxStar) {
+        return ctx.badRequest('已达到最高星级');
+      }
+
+      // 计算升星所需材料
+      const requiredFragments = getStarUpRequiredFragments(currentStar);
+      let availableFragments = useFragments;
+
+      // 计算重复武将提供的碎片
+      for (const duplicateId of useDuplicates) {
+        const duplicate = await strapi.db.query('api::user-hero.user-hero').findOne({
+          where: { id: duplicateId, user: user.id },
+          populate: { hero: true }
+        });
+
+        if (duplicate && duplicate.hero.id === userHero.hero.id) {
+          availableFragments += getFragmentsFromDuplicate(duplicate.star);
+        }
+      }
+
+      if (availableFragments < requiredFragments) {
+        return ctx.badRequest(`升星需要 ${requiredFragments} 个碎片，当前只有 ${availableFragments} 个`);
+      }
+
+      // 执行升星
+      const newStar = currentStar + 1;
+      const newStats = calculateCurrentStats(userHero.hero, userHero.level, newStar);
+
+      const updatedHero = await strapi.db.query('api::user-hero.user-hero').update({
+        where: { id: Number(id) },
+        data: {
+          star: newStar,
+          power: calculatePower(newStats)
+        }
+      });
+
+      // 删除使用的重复武将
+      for (const duplicateId of useDuplicates) {
+        await strapi.db.query('api::user-hero.user-hero').delete({
+          where: { id: duplicateId }
+        });
+      }
+
+      // TODO: 扣除碎片（需要实现背包系统）
+
+      const statsIncrease = {
+        hp: calculateCurrentStats(userHero.hero, userHero.level, newStar).hp - 
+            calculateCurrentStats(userHero.hero, userHero.level, currentStar).hp,
+        attack: calculateCurrentStats(userHero.hero, userHero.level, newStar).attack - 
+               calculateCurrentStats(userHero.hero, userHero.level, currentStar).attack,
+        defense: calculateCurrentStats(userHero.hero, userHero.level, newStar).defense - 
+                calculateCurrentStats(userHero.hero, userHero.level, currentStar).defense,
+        speed: calculateCurrentStats(userHero.hero, userHero.level, newStar).speed - 
+               calculateCurrentStats(userHero.hero, userHero.level, currentStar).speed
+      };
+
+      ctx.body = {
+        success: true,
+        data: {
+          hero: updatedHero,
+          starIncreased: 1,
+          materialsUsed: {
+            fragments: requiredFragments,
+            duplicates: useDuplicates.length
+          },
+          statsIncrease,
+          newSkillsUnlocked: newStar >= 4 ? getSkillsUnlockedAtStar(newStar) : []
+        }
+      };
+    } catch (error) {
+      console.error('武将升星错误:', error);
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        error: {
+          code: 'STAR_UP_ERROR',
+          message: '武将升星失败'
+        }
+      };
+    }
+  },
+
+  /**
+   * 武将觉醒
+   */
+  async awaken(ctx: Context) {
+    try {
+      const user = ctx.state.user;
+      if (!user) {
+        return ctx.unauthorized('未认证');
+      }
+
+      const { id } = ctx.params;
+      const { awakening_crystals, hero_essence, divine_fragments, celestial_orb } = ctx.request.body;
+
+      // 获取用户武将
+      const userHero = await strapi.db.query('api::user-hero.user-hero').findOne({
+        where: { id: Number(id), user: user.id },
+        populate: { hero: true }
+      });
+
+      if (!userHero) {
+        return ctx.badRequest('武将不存在');
+      }
+
+      // 检查觉醒条件
+      if (userHero.star < 6) {
+        return ctx.badRequest('武将必须达到6星才能觉醒');
+      }
+
+      if (userHero.level < 80) {
+        return ctx.badRequest('武将必须达到80级才能觉醒');
+      }
+
+      const currentStage = userHero.breakthrough;
+      const maxStage = 3;
+
+      if (currentStage >= maxStage) {
+        return ctx.badRequest('已达到最高觉醒阶段');
+      }
+
+      const nextStage = currentStage + 1;
+      const requirements = getAwakeningRequirements(nextStage);
+
+      // 检查材料是否足够
+      if (awakening_crystals < requirements.awakening_crystals) {
+        return ctx.badRequest(`需要 ${requirements.awakening_crystals} 个觉醒水晶`);
+      }
+      if (hero_essence < requirements.hero_essence) {
+        return ctx.badRequest(`需要 ${requirements.hero_essence} 个英雄精华`);
+      }
+      if (nextStage >= 2 && divine_fragments < requirements.divine_fragments) {
+        return ctx.badRequest(`需要 ${requirements.divine_fragments} 个神性碎片`);
+      }
+      if (nextStage >= 3 && celestial_orb < requirements.celestial_orb) {
+        return ctx.badRequest(`需要 ${requirements.celestial_orb} 个天界宝珠`);
+      }
+
+      // 获取用户档案检查金币
+      const userProfile = await strapi.db.query('api::user-profile.user-profile').findOne({
+        where: { user: user.id }
+      });
+
+      if (!userProfile || userProfile.gold < requirements.gold) {
+        return ctx.badRequest(`需要 ${requirements.gold} 金币`);
+      }
+
+      // 执行觉醒
+      const oldStats = calculateCurrentStats(userHero.hero, userHero.level, userHero.star);
+      const awakeningBonus = getAwakeningStatBonus(nextStage);
+      
+      const newStats = {
+        hp: Math.floor(oldStats.hp * (1 + awakeningBonus.hp)),
+        attack: Math.floor(oldStats.attack * (1 + awakeningBonus.attack)),
+        defense: Math.floor(oldStats.defense * (1 + awakeningBonus.defense)),
+        speed: Math.floor(oldStats.speed * (1 + awakeningBonus.speed))
+      };
+
+      const updatedHero = await strapi.db.query('api::user-hero.user-hero').update({
+        where: { id: Number(id) },
+        data: {
+          breakthrough: nextStage,
+          power: calculatePower(newStats)
+        }
+      });
+
+      // 扣除金币
+      await strapi.db.query('api::user-profile.user-profile').update({
+        where: { id: userProfile.id },
+        data: {
+          gold: userProfile.gold - requirements.gold
+        }
+      });
+
+      // TODO: 扣除觉醒材料（需要实现背包系统）
+
+      const statsIncrease = {
+        hp: newStats.hp - oldStats.hp,
+        attack: newStats.attack - oldStats.attack,
+        defense: newStats.defense - oldStats.defense,
+        speed: newStats.speed - oldStats.speed
+      };
+
+      ctx.body = {
+        success: true,
+        data: {
+          hero: updatedHero,
+          awakeningStage: nextStage,
+          materialsUsed: requirements,
+          statsIncrease,
+          newSkillsUnlocked: getAwakeningSkills(nextStage),
+          specialAbilities: getAwakeningAbilities(nextStage)
+        }
+      };
+    } catch (error) {
+      console.error('武将觉醒错误:', error);
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        error: {
+          code: 'AWAKEN_ERROR',
+          message: '武将觉醒失败'
+        }
+      };
+    }
+  },
+
+  /**
    * 武将升级
    */
   async levelUp(ctx: Context) {
@@ -1122,6 +1355,94 @@ function getAwakeningRequirements(stage: number) {
   return requirements[stage] || null;
 }
 
+/**
+ * 获取升星所需碎片数量
+ */
+function getStarUpFragments(targetStar: number): number {
+  const fragmentRequirements = {
+    2: 10,    // 1星升2星需要10个碎片
+    3: 20,    // 2星升3星需要20个碎片
+    4: 50,    // 3星升4星需要50个碎片
+    5: 100,   // 4星升5星需要100个碎片
+    6: 200    // 5星升6星需要200个碎片
+  };
+  return fragmentRequirements[targetStar] || 0;
+}
+
+/**
+ * 检查升星后解锁的技能
+ */
+function checkSkillUnlock(star: number): any[] {
+  const skillUnlocks = {
+    2: [],
+    3: [{ name: '技能强化I', description: '所有技能效果提升5%' }],
+    4: [{ name: '属性共鸣', description: '同阵营武将属性提升3%' }],
+    5: [{ name: '技能强化II', description: '所有技能效果提升10%' }],
+    6: [{ name: '武将觉醒', description: '解锁觉醒功能，大幅提升属性' }]
+  };
+  return skillUnlocks[star] || [];
+}
+
+/**
+ * 获取觉醒加成
+ */
+function getAwakenBonus(stage: number) {
+  const bonuses = {
+    1: {
+      name: '初次觉醒',
+      description: '全属性提升15%，解锁觉醒技能',
+      statMultiplier: 1.15,
+      specialAbility: 'awaken_skill_1'
+    },
+    2: {
+      name: '二次觉醒',
+      description: '全属性提升30%，觉醒技能强化',
+      statMultiplier: 1.30,
+      specialAbility: 'awaken_skill_2'
+    },
+    3: {
+      name: '终极觉醒',
+      description: '全属性提升50%，解锁终极技能',
+      statMultiplier: 1.50,
+      specialAbility: 'ultimate_skill'
+    }
+  };
+  return bonuses[stage] || bonuses[1];
+}
+
+/**
+ * 应用觉醒加成到属性
+ */
+function applyAwakenBonus(baseStats: any, awakenBonus: any) {
+  return {
+    hp: Math.floor(baseStats.hp * awakenBonus.statMultiplier),
+    attack: Math.floor(baseStats.attack * awakenBonus.statMultiplier),
+    defense: Math.floor(baseStats.defense * awakenBonus.statMultiplier),
+    speed: Math.floor(baseStats.speed * awakenBonus.statMultiplier)
+  };
+}
+
+/**
+ * 获取觉醒后解锁的能力
+ */
+function getAwakenAbilities(stage: number): any[] {
+  const abilities = {
+    1: [
+      { name: '觉醒光环', description: '战斗开始时，全队属性提升5%' },
+      { name: '生命回复', description: '每回合恢复5%最大生命值' }
+    ],
+    2: [
+      { name: '强化光环', description: '战斗开始时，全队属性提升10%' },
+      { name: '技能冷却', description: '所有技能冷却时间减少1回合' }
+    ],
+    3: [
+      { name: '终极光环', description: '战斗开始时，全队属性提升15%' },
+      { name: '必杀技能', description: '解锁专属终极技能' }
+    ]
+  };
+  return abilities[stage] || [];
+}
+
 function performNewbieSummon(): number {
   const rates = HERO_SYSTEM_CONFIG.newbieSummonRates.guaranteed;
   const random = Math.random();
@@ -1158,6 +1479,83 @@ function calculateMaxExperience(level: number): number {
  */
 function getSkillLevel(skillTree: any, skillId: number): number {
   return skillTree?.[skillId] || 1;
+}
+
+/**
+ * 获取升星所需碎片数量
+ */
+function getStarUpRequiredFragments(currentStar: number): number {
+  const requirements = {
+    1: 5,   // 1星→2星需要5个碎片
+    2: 10,  // 2星→3星需要10个碎片
+    3: 20,  // 3星→4星需要20个碎片
+    4: 30,  // 4星→5星需要30个碎片
+    5: 50   // 5星→6星需要50个碎片
+  };
+  return requirements[currentStar] || 0;
+}
+
+/**
+ * 获取重复武将分解的碎片数量
+ */
+function getFragmentsFromDuplicate(star: number): number {
+  const fragmentsTable = {
+    1: 5,   // 1星武将分解得5个碎片
+    2: 15,  // 2星武将分解得15个碎片
+    3: 30,  // 3星武将分解得30个碎片
+    4: 50,  // 4星武将分解得50个碎片
+    5: 80,  // 5星武将分解得80个碎片
+    6: 120  // 6星武将分解得120个碎片
+  };
+  return fragmentsTable[star] || 5;
+}
+
+/**
+ * 获取星级解锁的技能
+ */
+function getSkillsUnlockedAtStar(star: number): any[] {
+  const skillUnlocks = {
+    4: [{ name: '技能强化', description: '4星解锁技能强化效果' }],
+    5: [{ name: '被动技能', description: '5星解锁被动技能' }],
+    6: [{ name: '终极技能', description: '6星解锁终极技能' }]
+  };
+  return skillUnlocks[star] || [];
+}
+
+/**
+ * 获取觉醒阶段的属性加成
+ */
+function getAwakeningStatBonus(stage: number) {
+  const bonuses = {
+    1: { hp: 0.15, attack: 0.15, defense: 0.15, speed: 0.10 },  // 觉醒1阶段
+    2: { hp: 0.25, attack: 0.25, defense: 0.25, speed: 0.15 },  // 觉醒2阶段
+    3: { hp: 0.40, attack: 0.40, defense: 0.40, speed: 0.25 }   // 觉醒3阶段
+  };
+  return bonuses[stage] || { hp: 0, attack: 0, defense: 0, speed: 0 };
+}
+
+/**
+ * 获取觉醒解锁的技能
+ */
+function getAwakeningSkills(stage: number): any[] {
+  const awakeningSkills = {
+    1: [{ name: '觉醒之力', description: '觉醒1阶段解锁特殊技能效果' }],
+    2: [{ name: '神性觉醒', description: '觉醒2阶段解锁神性技能' }],
+    3: [{ name: '天界之力', description: '觉醒3阶段解锁最强形态' }]
+  };
+  return awakeningSkills[stage] || [];
+}
+
+/**
+ * 获取觉醒解锁的特殊能力
+ */
+function getAwakeningAbilities(stage: number): any[] {
+  const abilities = {
+    1: [{ name: '属性强化', description: '全属性提升15%' }],
+    2: [{ name: '技能威力', description: '技能伤害提升25%' }],
+    3: [{ name: '战场统御', description: '对全队提供光环效果' }]
+  };
+  return abilities[stage] || [];
 }
 
 /**

@@ -58,8 +58,19 @@ import {
   useCopyFormationMutation,
   useGetRecommendedFormationsQuery,
 } from '../../store/slices/apiSlice';
-import FormationGrid from '../../components/ui/FormationGrid';
-import type { FormationPosition } from '../../components/ui/FormationGrid';
+import DragDropFormationGrid from '../../components/ui/DragDropFormationGrid';
+import type { FormationPosition, FormationHero } from '../../components/ui/DragDropFormationGrid';
+
+// 扩展FormationHero类型以匹配我们的数据结构
+interface ExtendedFormationHero extends FormationHero {
+  attack?: number;
+  defense?: number;
+  health?: number;
+  cost?: number;
+  base_attack?: number;
+  base_defense?: number;
+  base_hp?: number;
+}
 
 interface FormationPreset {
   id: number;
@@ -82,9 +93,9 @@ interface FormationStats {
 const FormationPageMUI: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data: heroesData, error: heroesError, isLoading: heroesLoading } = useGetHeroesQuery();
+  const { data: heroesData, error: heroesError, isLoading: heroesLoading } = useGetHeroesQuery({});
   // 阵容API调用
-  const { data: formationsData, error: formationsError, isLoading: formationsLoading } = useGetFormationsQuery();
+  const { data: formationsData, error: formationsError, isLoading: formationsLoading } = useGetFormationsQuery({});
   
   // API mutations
   const [updateFormation, { isLoading: updating }] = useUpdateFormationMutation();
@@ -105,7 +116,7 @@ const FormationPageMUI: React.FC = () => {
   
   // 处理阵容数据 - 使用useMemo优化性能
   const processedFormations = useMemo(() => {
-    return formations.map(formation => ({
+    return formations.map((formation: any) => ({
       id: formation.id,
       name: formation.name,
       description: formation.description,
@@ -152,18 +163,14 @@ const FormationPageMUI: React.FC = () => {
   // 初始化本地阵容数据 - 只在formations数据变化时初始化一次
   useEffect(() => {
     if (presets.length > 0 && localFormations.length === 0) {
-      const initFormations = presets.map(preset => {
+      const initFormations = presets.map((preset: any) => {
         if (preset.formation && preset.formation.length > 0) {
           return preset.formation;
         }
         // 创建空阵容
         return Array.from({ length: 6 }, (_, index) => ({
-          id: index,
-          row: Math.floor(index / 3),
-          col: index % 3,
+          position: index,
           hero: null,
-          locked: false,
-          type: (Math.floor(index / 3) === 0 ? 'front' : 'back') as 'front' | 'back'
         }));
       });
       setLocalFormations(initFormations);
@@ -199,7 +206,8 @@ const FormationPageMUI: React.FC = () => {
     const deployedHeroes = currentFormation.filter(pos => pos.hero);
     const totalPower = deployedHeroes.reduce((sum, pos) => {
       if (pos.hero) {
-        return sum + (pos.hero.base_attack || 0) + (pos.hero.base_defense || 0) + (pos.hero.base_hp || 0) / 10;
+        const hero = pos.hero as ExtendedFormationHero;
+        return sum + (hero.attack || hero.stats?.attack || 0) + (hero.defense || hero.stats?.defense || 0) + (hero.health || hero.stats?.hp || 0) / 10;
       }
       return sum;
     }, 0);
@@ -213,7 +221,7 @@ const FormationPageMUI: React.FC = () => {
       averageLevel: Math.floor(averageLevel),
       deployedCount: deployedHeroes.length,
       maxDeployable: 6,
-      totalCost: deployedHeroes.reduce((sum, pos) => sum + (pos.hero?.cost || 0), 0),
+      totalCost: deployedHeroes.reduce((sum, pos) => sum + ((pos.hero as ExtendedFormationHero)?.cost || 3), 0),
       maxCost: 30
     };
   };
@@ -241,7 +249,7 @@ const FormationPageMUI: React.FC = () => {
         });
 
         // 放置武将到新位置
-        const targetPosition = currentFormation.find(pos => pos.id === position.id);
+        const targetPosition = currentFormation.find(pos => pos.position === position.position);
         if (targetPosition) {
           targetPosition.hero = {
             ...selectedHero,
@@ -282,7 +290,7 @@ const FormationPageMUI: React.FC = () => {
     setLocalFormations(prev => {
       const newFormations = [...prev];
       const currentFormation = [...newFormations[selectedPreset]];
-      const targetPosition = currentFormation.find(pos => pos.id === position.id);
+      const targetPosition = currentFormation.find(pos => pos.position === position.position);
       
       if (targetPosition && targetPosition.hero) {
         const removedHero = targetPosition.hero;
@@ -308,8 +316,8 @@ const FormationPageMUI: React.FC = () => {
       const newFormations = [...prev];
       const currentFormation = [...newFormations[selectedPreset]];
       
-      const fromPos = currentFormation.find(pos => pos.id === fromPosition);
-      const toPos = currentFormation.find(pos => pos.id === toPosition);
+      const fromPos = currentFormation.find(pos => pos.position === fromPosition);
+      const toPos = currentFormation.find(pos => pos.position === toPosition);
       
       if (fromPos && toPos) {
         // 交换位置
@@ -394,7 +402,7 @@ const FormationPageMUI: React.FC = () => {
     .map(pos => pos.hero!.id);
 
   // 可用武将（未部署的）
-  const unusedHeroes = availableHeroes.filter(hero => 
+  const unusedHeroes = availableHeroes.filter((hero: any) => 
     !deployedHeroIds.includes(hero.id)
   );
 
@@ -490,7 +498,7 @@ const FormationPageMUI: React.FC = () => {
                       '& .MuiTabs-indicator': { backgroundColor: '#ff6b35' }
                     }}
                   >
-                    {presets.map((preset, index) => (
+                    {presets.map((preset: any, index: number) => (
                       <Tab 
                         key={preset.id}
                         label={
@@ -598,16 +606,20 @@ const FormationPageMUI: React.FC = () => {
                     </Tooltip>
                   </Box>
 
-                  <FormationGrid
+                  <DragDropFormationGrid
                     formation={currentFormation}
-                    onPositionClick={handlePositionClick}
-                    onHeroDrop={handleHeroDrop}
-                    onHeroRemove={handleHeroRemove}
-                    gridSize={{ rows: 2, cols: 3 }}
-                    maxHeroes={6}
-                    showIndices={true}
-                    showTypes={true}
-                    variant="game"
+                    availableHeroes={unusedHeroes}
+                                         onFormationChange={(newFormation: FormationPosition[]) => {
+                      setLocalFormations(prev => {
+                        const newFormations = [...prev];
+                        newFormations[selectedPreset] = newFormation;
+                        setHasChanges(true);
+                        return newFormations;
+                      });
+                    }}
+                    readonly={false}
+                    showPowerCalculation={false}
+                    size="medium"
                   />
                 </CardContent>
               </Card>
@@ -651,7 +663,7 @@ const FormationPageMUI: React.FC = () => {
                 }}>
                   <Grid container spacing={2}>
                     <AnimatePresence>
-                      {unusedHeroes.map((hero, index) => (
+                      {unusedHeroes.map((hero: any, index: number) => (
                         <Grid item xs={6} key={hero.id}>
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}

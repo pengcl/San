@@ -341,30 +341,77 @@ export class FormationApi {
 
 // 战斗相关API
 export class BattleApi {
-  private static readonly BASE_PATH = '/battle';
+  private static readonly BASE_PATH = '/battles';
+
+  // 获取战斗关卡
+  static async getStages(params?: {
+    chapter?: number;
+    difficulty?: 'normal' | 'elite' | 'heroic';
+    completed?: boolean;
+  }): Promise<any> {
+    const queryString = params
+      ? '?' +
+        new URLSearchParams(
+          Object.entries(params).reduce(
+            (acc, [key, value]) => {
+              if (value !== undefined) acc[key] = String(value);
+              return acc;
+            },
+            {} as Record<string, string>
+          )
+        ).toString()
+      : '';
+
+    return withCache(
+      `battle-stages${queryString}`,
+      () => ApiService.get(`${this.BASE_PATH}/stages${queryString}`),
+      60 * 1000 // 1分钟缓存
+    );
+  }
 
   // 开始战斗
   static async startBattle(params: {
-    stageId: number;
-    formationId: number;
-    battleType: 'campaign' | 'arena' | 'guild';
+    battleType: 'pve_normal' | 'pve_elite' | 'pvp_arena' | 'guild_war' | 'world_boss';
+    stageId?: string;
+    opponentId?: number;
+    formation: Array<{
+      position: number;
+      heroId: number | null;
+    }>;
+    autoSkill?: boolean;
   }): Promise<{
     battleId: string;
-    battleData: any;
+    battleType: string;
+    playerTeam: any;
+    enemyTeam: any;
+    battleState: any;
+    nextActions: any[];
   }> {
     return ApiService.post(`${this.BASE_PATH}/start`, params);
   }
 
-  // 结束战斗
-  static async endBattle(
+  // 执行战斗动作
+  static async executeAction(
     battleId: string,
-    battleResult: {
-      victory: boolean;
-      actions: any[];
-      duration: number;
+    action: {
+      heroId: number;
+      actionType: 'attack' | 'skill' | 'ultimate' | 'defend';
+      skillId?: number;
+      targetId?: number;
+      targetPosition?: number;
     }
-  ): Promise<BattleResult> {
-    return ApiService.post(`${this.BASE_PATH}/${battleId}/end`, battleResult);
+  ): Promise<any> {
+    return ApiService.post(`${this.BASE_PATH}/${battleId}/action`, action);
+  }
+
+  // 获取战斗结果
+  static async getBattleResult(battleId: string): Promise<BattleResult> {
+    return ApiService.get(`${this.BASE_PATH}/${battleId}/result`);
+  }
+
+  // 自动战斗
+  static async autoBattle(battleId: string): Promise<any> {
+    return ApiService.post(`${this.BASE_PATH}/${battleId}/auto`);
   }
 
   // 获取战斗历史
