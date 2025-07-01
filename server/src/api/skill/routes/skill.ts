@@ -1,16 +1,48 @@
 /**
- * skill router
+ * 技能系统路由配置
  */
 
-import { factories } from '@strapi/strapi';
-
-export default factories.createCoreRouter('api::skill.skill', {
-  config: {
-    find: {
-      auth: false,
+export default {
+  routes: [
+    {
+      method: 'GET',
+      path: '/skills',
+      handler: 'skill.find',
+      config: {
+        auth: false
+      }
     },
-    findOne: {
-      auth: false,
+    {
+      method: 'GET',
+      path: '/skills/:id',
+      handler: 'skill.findOne',
+      config: {
+        auth: false
+      }
     },
-  },
-}); 
+    {
+      method: 'GET',
+      path: '/skills/type/:type',
+      handler: 'skill.getByType',
+      config: {
+        auth: false
+      }
+    },
+    {
+      method: 'GET',
+      path: '/skills/hero/:heroId',
+      handler: 'skill.getHeroSkills',
+      config: {
+        auth: false
+      }
+    },
+    {
+      method: 'GET',
+      path: '/skills/stats/overview',
+      handler: 'skill.getSkillStats',
+      config: {
+        auth: false
+      }
+    }
+  ]
+};

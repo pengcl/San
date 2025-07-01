@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import type { Hero } from '../../types';
+import { getQualityColor, getQualityGradient, getQualityGlow, getQualityAnimation } from '../../utils/qualityColors';
 
 interface HeroCardProps {
   hero: Hero;
@@ -60,18 +61,16 @@ const HeroCard: React.FC<HeroCardProps> = ({
     }
   };
 
-  const getRarityColor = (rarity: number) => {
-    if (rarity >= 6) return '#ff6b35'; // 传奇橙
-    if (rarity >= 5) return '#ffd700'; // 金色
-    if (rarity >= 4) return '#9c27b0'; // 史诗紫
-    if (rarity >= 3) return '#2196f3'; // 稀有蓝
-    return '#4caf50'; // 普通绿
-  };
+  const quality = hero.rarity || hero.quality || 1;
+  const rarityColor = getQualityColor(quality);
+  const rarityGradient = getQualityGradient(quality);
+  const rarityGlow = getQualityGlow(quality);
+  const rarityAnimation = getQualityAnimation(quality);
 
   const cardHeight = {
-    sm: 280,
-    md: 320,
-    lg: 380,
+    sm: 240,   // 手机端适配：减小高度
+    md: 280,   // 平板端
+    lg: 320,   // 桌面端
   }[size];
 
   return (
@@ -92,9 +91,10 @@ const HeroCard: React.FC<HeroCardProps> = ({
           borderColor: isSelected ? 'primary.main' : 'divider',
           boxShadow: isSelected ? 4 : 2,
           background: `linear-gradient(135deg, 
-            ${getRarityColor(hero.rarity)}15 0%, 
+            ${rarityColor}15 0%, 
             transparent 50%
           ), linear-gradient(to bottom right, #1f2937, #111827)`,
+          animation: rarityAnimation ? `${rarityAnimation} 2s ease-in-out infinite` : 'none',
           '&:hover': {
             boxShadow: 6,
             '& .hero-glow': {
@@ -113,7 +113,8 @@ const HeroCard: React.FC<HeroCardProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            background: `radial-gradient(circle at center, ${getRarityColor(hero.rarity)}20 0%, transparent 70%)`,
+            background: `radial-gradient(circle at center, ${rarityColor}20 0%, transparent 70%)`,
+            boxShadow: quality >= 5 ? rarityGlow : 'none',
             opacity: 0,
             transition: 'opacity 0.3s',
             zIndex: 0,
@@ -181,7 +182,7 @@ const HeroCard: React.FC<HeroCardProps> = ({
           }}
         >
           <Rating
-            value={hero.rarity}
+            value={quality}
             readOnly
             max={6}
             size="small"
@@ -224,7 +225,7 @@ const HeroCard: React.FC<HeroCardProps> = ({
               sx={{
                 fontWeight: 'bold',
                 fontSize: size === 'sm' ? '0.9rem' : '1rem',
-                color: hero.rarity >= 5 ? 'gold.main' : 'text.primary',
+                color: quality >= 5 ? 'gold.main' : 'text.primary',
                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                 mb: 0.5,
                 lineHeight: 1.2,
@@ -316,7 +317,7 @@ const HeroCard: React.FC<HeroCardProps> = ({
               border: 2,
               borderColor: 'primary.main',
               borderRadius: 1,
-              boxShadow: `0 0 20px ${getRarityColor(hero.rarity)}80`,
+              boxShadow: `0 0 20px ${rarityColor}80, ${rarityGlow}`,
               pointerEvents: 'none',
               zIndex: 3,
             }}

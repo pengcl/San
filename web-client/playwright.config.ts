@@ -114,6 +114,6 @@ export default defineConfig({
   },
 
   // 全局设置和清理
-  globalSetup: require.resolve('./e2e/global-setup.ts'),
-  globalTeardown: require.resolve('./e2e/global-teardown.ts'),
+  // globalSetup: './e2e/global-setup.ts',
+  // globalTeardown: './e2e/global-teardown.ts',
 });

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武将详情页面测试</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .hero-detail {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .api-result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .error {
+            color: red;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success {
+            color: green;
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .hero-stat {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 5px 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .quality-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #e55529;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏮 武将详情页面测试</h1>
+
+    <div class="test-section">
+        <h3>📊 选择测试武将</h3>
+        <div>
+            <button onclick="testHeroDetail(1001)">刘备 (1001)</button>
+            <button onclick="testHeroDetail(1002)">诸葛亮 (1002)</button>
+            <button onclick="testHeroDetail(1003)">关羽 (1003)</button>
+            <button onclick="testHeroDetail(2001)">曹操 (2001)</button>
+            <button onclick="testHeroDetail(4004)">吕布 (4004)</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔗 API 测试结果</h3>
+        <div id="apiTest">
+            <div class="loading">点击上方按钮测试武将详情API...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🎮 武将详情展示</h3>
+        <div id="heroDetail">
+            <div class="loading">选择武将查看详情...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🧪 前端页面访问测试</h3>
+        <div>
+            <p>点击以下链接测试前端武将详情页面：</p>
+            <a href="http://localhost:3000/heroes/1001" target="_blank">刘备详情页面</a> |
+            <a href="http://localhost:3000/heroes/1002" target="_blank">诸葛亮详情页面</a> |
+            <a href="http://localhost:3000/heroes/2001" target="_blank">曹操详情页面</a> |
+            <a href="http://localhost:3000/heroes/4004" target="_blank">吕布详情页面</a>
+        </div>
+    </div>
+
+    <script>
+        // 测试武将详情API
+        async function testHeroDetail(heroId) {
+            const apiContainer = document.getElementById('apiTest');
+            const detailContainer = document.getElementById('heroDetail');
+            
+            apiContainer.innerHTML = '<div class="loading">正在测试武将详情API...</div>';
+            detailContainer.innerHTML = '<div class="loading">正在加载武将详情...</div>';
+
+            try {
+                const response = await fetch(`http://localhost:1337/api/heroes/${heroId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const hero = data.data;
+                    
+                    // 显示API响应
+                    let apiHtml = `<div class="success">✅ API 测试成功！</div>`;
+                    apiHtml += `<div class="api-result">响应数据:\n${JSON.stringify(hero, null, 2)}</div>`;
+                    apiContainer.innerHTML = apiHtml;
+
+                    // 显示武将详情
+                    displayHeroDetail(hero);
+                } else {
+                    throw new Error(data.error?.message || 'API 返回错误');
+                }
+            } catch (error) {
+                apiContainer.innerHTML = `<div class="error">❌ API 测试失败: ${error.message}</div>`;
+                detailContainer.innerHTML = `<div class="error">❌ 加载武将详情失败</div>`;
+            }
+        }
+
+        // 显示武将详情
+        function displayHeroDetail(hero) {
+            const container = document.getElementById('heroDetail');
+            
+            // 计算战力
+            const power = Math.floor(
+                (hero.base_attack || hero.baseStats?.attack || 0) +
+                (hero.base_defense || hero.baseStats?.defense || 0) +
+                (hero.base_hp || hero.baseStats?.hp || 0) / 10 +
+                (hero.base_speed || hero.baseStats?.speed || 0)
+            );
+            
+            const html = `
+                <div class="hero-detail">
+                    <h2>${hero.name} ${hero.title ? '- ' + hero.title : ''}</h2>
+                    
+                    <div class="quality-badge" style="background-color: ${hero.qualityColor || '#808080'}">
+                        ${hero.quality || 1}★ ${hero.qualityName || '未知'}
+                    </div>
+                    
+                    <p><strong>描述：</strong>${hero.description || '暂无描述'}</p>
+                    
+                    <div style="margin: 15px 0;">
+                        <span class="hero-stat">🏰 阵营: ${hero.faction || '未知'}</span>
+                        <span class="hero-stat">⚔️ 兵种: ${hero.unitType || '未知'}</span>
+                        <span class="hero-stat">⚡ 战力: ${power.toLocaleString()}</span>
+                    </div>
+                    
+                    <h4>基础属性</h4>
+                    <div style="margin: 10px 0;">
+                        <span class="hero-stat">❤️ 生命: ${(hero.base_hp || hero.baseStats?.hp || 0).toLocaleString()}</span>
+                        <span class="hero-stat">⚔️ 攻击: ${hero.base_attack || hero.baseStats?.attack || 0}</span>
+                        <span class="hero-stat">🛡️ 防御: ${hero.base_defense || hero.baseStats?.defense || 0}</span>
+                        <span class="hero-stat">💨 速度: ${hero.base_speed || hero.baseStats?.speed || 0}</span>
+                    </div>
+                    
+                    <h4>其他信息</h4>
+                    <div style="margin: 10px 0;">
+                        <span class="hero-stat">等级: ${hero.level || 1}</span>
+                        <span class="hero-stat">经验: ${hero.experience || 0}</span>
+                        <span class="hero-stat">费用: ${Math.floor((hero.base_attack || hero.baseStats?.attack || 400) / 200) + 3}</span>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // 初始化：自动测试刘备
+        document.addEventListener('DOMContentLoaded', function() {
+            testHeroDetail(1001);
+        });
+    </script>
+</body>
+</html>

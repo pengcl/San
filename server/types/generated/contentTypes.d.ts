@@ -1150,6 +1150,66 @@ export interface ApiFactionFaction extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFormationFormation extends Struct.CollectionTypeSchema {
+  collectionName: 'formations';
+  info: {
+    description: '\u7528\u6237\u7684\u6218\u6597\u9635\u5BB9\u914D\u7F6E';
+    displayName: 'Formation';
+    pluralName: 'formations';
+    singularName: 'formation';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deployed_count: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    formation_data: Schema.Attribute.JSON & Schema.Attribute.Required;
+    formation_slots: Schema.Attribute.JSON;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    last_used_at: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::formation.formation'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+        minLength: 1;
+      }>;
+    preset_type: Schema.Attribute.Enumeration<
+      ['main', 'secondary', 'challenge', 'arena', 'guild_war']
+    > &
+      Schema.Attribute.DefaultTo<'main'>;
+    publishedAt: Schema.Attribute.DateTime;
+    total_power: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiFriendRequestFriendRequest
   extends Struct.CollectionTypeSchema {
   collectionName: 'friend_requests';
@@ -2054,6 +2114,74 @@ export interface ApiStageStage extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSummonSummon extends Struct.CollectionTypeSchema {
+  collectionName: 'summons';
+  info: {
+    description: '\u73A9\u5BB6\u53EC\u5524\u6B66\u5C06\u7684\u8BB0\u5F55';
+    displayName: '\u53EC\u5524\u8BB0\u5F55';
+    pluralName: 'summons';
+    singularName: 'summon';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    cost_amount: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    cost_type: Schema.Attribute.Enumeration<['gold', 'gems', 'fragments']> &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    fragments_gained: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    hero_star: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+          min: 1;
+        },
+        number
+      >;
+    is_new_hero: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::summon.summon'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    summon_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    summon_type: Schema.Attribute.Enumeration<
+      ['normal', 'premium', 'fragment']
+    > &
+      Schema.Attribute.Required;
+    summoned_hero: Schema.Attribute.Relation<'manyToOne', 'api::hero.hero'> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
   };
 }
 
@@ -3441,6 +3569,7 @@ declare module '@strapi/strapi' {
       'api::city-type.city-type': ApiCityTypeCityType;
       'api::city.city': ApiCityCity;
       'api::faction.faction': ApiFactionFaction;
+      'api::formation.formation': ApiFormationFormation;
       'api::friend-request.friend-request': ApiFriendRequestFriendRequest;
       'api::friendship.friendship': ApiFriendshipFriendship;
       'api::guild-member.guild-member': ApiGuildMemberGuildMember;
@@ -3454,6 +3583,7 @@ declare module '@strapi/strapi' {
       'api::skill.skill': ApiSkillSkill;
       'api::stage-reward.stage-reward': ApiStageRewardStageReward;
       'api::stage.stage': ApiStageStage;
+      'api::summon.summon': ApiSummonSummon;
       'api::unit-type.unit-type': ApiUnitTypeUnitType;
       'api::user-city-policy.user-city-policy': ApiUserCityPolicyUserCityPolicy;
       'api::user-city.user-city': ApiUserCityUserCity;

@@ -1,0 +1,64 @@
+<testsuites id="" name="" tests="3" failures="1" skipped="0" errors="0" time="8.258956">
+<testsuite name="final-verification.spec.ts" timestamp="2025-07-01T17:05:08.250Z" hostname="chromium" tests="3" failures="1" skipped="0" time="16.593" errors="0">
+<testcase name="三国英雄传前端功能验证 › 完整功能验证 - 从登录到首页游戏体验" classname="final-verification.spec.ts" time="7.697">
+<failure message="final-verification.spec.ts:4:3 完整功能验证 - 从登录到首页游戏体验" type="FAILURE">
+<![CDATA[  [chromium] › final-verification.spec.ts:4:3 › 三国英雄传前端功能验证 › 完整功能验证 - 从登录到首页游戏体验 ──────────────────
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('text=pengcl') resolved to 2 elements:
+        1) <p class="mt-1 text-sm text-gray-100 leading-tight">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').first()
+        2) <p class="mt-1 text-sm text-gray-100 leading-tight">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').nth(1)
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('text=pengcl')
+
+
+      91 |     
+      92 |     // 6. 验证用户信息
+    > 93 |     await expect(page.locator('text=pengcl')).toBeVisible();
+         |                                               ^
+      94 |     console.log('✅ 步骤5: 用户信息显示正常');
+      95 |     
+      96 |     // 7. 验证快捷操作功能
+        at /Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e/final-verification.spec.ts:93:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[🚀 开始前端功能验证...
+✅ 步骤1: 登录页面加载成功
+✅ 步骤2: 登录操作执行成功
+✅ 步骤3: 成功跳转到首页
+✅ 步骤4: 首页标题显示正常
+
+[[ATTACHMENT|final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/video.webm]]
+
+[[ATTACHMENT|final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="三国英雄传前端功能验证 › 登录页面基础验证" classname="final-verification.spec.ts" time="4.201">
+<system-out>
+<![CDATA[✅ 登录页面基础验证通过
+]]>
+</system-out>
+</testcase>
+<testcase name="三国英雄传前端功能验证 › 页面标题验证" classname="final-verification.spec.ts" time="4.695">
+<system-out>
+<![CDATA[✅ 页面标题验证通过: 三国卡牌 - 策略游戏
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

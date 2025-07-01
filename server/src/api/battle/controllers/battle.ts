@@ -36,7 +36,7 @@ const BATTLE_SYSTEM_CONFIG = {
 // 活跃战斗缓存
 const activeBattles = new Map();
 
-export default {
+module.exports = {
   /**
    * 获取关卡列表
    */

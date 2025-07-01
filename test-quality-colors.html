@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>品质颜色系统测试</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .quality-test {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+        .quality-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .quality-name {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 60px;
+        }
+        .hero-preview {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid;
+            background: white;
+            min-width: 200px;
+            text-align: center;
+        }
+        .hero-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .hero-stats {
+            font-size: 12px;
+            color: #666;
+        }
+        .api-result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .error {
+            color: red;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success {
+            color: green;
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌈 品质颜色系统测试</h1>
+
+    <div class="test-section">
+        <h3>📊 品质颜色配置测试</h3>
+        <div id="qualityColorTest">
+            <div class="loading">正在测试品质颜色配置...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔗 API 数据测试</h3>
+        <button onclick="testAPI()">🔄 测试 API 数据</button>
+        <div id="apiTest">
+            <div class="loading">点击按钮开始测试...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🎮 武将卡片预览</h3>
+        <div id="heroPreview">
+            <div class="loading">正在加载武将数据...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🧪 筛选功能测试</h3>
+        <div>
+            <label>选择品质筛选：</label>
+            <select id="qualityFilter" onchange="filterHeroes()">
+                <option value="">全部品质</option>
+                <option value="1">1★ 普通</option>
+                <option value="2">2★ 优秀</option>
+                <option value="3">3★ 精良</option>
+                <option value="4">4★ 史诗</option>
+                <option value="5">5★ 传说</option>
+                <option value="6">6★ 神话</option>
+            </select>
+        </div>
+        <div id="filterResult"></div>
+    </div>
+
+    <script>
+        // 品质颜色配置（与前端保持一致）
+        const qualityColors = {
+            1: '#808080', // 普通
+            2: '#00FF00', // 优秀  
+            3: '#0080FF', // 精良
+            4: '#8000FF', // 史诗
+            5: '#FF8000', // 传说
+            6: '#FF0000'  // 神话
+        };
+
+        const qualityNames = {
+            1: '普通', 2: '优秀', 3: '精良', 4: '史诗', 5: '传说', 6: '神话'
+        };
+
+        let allHeroes = [];
+
+        // 测试品质颜色配置
+        function testQualityColors() {
+            const container = document.getElementById('qualityColorTest');
+            let html = '';
+
+            for (let quality = 1; quality <= 6; quality++) {
+                const color = qualityColors[quality];
+                const name = qualityNames[quality];
+                
+                html += `
+                    <div class="quality-test" style="border-color: ${color}">
+                        <span class="quality-badge" style="background-color: ${color}">${quality}★</span>
+                        <span class="quality-name">${name}</span>
+                        <span style="color: ${color}">颜色代码: ${color}</span>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 测试 API 数据
+        async function testAPI() {
+            const container = document.getElementById('apiTest');
+            container.innerHTML = '<div class="loading">正在测试 API...</div>';
+
+            try {
+                const response = await fetch('http://localhost:1337/api/heroes?limit=10');
+                const data = await response.json();
+
+                if (data.success) {
+                    const heroes = data.data.heroes;
+                    allHeroes = heroes; // 保存数据供筛选使用
+                    
+                    let html = `<div class="success">✅ API 测试成功！</div>`;
+                    html += `<div class="api-result">加载了 ${heroes.length} 个武将数据\n\n`;
+                    
+                    // 显示前3个武将的详细信息
+                    heroes.slice(0, 3).forEach(hero => {
+                        html += `武将: ${hero.name}\n`;
+                        html += `品质: ${hero.quality}★ ${hero.qualityName}\n`;
+                        html += `阵营: ${hero.faction}\n`;
+                        html += `兵种: ${hero.unitType}\n`;
+                        html += `颜色: ${hero.qualityColor}\n\n`;
+                    });
+                    
+                    html += `</div>`;
+                    container.innerHTML = html;
+
+                    // 更新武将预览
+                    updateHeroPreview(heroes);
+                } else {
+                    throw new Error(data.error?.message || 'API 返回错误');
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">❌ API 测试失败: ${error.message}</div>`;
+            }
+        }
+
+        // 更新武将预览
+        function updateHeroPreview(heroes) {
+            const container = document.getElementById('heroPreview');
+            let html = '';
+
+            heroes.slice(0, 8).forEach(hero => {
+                const quality = hero.quality || 1;
+                const color = hero.qualityColor || qualityColors[quality];
+                
+                html += `
+                    <div class="hero-preview" style="border-color: ${color}">
+                        <div class="hero-name" style="color: ${color}">${hero.name}</div>
+                        <div class="quality-badge" style="background-color: ${color}">
+                            ${quality}★ ${hero.qualityName || qualityNames[quality]}
+                        </div>
+                        <div class="hero-stats">
+                            🏰 ${hero.faction} | ⚔️ ${hero.unitType}<br>
+                            💪 ${hero.baseStats?.attack || '未知'} | 🛡️ ${hero.baseStats?.defense || '未知'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 筛选武将
+        function filterHeroes() {
+            const selectedQuality = document.getElementById('qualityFilter').value;
+            const container = document.getElementById('filterResult');
+
+            if (!allHeroes.length) {
+                container.innerHTML = '<div class="error">请先测试 API 加载数据</div>';
+                return;
+            }
+
+            let filteredHeroes = allHeroes;
+            
+            if (selectedQuality) {
+                filteredHeroes = allHeroes.filter(hero => hero.quality == selectedQuality);
+            }
+
+            let html = `<div class="success">筛选结果: 找到 ${filteredHeroes.length} 个武将</div>`;
+            
+            if (filteredHeroes.length > 0) {
+                html += '<div style="margin-top: 15px;">';
+                filteredHeroes.slice(0, 6).forEach(hero => {
+                    const quality = hero.quality || 1;
+                    const color = hero.qualityColor || qualityColors[quality];
+                    
+                    html += `
+                        <div class="hero-preview" style="border-color: ${color}; margin: 5px;">
+                            <div class="hero-name" style="color: ${color}">${hero.name}</div>
+                            <div class="quality-badge" style="background-color: ${color}">
+                                ${quality}★ ${hero.qualityName || qualityNames[quality]}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 初始化测试
+        document.addEventListener('DOMContentLoaded', function() {
+            testQualityColors();
+            testAPI();
+        });
+    </script>
+</body>
+</html>

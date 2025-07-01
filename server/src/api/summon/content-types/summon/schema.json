@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "summons",
+  "info": {
+    "singularName": "summon",
+    "pluralName": "summons",
+    "displayName": "召唤记录",
+    "description": "玩家召唤武将的记录"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "summon_type": {
+      "type": "enumeration",
+      "enum": ["normal", "premium", "fragment"],
+      "required": true
+    },
+    "cost_type": {
+      "type": "enumeration", 
+      "enum": ["gold", "gems", "fragments"],
+      "required": true
+    },
+    "cost_amount": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "summoned_hero": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::hero.hero",
+      "required": true
+    },
+    "hero_star": {
+      "type": "integer",
+      "min": 1,
+      "max": 6,
+      "required": true
+    },
+    "is_new_hero": {
+      "type": "boolean",
+      "default": false
+    },
+    "fragments_gained": {
+      "type": "integer",
+      "min": 0,
+      "default": 0
+    },
+    "summon_time": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

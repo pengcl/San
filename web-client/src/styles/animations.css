@@ -1,0 +1,114 @@
+/* 品质发光动画 */
+
+/* 神话级动画 */
+@keyframes mythic-glow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.4),
+                0 0 20px rgba(255, 0, 0, 0.3),
+                0 0 30px rgba(255, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6),
+                0 0 40px rgba(255, 0, 0, 0.4),
+                0 0 60px rgba(255, 0, 0, 0.3),
+                inset 0 0 10px rgba(255, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.4),
+                0 0 20px rgba(255, 0, 0, 0.3),
+                0 0 30px rgba(255, 0, 0, 0.2);
+  }
+}
+
+/* 传说级动画 */
+@keyframes legendary-glow {
+  0% {
+    box-shadow: 0 0 8px rgba(255, 128, 0, 0.4),
+                0 0 16px rgba(255, 128, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 128, 0, 0.6),
+                0 0 32px rgba(255, 128, 0, 0.4),
+                inset 0 0 8px rgba(255, 128, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(255, 128, 0, 0.4),
+                0 0 16px rgba(255, 128, 0, 0.3);
+  }
+}
+
+/* 史诗级动画 */
+@keyframes epic-glow {
+  0% {
+    box-shadow: 0 0 6px rgba(128, 0, 255, 0.4),
+                0 0 12px rgba(128, 0, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(128, 0, 255, 0.5),
+                0 0 24px rgba(128, 0, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(128, 0, 255, 0.4),
+                0 0 12px rgba(128, 0, 255, 0.3);
+  }
+}
+
+/* 品质星星动画 */
+@keyframes star-shine {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+/* 高品质卡片悬浮动画 */
+.quality-card-hover {
+  transition: all 0.3s ease;
+}
+
+.quality-card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* 品质边框流光效果 */
+@keyframes border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.mythic-border {
+  background: linear-gradient(
+    90deg,
+    #ff0000,
+    #ff4444,
+    #ff0000,
+    #ff4444,
+    #ff0000
+  );
+  background-size: 200% 200%;
+  animation: border-flow 3s ease infinite;
+}
+
+.legendary-border {
+  background: linear-gradient(
+    90deg,
+    #ff8000,
+    #ffaa00,
+    #ff8000,
+    #ffaa00,
+    #ff8000
+  );
+  background-size: 200% 200%;
+  animation: border-flow 3s ease infinite;
+}

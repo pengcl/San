@@ -50,9 +50,9 @@ export default {
     {
       method: 'GET',
       path: '/heroes/:id',
-      handler: 'hero.findOne',
+      handler: 'hero.findHeroTemplate',
       config: {
-        auth: false,  // 使用自定义JWT中间件
+        auth: false,  // 公开访问武将模板详情
         middlewares: [],
         policies: []
       }

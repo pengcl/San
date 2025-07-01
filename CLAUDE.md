@@ -4,6 +4,14 @@
 
 这是一个三国题材的卡牌游戏项目《三国英雄传》，使用 React (TypeScript) + @mui/material + Strapi v5 开发。项目已建立完整的开发标准和规范，所有开发必须严格遵循这些标准。
 
+**【关键设计要求】这是一个手机端卡牌游戏，必须严格遵循以下移动端优先原则：**
+
+1. **移动端优先（Mobile First）**：手机端为主要客户端，所有功能和内容必须在手机端完整呈现
+2. **竖屏模式设计**：必须按照手机竖屏模式设计开发，所有UI组件和布局都必须适配手机竖屏视口
+3. **内容完整性**：禁止在手机端删减任何功能、按钮或内容，所有桌面端功能都必须在手机端可访问
+4. **触控优化**：所有交互元素必须适配触控操作，按钮大小符合触控标准（最小44px）
+5. **响应式适配顺序**：设计顺序为 手机端(xs) → 平板端(sm) → 桌面端(md+)，而非桌面端向下适配
+
 **重要：开发前必须阅读游戏设计文档 `docs/game-design-document.md` 了解完整的游戏设计和功能规划。**
 
 ## 项目结构
@@ -524,25 +532,6 @@ const result = await apiClient.purchaseShopItem({
 
 ## 【强制】启动命令
 
-### 后端启动（PM2常驻）
-```bash
-# 安装PM2（如果未安装）
-npm install -g pm2
-
-# 启动后端服务
-cd server
-pm2 start ecosystem.config.js
-
-# 查看运行状态
-pm2 status
-
-# 查看实时日志
-pm2 logs sanguo-server
-
-# 重启服务（代码更新后）
-pm2 restart sanguo-server
-```
-
 ### 前端启动
 ```bash
 # 启动前端开发服务器
@@ -556,7 +545,7 @@ cd web-client && npm run dev
 ```bash
 # 1. 启动后端（常驻运行）
 cd server
-pm2 start ecosystem.config.js
+npm run develop
 
 # 2. 启动前端（开发时）
 cd ../web-client
@@ -745,67 +734,19 @@ import { useGetHeroesQuery } from '../../store/slices/apiSlice';
 - ❌ `Button`（自定义） - 使用Material-UI的Button替代
 - ❌ 任何非Material-UI的UI组件
 
-### 3. 【强制】后端运行规范
-**后端必须使用PM2常驻后台运行：**
-
-#### A. PM2配置文件
-创建 `server/ecosystem.config.js`：
-```javascript
-module.exports = {
-  apps: [{
-    name: 'sanguo-server',
-    script: 'npm',
-    args: 'run develop',
-    cwd: '/path/to/project/server',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '1G',
-    env: {
-      NODE_ENV: 'development',
-      PORT: 1337
-    },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true
-  }]
-};
-```
-
-#### B. PM2启动命令
-```bash
-# 安装PM2 (如果未安装)
-npm install -g pm2
-
-# 在server目录下启动
-cd server
-pm2 start ecosystem.config.js
-
-# 常用PM2命令
-pm2 status                    # 查看运行状态
-pm2 logs sanguo-server       # 查看日志
-pm2 restart sanguo-server    # 重启服务
-pm2 stop sanguo-server       # 停止服务
-pm2 delete sanguo-server     # 删除服务
-```
 
 #### C. 开发流程
-1. **启动后端**: `cd server && pm2 start ecosystem.config.js`
+1. **启动后端**: `cd server && npm run develop`
 2. **启动前端**: `cd web-client && npm run dev` (自动使用3000端口)
-3. **日常开发**: 后端常驻运行，前端可重启
-4. **代码修改**: 后端代码变更后执行 `pm2 restart sanguo-server`
 
 ### 4. 【强制】违规处理
 **违反以上任一规范将被视为严重错误：**
 - ❌ 使用英文输出
 - ❌ 前端使用非3000端口
-- ❌ 后端不使用PM2运行
 
 **正确的开发流程检查清单：**
 1. ☐ 输出语言为中文
 2. ☐ 前端运行在localhost:3000
-3. ☐ 后端通过PM2常驻运行
 4. ☐ 所有开发基于已定义规范
 5. ☐ 使用真实API，禁止模拟数据
 
@@ -814,8 +755,6 @@ pm2 delete sanguo-server     # 删除服务
 **记住：请永远使用中文输出！**
 
 **记住：前端强制使用3000端口！**
-
-**记住：后端必须使用PM2常驻运行！**
 
 **记住：所有开发都必须基于已定义的规范，不要自行创造新的标准！**
 

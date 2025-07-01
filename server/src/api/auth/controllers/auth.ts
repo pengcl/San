@@ -356,7 +356,40 @@ export default {
    */
   async me(ctx: Context) {
     try {
-      const user = ctx.state.user;
+      // 检查认证头部
+      const authHeader = ctx.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        ctx.status = 401;
+        return ctx.body = {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: '缺少认证令牌'
+          }
+        };
+      }
+
+      const token = authHeader.substring(7);
+      
+      // 验证JWT令牌
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as any;
+      } catch (jwtError) {
+        ctx.status = 401;
+        return ctx.body = {
+          success: false,
+          error: {
+            code: 'INVALID_TOKEN',
+            message: '令牌无效或已过期'
+          }
+        };
+      }
+
+      // 查找用户
+      const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+        where: { id: decoded.id }
+      });
       
       if (!user) {
         ctx.status = 401;
@@ -364,7 +397,7 @@ export default {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: '未认证'
+            message: '用户不存在'
           }
         };
       }

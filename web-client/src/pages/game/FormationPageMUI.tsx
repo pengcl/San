@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -49,7 +49,15 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppDispatch } from '../../store';
 import { addNotification } from '../../store/slices/uiSlice';
-import { useGetHeroesQuery } from '../../store/slices/apiSlice';
+import {
+  useGetHeroesQuery,
+  useGetFormationsQuery,
+  useUpdateFormationMutation,
+  useCreateFormationMutation,
+  useDeleteFormationMutation,
+  useCopyFormationMutation,
+  useGetRecommendedFormationsQuery,
+} from '../../store/slices/apiSlice';
 import FormationGrid from '../../components/ui/FormationGrid';
 import type { FormationPosition } from '../../components/ui/FormationGrid';
 
@@ -74,62 +82,97 @@ interface FormationStats {
 const FormationPageMUI: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data: heroesData, error, isLoading } = useGetHeroesQuery();
+  const { data: heroesData, error: heroesError, isLoading: heroesLoading } = useGetHeroesQuery();
+  // 阵容API调用
+  const { data: formationsData, error: formationsError, isLoading: formationsLoading } = useGetFormationsQuery();
+  
+  // API mutations
+  const [updateFormation, { isLoading: updating }] = useUpdateFormationMutation();
+  const [createFormation, { isLoading: creating }] = useCreateFormationMutation();
+  const [deleteFormation] = useDeleteFormationMutation();
+  const [copyFormation] = useCopyFormationMutation();
   
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedPreset, setSelectedPreset] = useState(0);
-  const [formations, setFormations] = useState<FormationPosition[][]>([]);
+  const [localFormations, setLocalFormations] = useState<FormationPosition[][]>([]);
   const [selectedHero, setSelectedHero] = useState<any>(null);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [presetName, setPresetName] = useState('');
+  const [hasChanges, setHasChanges] = useState(false);
 
-  // 阵容预设
-  const [presets] = useState<FormationPreset[]>([
-    {
-      id: 0,
-      name: '主力阵容',
-      formation: [],
-      totalPower: 0,
-      isActive: true,
-      description: '日常战斗推荐阵容'
-    },
-    {
-      id: 1,
-      name: '副阵容',
-      formation: [],
-      totalPower: 0,
-      isActive: false,
-      description: '备用阵容配置'
-    },
-    {
-      id: 2,
-      name: '挑战阵容',
-      formation: [],
-      totalPower: 0,
-      isActive: false,
-      description: '高难度关卡专用'
-    }
-  ]);
+  // 从API获取的阵容数据
+  const formations = formationsData?.data?.formations || [];
+  
+  // 处理阵容数据 - 使用useMemo优化性能
+  const processedFormations = useMemo(() => {
+    return formations.map(formation => ({
+      id: formation.id,
+      name: formation.name,
+      description: formation.description,
+      totalPower: formation.total_power,
+      isActive: formation.is_active,
+      formation: formation.formation_data || [],
+      preset_type: formation.preset_type
+    }));
+  }, [formations]);
+  
+  // 如果没有阵容数据，使用默认阵容 - 使用useMemo避免无限循环
+  const presets = useMemo(() => {
+    return processedFormations.length > 0 ? processedFormations : [
+      {
+        id: 0,
+        name: '主力阵容',
+        formation: [],
+        totalPower: 0,
+        isActive: true,
+        description: '日常战斗推荐阵容',
+        preset_type: 'main'
+      },
+      {
+        id: 1,
+        name: '副阵容',
+        formation: [],
+        totalPower: 0,
+        isActive: false,
+        description: '备用阵容配置',
+        preset_type: 'secondary'
+      },
+      {
+        id: 2,
+        name: '挑战阵容',
+        formation: [],
+        totalPower: 0,
+        isActive: false,
+        description: '高难度关卡专用',
+        preset_type: 'challenge'
+      }
+    ];
+  }, [processedFormations]);
 
-  // 初始化阵容数据
+  // 初始化本地阵容数据 - 只在formations数据变化时初始化一次
   useEffect(() => {
-    // 初始化3个2x3网格阵容
-    const initFormations = Array.from({ length: 3 }, () => {
-      return Array.from({ length: 6 }, (_, index) => ({
-        id: index,
-        row: Math.floor(index / 3),
-        col: index % 3,
-        hero: null,
-        locked: false,
-        type: (Math.floor(index / 3) === 0 ? 'front' : 'back') as 'front' | 'back'
-      }));
-    });
-    setFormations(initFormations);
-  }, []);
+    if (presets.length > 0 && localFormations.length === 0) {
+      const initFormations = presets.map(preset => {
+        if (preset.formation && preset.formation.length > 0) {
+          return preset.formation;
+        }
+        // 创建空阵容
+        return Array.from({ length: 6 }, (_, index) => ({
+          id: index,
+          row: Math.floor(index / 3),
+          col: index % 3,
+          hero: null,
+          locked: false,
+          type: (Math.floor(index / 3) === 0 ? 'front' : 'back') as 'front' | 'back'
+        }));
+      });
+      setLocalFormations(initFormations);
+    }
+  }, [formations, presets.length]); // 改为依赖formations而不是presets对象本身
 
   // 处理API错误
   useEffect(() => {
-    if (error) {
+    if (heroesError) {
       dispatch(addNotification({
         type: 'error',
         title: '加载失败',
@@ -137,11 +180,19 @@ const FormationPageMUI: React.FC = () => {
         duration: 5000,
       }));
     }
-  }, [error, dispatch]);
+    if (formationsError) {
+      dispatch(addNotification({
+        type: 'error',
+        title: '阵容加载失败',
+        message: '无法加载阵容数据，请检查网络连接',
+        duration: 5000,
+      }));
+    }
+  }, [heroesError, formationsError, dispatch]);
 
   // 当前阵容
-  const currentFormation = formations[selectedPreset] || [];
-  const availableHeroes = heroesData?.data || [];
+  const currentFormation = localFormations[selectedPreset] || [];
+  const availableHeroes = heroesData?.data?.heroes || [];
 
   // 计算阵容统计
   const getFormationStats = (): FormationStats => {
@@ -178,7 +229,7 @@ const FormationPageMUI: React.FC = () => {
   const handlePositionClick = (position: FormationPosition) => {
     if (selectedHero) {
       // 放置武将
-      setFormations(prev => {
+      setLocalFormations(prev => {
         const newFormations = [...prev];
         const currentFormation = [...newFormations[selectedPreset]];
         
@@ -209,6 +260,7 @@ const FormationPageMUI: React.FC = () => {
         }
 
         newFormations[selectedPreset] = currentFormation;
+        setHasChanges(true);
         return newFormations;
       });
 
@@ -227,7 +279,7 @@ const FormationPageMUI: React.FC = () => {
 
   // 处理武将移除
   const handleHeroRemove = (position: FormationPosition) => {
-    setFormations(prev => {
+    setLocalFormations(prev => {
       const newFormations = [...prev];
       const currentFormation = [...newFormations[selectedPreset]];
       const targetPosition = currentFormation.find(pos => pos.id === position.id);
@@ -236,6 +288,7 @@ const FormationPageMUI: React.FC = () => {
         const removedHero = targetPosition.hero;
         targetPosition.hero = null;
         newFormations[selectedPreset] = currentFormation;
+        setHasChanges(true);
 
         dispatch(addNotification({
           type: 'info',
@@ -251,7 +304,7 @@ const FormationPageMUI: React.FC = () => {
 
   // 处理武将拖拽
   const handleHeroDrop = (fromPosition: number, toPosition: number) => {
-    setFormations(prev => {
+    setLocalFormations(prev => {
       const newFormations = [...prev];
       const currentFormation = [...newFormations[selectedPreset]];
       
@@ -265,6 +318,7 @@ const FormationPageMUI: React.FC = () => {
         toPos.hero = tempHero;
         
         newFormations[selectedPreset] = currentFormation;
+        setHasChanges(true);
       }
 
       return newFormations;
@@ -272,25 +326,57 @@ const FormationPageMUI: React.FC = () => {
   };
 
   // 保存阵容
-  const handleSaveFormation = () => {
-    // 这里应该调用真实的API保存阵容
-    dispatch(addNotification({
-      type: 'success',
-      title: '保存成功',
-      message: `${presets[selectedPreset].name} 已保存`,
-      duration: 3000,
-    }));
+  const handleSaveFormation = async () => {
+    try {
+      const currentPreset = presets[selectedPreset];
+      const formationData = {
+        formation_data: currentFormation,
+        total_power: stats.totalPower,
+        deployed_count: stats.deployedCount
+      };
+      
+      if (currentPreset.id && currentPreset.id !== 0) {
+        // 更新现有阵容
+        await updateFormation({ id: currentPreset.id, ...formationData }).unwrap();
+      } else {
+        // 创建新阵容 (如果是默认阵容但没有ID)
+        const newFormationData = {
+          name: currentPreset.name,
+          description: currentPreset.description,
+          preset_type: currentPreset.preset_type || 'main',
+          ...formationData
+        };
+        await createFormation(newFormationData).unwrap();
+      }
+      
+      setHasChanges(false);
+      dispatch(addNotification({
+        type: 'success',
+        title: '保存成功',
+        message: `${currentPreset.name} 已保存`,
+        duration: 3000,
+      }));
+    } catch (error) {
+      console.error('保存阵容失败:', error);
+      dispatch(addNotification({
+        type: 'error',
+        title: '保存失败',
+        message: '保存阵容时出现错误',
+        duration: 3000,
+      }));
+    }
     setSaveDialogOpen(false);
   };
 
   // 重置阵容
   const handleResetFormation = () => {
-    setFormations(prev => {
+    setLocalFormations(prev => {
       const newFormations = [...prev];
       newFormations[selectedPreset] = newFormations[selectedPreset].map(pos => ({
         ...pos,
         hero: null
       }));
+      setHasChanges(true);
       return newFormations;
     });
 
@@ -312,6 +398,8 @@ const FormationPageMUI: React.FC = () => {
     !deployedHeroIds.includes(hero.id)
   );
 
+  const isLoading = heroesLoading || formationsLoading;
+  
   if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
@@ -372,12 +460,14 @@ const FormationPageMUI: React.FC = () => {
                 variant="contained"
                 startIcon={<Save />}
                 onClick={() => setSaveDialogOpen(true)}
+                disabled={!hasChanges || updating || creating}
                 sx={{ 
-                  background: 'linear-gradient(45deg, #ff6b35, #f9ca24)',
-                  '&:hover': { background: 'linear-gradient(45deg, #ff8c42, #f9d71c)' }
+                  background: hasChanges ? 'linear-gradient(45deg, #ff6b35, #f9ca24)' : 'rgba(158,158,158,0.3)',
+                  '&:hover': hasChanges ? { background: 'linear-gradient(45deg, #ff8c42, #f9d71c)' } : {},
+                  '&:disabled': { background: 'rgba(158,158,158,0.3)' }
                 }}
               >
-                保存
+                {updating || creating ? '保存中...' : '保存'}
               </Button>
             </Stack>
           </Toolbar>
@@ -685,12 +775,13 @@ const FormationPageMUI: React.FC = () => {
             <Button 
               onClick={handleSaveFormation} 
               variant="contained"
+              disabled={updating || creating}
               sx={{ 
                 background: 'linear-gradient(45deg, #ff6b35, #f9ca24)',
                 '&:hover': { background: 'linear-gradient(45deg, #ff8c42, #f9d71c)' }
               }}
             >
-              确认保存
+              {updating || creating ? '保存中...' : '确认保存'}
             </Button>
           </DialogActions>
         </Dialog>

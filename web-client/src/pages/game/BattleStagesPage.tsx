@@ -120,38 +120,57 @@ const BattleStagesPage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 2 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3 }, px: { xs: 2, sm: 3 } }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* 头部 */}
-        <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+        {/* 头部 - 移动端优化 */}
+        <Box sx={{ 
+          mb: { xs: 2, sm: 3 }, 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: { xs: 1, sm: 2 }
+        }}>
           <IconButton 
             onClick={() => navigate('/home')} 
-            sx={{ color: 'white' }}
+            sx={{ 
+              color: 'white',
+              minWidth: 44,
+              minHeight: 44
+            }}
           >
             <ArrowBack />
           </IconButton>
-          <Typography variant="h4" sx={{ color: '#ff6b35', fontWeight: 'bold' }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              color: '#ff6b35', 
+              fontWeight: 'bold',
+              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }
+            }}
+          >
             战斗关卡 ⚔️
           </Typography>
         </Box>
 
-        {/* 难度和章节选择 */}
-        <Card sx={{ mb: 3, background: 'linear-gradient(45deg, #1a1a2e, #16213e)' }}>
-          <CardContent>
-            <Grid container spacing={2} alignItems="center">
+        {/* 难度和章节选择 - 移动端优化 */}
+        <Card sx={{ mb: { xs: 2, sm: 3 }, background: 'linear-gradient(45deg, #1a1a2e, #16213e)' }}>
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Grid container spacing={{ xs: 2, sm: 2 }} alignItems="center">
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel sx={{ color: 'white' }}>难度</InputLabel>
+                <FormControl fullWidth size="small">
+                  <InputLabel sx={{ color: 'white', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+                    难度
+                  </InputLabel>
                   <Select
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value as 'normal' | 'elite' | 'nightmare')}
                     sx={{ 
                       color: 'white', 
-                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)' } 
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)' },
+                      minHeight: 44 // 触控友好高度
                     }}
                   >
                     <MenuItem value="normal">
@@ -177,14 +196,17 @@ const BattleStagesPage: React.FC = () => {
               </Grid>
               
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel sx={{ color: 'white' }}>章节</InputLabel>
+                <FormControl fullWidth size="small">
+                  <InputLabel sx={{ color: 'white', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+                    章节
+                  </InputLabel>
                   <Select
                     value={selectedChapter}
                     onChange={(e) => setSelectedChapter(Number(e.target.value))}
                     sx={{ 
                       color: 'white', 
-                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)' } 
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)' },
+                      minHeight: 44 // 触控友好高度
                     }}
                   >
                     {chapters.map(chapter => (
@@ -206,8 +228,8 @@ const BattleStagesPage: React.FC = () => {
           </Alert>
         )}
 
-        {/* 关卡网格 */}
-        <Grid container spacing={2}>
+        {/* 关卡网格 - 移动端优化 */}
+        <Grid container spacing={{ xs: 1.5, sm: 2 }}>
           <AnimatePresence>
             {stages.map((stage, index) => (
               <Grid item xs={12} sm={6} md={4} key={stage.id}>
@@ -271,70 +293,132 @@ const BattleStagesPage: React.FC = () => {
                       </Box>
                     )}
 
-                    <CardContent>
+                    <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                       {/* 关卡标题 */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1.5, sm: 2 } }}>
                         {getDifficultyIcon(stage.stage_type || 'normal')}
                         <Typography 
                           variant="h6" 
-                          sx={{ color: 'white', ml: 1, fontWeight: 'bold' }}
+                          sx={{ 
+                            color: 'white', 
+                            ml: 1, 
+                            fontWeight: 'bold',
+                            fontSize: { xs: '1rem', sm: '1.125rem' },
+                            lineHeight: 1.2
+                          }}
                         >
                           {stage.stage_id} {stage.name}
                         </Typography>
                       </Box>
 
                       {/* 关卡信息 */}
-                      <Stack spacing={1} sx={{ mb: 2 }}>
+                      <Stack spacing={{ xs: 0.5, sm: 1 }} sx={{ mb: { xs: 1.5, sm: 2 } }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" sx={{ color: 'gray' }}>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: 'gray',
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                            }}
+                          >
                             推荐战力
                           </Typography>
-                          <Typography variant="body2" sx={{ color: 'white' }}>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: 'white',
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                              fontWeight: 'bold'
+                            }}
+                          >
                             {stage.recommended_power || 0}
                           </Typography>
                         </Box>
                         
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" sx={{ color: 'gray' }}>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: 'gray',
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                            }}
+                          >
                             体力消耗
                           </Typography>
-                          <Typography variant="body2" sx={{ color: 'white' }}>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: 'white',
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                              fontWeight: 'bold'
+                            }}
+                          >
                             {stage.energy_cost || 6}
                           </Typography>
                         </Box>
                       </Stack>
 
                       {/* 星级 */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Typography variant="body2" sx={{ color: 'gray', mr: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1.5, sm: 2 } }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'gray', 
+                            mr: 1,
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                          }}
+                        >
                           星级:
                         </Typography>
                         {Array.from({ length: 3 }, (_, i) => (
                           <Box key={i}>
                             {i < (stage.stars_earned || 0) ? (
-                              <Star sx={{ color: '#ffd700', fontSize: '1.2rem' }} />
+                              <Star sx={{ 
+                                color: '#ffd700', 
+                                fontSize: { xs: '1rem', sm: '1.2rem' } 
+                              }} />
                             ) : (
-                              <StarBorder sx={{ color: 'gray', fontSize: '1.2rem' }} />
+                              <StarBorder sx={{ 
+                                color: 'gray', 
+                                fontSize: { xs: '1rem', sm: '1.2rem' } 
+                              }} />
                             )}
                           </Box>
                         ))}
                       </Box>
 
                       {/* 奖励 */}
-                      <Box sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ color: 'gray', mb: 1 }}>
+                      <Box sx={{ mb: { xs: 1.5, sm: 2 } }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'gray', 
+                            mb: 1,
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                          }}
+                        >
                           奖励:
                         </Typography>
                         <Stack direction="row" spacing={1} flexWrap="wrap">
                           <Chip 
                             label={`${stage.base_rewards?.exp || 0} 经验`}
                             size="small"
-                            sx={{ backgroundColor: 'rgba(76,175,80,0.2)', color: '#4caf50' }}
+                            sx={{ 
+                              backgroundColor: 'rgba(76,175,80,0.2)', 
+                              color: '#4caf50',
+                              fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                              height: { xs: 20, sm: 24 }
+                            }}
                           />
                           <Chip 
                             label={`${stage.base_rewards?.gold || 0} 金币`}
                             size="small"
-                            sx={{ backgroundColor: 'rgba(255,193,7,0.2)', color: '#ffc107' }}
+                            sx={{ 
+                              backgroundColor: 'rgba(255,193,7,0.2)', 
+                              color: '#ffc107',
+                              fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                              height: { xs: 20, sm: 24 }
+                            }}
                           />
                         </Stack>
                       </Box>
@@ -346,12 +430,17 @@ const BattleStagesPage: React.FC = () => {
                         disabled={!stage.is_unlocked}
                         startIcon={stage.is_unlocked ? <PlayArrow /> : <Lock />}
                         sx={{
+                          minHeight: { xs: 40, sm: 44 }, // 触控友好高度
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' },
                           background: stage.is_unlocked 
                             ? `linear-gradient(45deg, ${getDifficultyColor(stage.stage_type || 'normal')}, ${getDifficultyColor(stage.stage_type || 'normal')}88)`
                             : 'rgba(158,158,158,0.3)',
                           '&:hover': stage.is_unlocked ? {
                             background: `linear-gradient(45deg, ${getDifficultyColor(stage.stage_type || 'normal')}CC, ${getDifficultyColor(stage.stage_type || 'normal')}AA)`,
                           } : {},
+                          '&:active': {
+                            transform: 'scale(0.98)', // 触控反馈
+                          },
                         }}
                       >
                         {stage.is_unlocked ? '开始挑战' : '未解锁'}

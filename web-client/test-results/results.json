@@ -1,0 +1,376 @@
+{
+  "config": {
+    "configFile": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/playwright.config.ts",
+    "rootDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 3
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "iPad",
+        "name": "iPad",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "PWA Desktop",
+        "name": "PWA Desktop",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Game Features",
+        "name": "Game Features",
+        "testDir": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/game/**/*.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.53.1",
+    "workers": 5,
+    "webServer": {
+      "command": "npm run dev",
+      "port": 3000,
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "final-verification.spec.ts",
+      "file": "final-verification.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "三国英雄传前端功能验证",
+          "file": "final-verification.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "完整功能验证 - 从登录到首页游戏体验",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7697,
+                      "error": {
+                        "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('text=pengcl') resolved to 2 elements:\n    1) <p class=\"mt-1 text-sm text-gray-100 leading-tight\">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').first()\n    2) <p class=\"mt-1 text-sm text-gray-100 leading-tight\">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').nth(1)\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=pengcl')\u001b[22m\n",
+                        "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('text=pengcl') resolved to 2 elements:\n    1) <p class=\"mt-1 text-sm text-gray-100 leading-tight\">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').first()\n    2) <p class=\"mt-1 text-sm text-gray-100 leading-tight\">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').nth(1)\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=pengcl')\u001b[22m\n\n    at /Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e/final-verification.spec.ts:93:47",
+                        "location": {
+                          "file": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e/final-verification.spec.ts",
+                          "column": 47,
+                          "line": 93
+                        },
+                        "snippet": "  91 |     \n  92 |     // 6. 验证用户信息\n> 93 |     await expect(page.locator('text=pengcl')).toBeVisible();\n     |                                               ^\n  94 |     console.log('✅ 步骤5: 用户信息显示正常');\n  95 |     \n  96 |     // 7. 验证快捷操作功能"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e/final-verification.spec.ts",
+                            "column": 47,
+                            "line": 93
+                          },
+                          "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('text=pengcl') resolved to 2 elements:\n    1) <p class=\"mt-1 text-sm text-gray-100 leading-tight\">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').first()\n    2) <p class=\"mt-1 text-sm text-gray-100 leading-tight\">欢迎回来，Pengcl！</p> aka getByText('欢迎回来，Pengcl！').nth(1)\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=pengcl')\u001b[22m\n\n\n  91 |     \n  92 |     // 6. 验证用户信息\n> 93 |     await expect(page.locator('text=pengcl')).toBeVisible();\n     |                                               ^\n  94 |     console.log('✅ 步骤5: 用户信息显示正常');\n  95 |     \n  96 |     // 7. 验证快捷操作功能\n    at /Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e/final-verification.spec.ts:93:47"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🚀 开始前端功能验证...\n"
+                        },
+                        {
+                          "text": "✅ 步骤1: 登录页面加载成功\n"
+                        },
+                        {
+                          "text": "✅ 步骤2: 登录操作执行成功\n"
+                        },
+                        {
+                          "text": "✅ 步骤3: 成功跳转到首页\n"
+                        },
+                        {
+                          "text": "✅ 步骤4: 首页标题显示正常\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-01T17:05:08.475Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results/final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results/final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/test-results/final-verification-三国英雄传前端功能验证-完整功能验证---从登录到首页游戏体验-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Volumes/990ProMacOS/Users/pengcl/Documents/Companies/Pinor/San/web-client/e2e/final-verification.spec.ts",
+                        "column": 47,
+                        "line": 93
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "20d2b73116c6f80be102-3ad0580b48df35dbce28",
+              "file": "final-verification.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "登录页面基础验证",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4201,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ 登录页面基础验证通过\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-01T17:05:08.476Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "20d2b73116c6f80be102-f3c16da66beed15dc042",
+              "file": "final-verification.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "页面标题验证",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 4695,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ 页面标题验证通过: 三国卡牌 - 策略游戏\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-01T17:05:08.473Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "20d2b73116c6f80be102-589a0ae2b0e1be9ae327",
+              "file": "final-verification.spec.ts",
+              "line": 160,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-07-01T17:05:08.154Z",
+    "duration": 8258.956,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import theme from './theme/muiTheme';
 import './index.css';
+import './styles/animations.css';
 import App from './App.tsx';
 import { initAnalytics, autoTrackPagePerformance } from './utils/analytics';
 

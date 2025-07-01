@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "formations",
+  "info": {
+    "singularName": "formation",
+    "pluralName": "formations",
+    "displayName": "Formation",
+    "description": "用户的战斗阵容配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "minLength": 1
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "formation_data": {
+      "type": "json",
+      "required": true
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false
+    },
+    "preset_type": {
+      "type": "enumeration",
+      "enum": ["main", "secondary", "challenge", "arena", "guild_war"],
+      "default": "main"
+    },
+    "total_power": {
+      "type": "integer",
+      "default": 0
+    },
+    "deployed_count": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 6
+    },
+    "formation_slots": {
+      "type": "json"
+    },
+    "last_used_at": {
+      "type": "datetime"
+    }
+  }
+}

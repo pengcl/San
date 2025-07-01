@@ -15,17 +15,18 @@ import {
 import { useAppDispatch } from '../../store';
 import { login } from '../../store/slices/authSlice';
 import { addNotification } from '../../store/slices/uiSlice';
+import { useLoginMutation } from '../../store/slices/apiSlice';
 
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [loginUser, { isLoading, error }] = useLoginMutation();
   const [formData, setFormData] = useState({
     identifier: 'pengcl',
     password: 'zouleyuan',
     rememberMe: true,
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const from = (location.state as any)?.from?.pathname || '/home';
 
@@ -39,22 +40,13 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
-      // 调用真实的登录API
-      const response = await fetch('http://localhost:1337/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          identifier: formData.identifier,
-          password: formData.password,
-        }),
-      });
-
-      const result = await response.json();
+      const result = await loginUser({
+        identifier: formData.identifier,
+        password: formData.password,
+        rememberMe: formData.rememberMe,
+      }).unwrap();
 
       if (result.success && result.data) {
         const { user, token, refreshToken } = result.data;
@@ -81,17 +73,15 @@ const LoginPage: React.FC = () => {
       } else {
         throw new Error(result.error?.message || '登录失败');
       }
-    } catch (error: any) {
+    } catch (err: any) {
       dispatch(
         addNotification({
           type: 'error',
           title: '登录失败',
-          message: error.message || '网络错误，请重试',
+          message: err.data?.error?.message || err.message || '网络错误，请重试',
           duration: 5000,
         })
       );
-    } finally {
-      setIsLoading(false);
     }
   };
 

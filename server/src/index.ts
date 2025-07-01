@@ -77,9 +77,11 @@ export default {
           'api::battle.battle.find',
           'api::battle.battle.findOne',
           'api::battle.battle.create',
-          'api::battle.battle.start',
-          'api::battle.battle.action',
-          'api::battle.battle.result',
+          'api::battle.battle.getStages',
+          'api::battle.battle.startBattle',
+          'api::battle.battle.executeAction',
+          'api::battle.battle.getBattleResult',
+          'api::battle.battle.autoBattle',
           
           // 章节关卡
           'api::chapter.chapter.find',
@@ -89,10 +91,44 @@ export default {
           'api::stage.stage.start',
           'api::stage.stage.complete',
           
+          // 阵容系统权限
+          'api::formation.formation.find',
+          'api::formation.formation.findOne',
+          'api::formation.formation.create',
+          'api::formation.formation.update',
+          'api::formation.formation.delete',
+          
+          // 城池系统权限
+          'api::city.city.find',
+          'api::city.city.findOne',
+          'api::city.city.upgrade',
+          
+          // 背包系统 - 物品模板
+          'api::item-template.item-template.find',
+          'api::item-template.item-template.findOne',
+          'api::item-template.item-template.getByCategory',
+          'api::item-template.item-template.getUsableItems',
+          
+          // 背包系统 - 用户物品
+          'api::user-item.user-item.getUserItems',
+          'api::user-item.user-item.useItem',
+          'api::user-item.user-item.toggleItemLock',
+          'api::user-item.user-item.sellItems',
+          'api::user-item.user-item.addItem',
+          
           // WebSocket连接
           'api::websocket.websocket.connect',
           'api::websocket.websocket.disconnect',
           'api::websocket.websocket.message',
+          
+          // 召唤系统
+          'api::summon.summon.find',
+          'api::summon.summon.findOne',
+          'api::summon.summon.normalSummon',
+          'api::summon.summon.premiumSummon',
+          'api::summon.summon.getSummonHistory',
+          'api::summon.summon.getSummonRates',
+          'api::summon.summon.synthesizeHero',
         ];
 
         for (const permission of authenticatedPermissions) {
@@ -111,11 +147,15 @@ export default {
                 enabled: true
               }
             });
+            console.log(`✅ Created permission: ${permission}`);
           } else if (!existingPermission.enabled) {
             await strapi.db.query('plugin::users-permissions.permission').update({
               where: { id: existingPermission.id },
               data: { enabled: true }
             });
+            console.log(`✅ Enabled permission: ${permission}`);
+          } else {
+            console.log(`✓ Permission already exists and enabled: ${permission}`);
           }
         }
 
@@ -153,6 +193,9 @@ export default {
           // 技能系统 - 公开查看
           'api::skill.skill.find',
           'api::skill.skill.findOne',
+          
+          // 阵容系统 - 临时公开测试
+          'api::formation.formation.find',
         ];
 
         for (const permission of publicPermissions) {

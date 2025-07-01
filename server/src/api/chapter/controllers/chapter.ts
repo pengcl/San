@@ -166,7 +166,10 @@ export default factories.createCoreController('api::chapter.chapter', ({ strapi 
         console.log('初始化章节数据...');
         for (const chapterData of CHAPTER_CONFIG.chapters) {
           await strapi.entityService.create('api::chapter.chapter', {
-            data: chapterData
+            data: {
+              ...chapterData,
+              difficulty: chapterData.difficulty as "tutorial" | "easy" | "normal" | "hard" | "hell" | "nightmare"
+            }
           });
         }
         
@@ -186,16 +189,20 @@ export default factories.createCoreController('api::chapter.chapter', ({ strapi 
           filters: { user: user.id },
         });
         
-        userProgress = userStageProgress.reduce((acc, progress) => {
-          const stageId = progress.stage_id;
-          const chapterId = stageId.split('-')[0];
+        userProgress = userStageProgress.reduce((acc: any, progress: any) => {
+          if (!progress.stage) return acc;
+          
+          const stage = progress.stage;
+          const stageId = stage.stage_id || stage.id;
+          const chapterId = String(stageId).split('-')[0];
+          
           if (!acc[chapterId]) {
             acc[chapterId] = { completed: 0, totalStars: 0 };
           }
-          if (progress.is_completed) {
+          if (progress.stars > 0) {
             acc[chapterId].completed++;
           }
-          acc[chapterId].totalStars += progress.stars_earned || 0;
+          acc[chapterId].totalStars += progress.stars || 0;
           return acc;
         }, {});
       }
@@ -203,7 +210,7 @@ export default factories.createCoreController('api::chapter.chapter', ({ strapi 
       // 处理章节解锁状态
       const processedChapters = chapters.map(chapter => {
         const chapterProgress = userProgress[chapter.chapter_id] || { completed: 0, totalStars: 0 };
-        const isUnlocked = user ? this.checkChapterUnlocked(chapter, userProgress) : (chapter.chapter_id === 1);
+        const isUnlocked = user ? this.checkChapterUnlocked(chapter as any, userProgress as any) : (chapter.chapter_id === 1);
         
         return {
           ...chapter,
@@ -250,8 +257,11 @@ export default factories.createCoreController('api::chapter.chapter', ({ strapi 
           },
         });
         
-        stageProgress = userStageProgress.reduce((acc, progress) => {
-          acc[progress.stage_id] = progress;
+        stageProgress = userStageProgress.reduce((acc: any, progress: any) => {
+          const stageId = progress.stage?.stage_id || progress.stage?.id;
+          if (stageId) {
+            acc[stageId] = progress;
+          }
           return acc;
         }, {});
       }
@@ -265,8 +275,8 @@ export default factories.createCoreController('api::chapter.chapter', ({ strapi 
           ...stage,
           progress,
           is_unlocked: prevStageCompleted,
-          is_completed: progress.is_completed || false,
-          stars_earned: progress.stars_earned || 0,
+          is_completed: progress.stars > 0 || false,
+          stars_earned: progress.stars || 0,
           best_clear_time: progress.best_clear_time || null
         };
       });
@@ -275,8 +285,8 @@ export default factories.createCoreController('api::chapter.chapter', ({ strapi 
         ...chapter,
         stages: processedStages,
         total_stages: stages.length,
-        completed_stages: Object.values(stageProgress).filter(p => p.is_completed).length,
-        total_stars: Object.values(stageProgress).reduce((sum, p) => sum + (p.stars_earned || 0), 0)
+        completed_stages: Object.values(stageProgress).filter((p: any) => p.stars > 0).length,
+        total_stars: Object.values(stageProgress).reduce((sum: number, p: any) => sum + (p.stars || 0), 0)
       };
 
       return this.transformResponse(result);

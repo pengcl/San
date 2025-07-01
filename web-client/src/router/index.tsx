@@ -10,23 +10,28 @@ export const HeroesPage = lazy(() => import('../pages/game/HeroesPage'));
 export const HeroesPageMUI = lazy(() => import('../pages/game/HeroesPageMUI'));
 export const HeroLibraryPage = lazy(() => import('../pages/game/HeroLibraryPage'));
 export const HeroDetailPage = lazy(
-  () => import('../pages/game/HeroDetailPage')
+  () => import('../pages/game/HeroDetailPageMUI')
 );
-export const InventoryPage = lazy(() => import('../pages/game/InventoryPage'));
+export const HeroDetailPageMUI = lazy(() => import('../pages/game/HeroDetailPageMUI'));
+export const InventoryPage = lazy(() => import('../pages/game/InventoryPageMUI'));
 export const BattlePage = lazy(() => import('../pages/game/BattlePage'));
 export const BattlePageMUI = lazy(() => import('../pages/game/BattlePageMUI'));
 export const BattleStagesPage = lazy(() => import('../pages/game/BattleStagesPage'));
 export const BattleResultPage = lazy(() => import('../pages/game/BattleResultPage'));
 export const CityPage = lazy(() => import('../pages/game/CityPage'));
+export const CityPageMUI = lazy(() => import('../pages/game/CityPageMUI'));
 export const FormationPage = lazy(() => import('../pages/game/FormationPage'));
 export const FormationPageMUI = lazy(() => import('../pages/game/FormationPageMUI'));
 export const SettingsPage = lazy(() => import('../pages/game/SettingsPage'));
+export const SettingsPageMUI = lazy(() => import('../pages/game/SettingsPageMUI'));
 export const HeroTrainingPage = lazy(() => import('../pages/game/HeroTrainingPage'));
 export const EquipmentPage = lazy(() => import('../pages/game/EquipmentPage'));
 export const FormationPresetsPage = lazy(() => import('../pages/game/FormationPresetsPage'));
-export const BuildingManagementPage = lazy(() => import('../pages/game/BuildingManagementPage'));
+export const BuildingManagementPage = lazy(() => import('../pages/game/BuildingManagementPageMUI'));
 export const ShopPage = lazy(() => import('../pages/game/ShopPage'));
 export const RechargePage = lazy(() => import('../pages/game/RechargePage'));
+export const SkillsPage = lazy(() => import('../pages/game/SkillsPageMUI'));
+export const SummonPage = lazy(() => import('../pages/game/SummonPageMUI'));
 
 // 路由元数据类型
 export interface RouteMetadata {
@@ -60,15 +65,19 @@ export const routeComponents = {
   BattleStagesPage,
   BattleResultPage,
   CityPage,
+  CityPageMUI,
   FormationPage,
   FormationPageMUI,
   SettingsPage,
+  SettingsPageMUI,
   HeroTrainingPage,
   EquipmentPage,
   FormationPresetsPage,
   BuildingManagementPage,
   ShopPage,
   RechargePage,
+  SkillsPage,
+  SummonPage,
 };
 
 export default {

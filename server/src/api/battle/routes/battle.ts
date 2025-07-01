@@ -3,16 +3,16 @@
  * 基于API规范 battle-apis.json 实现
  */
 
-export default {
+module.exports = {
   routes: [
     {
       method: 'GET',
       path: '/battles/stages',
       handler: 'battle.getStages',
       config: {
-        auth: false,  // 使用自定义JWT中间件
-        middlewares: [],
-        policies: []
+        auth: {
+          scope: ['authenticated']
+        }
       }
     },
     {
@@ -20,9 +20,9 @@ export default {
       path: '/battles/start',
       handler: 'battle.startBattle',
       config: {
-        auth: false,  // 使用自定义JWT中间件
-        middlewares: [],
-        policies: []
+        auth: {
+          scope: ['authenticated']
+        }
       }
     },
     {
@@ -30,9 +30,9 @@ export default {
       path: '/battles/:battleId/action',
       handler: 'battle.executeAction',
       config: {
-        auth: false,  // 使用自定义JWT中间件
-        middlewares: [],
-        policies: []
+        auth: {
+          scope: ['authenticated']
+        }
       }
     },
     {
@@ -40,9 +40,9 @@ export default {
       path: '/battles/:battleId/auto',
       handler: 'battle.autoBattle',
       config: {
-        auth: false,  // 使用自定义JWT中间件
-        middlewares: [],
-        policies: []
+        auth: {
+          scope: ['authenticated']
+        }
       }
     },
     {
@@ -50,9 +50,9 @@ export default {
       path: '/battles/:battleId/result',
       handler: 'battle.getBattleResult',
       config: {
-        auth: false,  // 使用自定义JWT中间件
-        middlewares: [],
-        policies: []
+        auth: {
+          scope: ['authenticated']
+        }
       }
     }
   ]

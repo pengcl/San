@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武将系统测试页面</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .hero-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+            width: 200px;
+            vertical-align: top;
+        }
+        .hero-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .hero-info {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0;
+        }
+        .quality-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .filter-group {
+            margin: 10px 0;
+        }
+        .filter-group label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+        }
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        button {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #e55529;
+        }
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .error {
+            color: red;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏮 三国英雄传 - 武将系统测试</h1>
+    
+    <div class="stats">
+        <h3>📊 系统状态</h3>
+        <div id="systemStatus">检查中...</div>
+    </div>
+
+    <div class="filters">
+        <h3>🔍 筛选条件</h3>
+        <div class="filter-group">
+            <label>品质筛选:</label>
+            <select id="qualityFilter">
+                <option value="">全部品质</option>
+                <option value="1">1★ 普通</option>
+                <option value="2">2★ 优秀</option>
+                <option value="3">3★ 精良</option>
+                <option value="4">4★ 史诗</option>
+                <option value="5">5★ 传说</option>
+                <option value="6">6★ 神话</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>阵营筛选:</label>
+            <select id="factionFilter">
+                <option value="">全部阵营</option>
+                <option value="蜀">🔴 蜀汉</option>
+                <option value="魏">🔵 曹魏</option>
+                <option value="吴">🟢 东吴</option>
+                <option value="群雄">🟡 群雄</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>搜索:</label>
+            <input type="text" id="searchInput" placeholder="输入武将名称...">
+        </div>
+        <div class="filter-group">
+            <button onclick="loadHeroes()">🔄 刷新数据</button>
+            <button onclick="clearFilters()">🗑️ 清除筛选</button>
+            <button onclick="testLogin()">🔑 测试登录</button>
+        </div>
+    </div>
+
+    <div id="heroContainer">
+        <div class="loading">正在加载武将数据...</div>
+    </div>
+
+    <script>
+        let allHeroes = [];
+        let userToken = null;
+
+        // 品质颜色映射
+        const qualityColors = {
+            1: '#808080', // 普通
+            2: '#00FF00', // 优秀  
+            3: '#0080FF', // 精良
+            4: '#8000FF', // 史诗
+            5: '#FF8000', // 传说
+            6: '#FF0000'  // 神话
+        };
+
+        const qualityNames = {
+            1: '普通', 2: '优秀', 3: '精良', 4: '史诗', 5: '传说', 6: '神话'
+        };
+
+        // 初始化
+        async function init() {
+            await checkSystemStatus();
+            await testLogin();
+            await loadHeroes();
+            setupEventListeners();
+        }
+
+        // 检查系统状态
+        async function checkSystemStatus() {
+            const statusEl = document.getElementById('systemStatus');
+            try {
+                // 检查后端API
+                const response = await fetch('http://localhost:1337/api/heroes?limit=1');
+                const backendStatus = response.ok ? '✅ 正常' : '❌ 异常';
+                
+                // 检查前端
+                const frontendResponse = await fetch('http://localhost:3000');
+                const frontendStatus = frontendResponse.ok ? '✅ 正常' : '❌ 异常';
+                
+                statusEl.innerHTML = `
+                    <div>后端API (1337): ${backendStatus}</div>
+                    <div>前端页面 (3000): ${frontendStatus}</div>
+                    <div>时间: ${new Date().toLocaleString()}</div>
+                `;
+            } catch (error) {
+                statusEl.innerHTML = `<div class="error">❌ 系统检查失败: ${error.message}</div>`;
+            }
+        }
+
+        // 测试登录
+        async function testLogin() {
+            try {
+                const response = await fetch('http://localhost:1337/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    userToken = data.data.token;
+                    console.log('✅ 登录成功');
+                    return true;
+                } else {
+                    console.error('❌ 登录失败');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ 登录错误:', error);
+                return false;
+            }
+        }
+
+        // 加载武将数据
+        async function loadHeroes() {
+            const container = document.getElementById('heroContainer');
+            container.innerHTML = '<div class="loading">正在加载武将数据...</div>';
+
+            try {
+                // 加载武将模板数据
+                const templateResponse = await fetch('http://localhost:1337/api/heroes?limit=20');
+                const templateData = await templateResponse.json();
+                
+                if (templateData.success) {
+                    allHeroes = templateData.data.heroes;
+                    console.log('✅ 加载了', allHeroes.length, '个武将模板');
+                    filterAndDisplayHeroes();
+                } else {
+                    throw new Error('API返回错误: ' + templateData.error?.message);
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">❌ 加载失败: ${error.message}</div>`;
+                console.error('加载武将数据失败:', error);
+            }
+        }
+
+        // 筛选并显示武将
+        function filterAndDisplayHeroes() {
+            const container = document.getElementById('heroContainer');
+            const qualityFilter = document.getElementById('qualityFilter').value;
+            const factionFilter = document.getElementById('factionFilter').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+            let filteredHeroes = [...allHeroes];
+
+            // 品质筛选
+            if (qualityFilter) {
+                filteredHeroes = filteredHeroes.filter(hero => 
+                    hero.quality == qualityFilter || hero.rarity == qualityFilter
+                );
+            }
+
+            // 阵营筛选
+            if (factionFilter) {
+                filteredHeroes = filteredHeroes.filter(hero => 
+                    hero.faction === factionFilter
+                );
+            }
+
+            // 搜索筛选
+            if (searchQuery) {
+                filteredHeroes = filteredHeroes.filter(hero =>
+                    hero.name.toLowerCase().includes(searchQuery) ||
+                    (hero.description && hero.description.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            // 按品质排序
+            filteredHeroes.sort((a, b) => (b.quality || b.rarity || 1) - (a.quality || a.rarity || 1));
+
+            // 显示结果
+            if (filteredHeroes.length === 0) {
+                container.innerHTML = '<div class="loading">😔 没有找到符合条件的武将</div>';
+                return;
+            }
+
+            const heroCards = filteredHeroes.map(hero => {
+                const quality = hero.quality || hero.rarity || 1;
+                const qualityColor = hero.qualityColor || qualityColors[quality] || '#808080';
+                const qualityName = hero.qualityName || qualityNames[quality] || '未知';
+                
+                return `
+                    <div class="hero-card">
+                        <div class="hero-name">${hero.name}</div>
+                        <div class="hero-info">
+                            <span class="quality-badge" style="background-color: ${qualityColor}">
+                                ${quality}★ ${qualityName}
+                            </span>
+                        </div>
+                        <div class="hero-info">🏰 阵营: ${hero.faction || '未知'}</div>
+                        <div class="hero-info">⚔️ 兵种: ${hero.unitType || '未知'}</div>
+                        <div class="hero-info">💪 攻击: ${hero.baseStats?.attack || '未知'}</div>
+                        <div class="hero-info">🛡️ 防御: ${hero.baseStats?.defense || '未知'}</div>
+                        <div class="hero-info">❤️ 生命: ${hero.baseStats?.hp || '未知'}</div>
+                        <div class="hero-info">💨 速度: ${hero.baseStats?.speed || '未知'}</div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <strong>📊 找到 ${filteredHeroes.length} 个武将 (共 ${allHeroes.length} 个)</strong>
+                </div>
+                ${heroCards}
+            `;
+        }
+
+        // 清除筛选
+        function clearFilters() {
+            document.getElementById('qualityFilter').value = '';
+            document.getElementById('factionFilter').value = '';
+            document.getElementById('searchInput').value = '';
+            filterAndDisplayHeroes();
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            document.getElementById('qualityFilter').addEventListener('change', filterAndDisplayHeroes);
+            document.getElementById('factionFilter').addEventListener('change', filterAndDisplayHeroes);
+            document.getElementById('searchInput').addEventListener('input', filterAndDisplayHeroes);
+        }
+
+        // 初始化应用
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

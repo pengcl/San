@@ -21,20 +21,25 @@ import {
   HeroesPageMUI,
   HeroLibraryPage,
   HeroDetailPage,
+  HeroDetailPageMUI,
   InventoryPage,
   BattlePageMUI,
   BattleStagesPage,
   BattleResultPage,
   CityPage,
+  CityPageMUI,
   FormationPage,
   FormationPageMUI,
   SettingsPage,
+  SettingsPageMUI,
   HeroTrainingPage,
   EquipmentPage,
   FormationPresetsPage,
   BuildingManagementPage,
   ShopPage,
   RechargePage,
+  SkillsPage,
+  SummonPage,
   preloadCoreRoutes,
 } from './router';
 
@@ -88,7 +93,7 @@ const AnimatedRoutes = () => {
           <Route path='/home' element={<HomePageMUI />} />
           <Route path='/heroes' element={<HeroesPageMUI />} />
           <Route path='/heroes/library' element={<HeroLibraryPage />} />
-          <Route path='/heroes/:heroId' element={<HeroDetailPage />} />
+          <Route path='/heroes/:heroId' element={<HeroDetailPageMUI />} />
           <Route path='/heroes/:heroId/training' element={<HeroTrainingPage />} />
           <Route path='/heroes/:heroId/equipment' element={<EquipmentPage />} />
           <Route path='/inventory' element={<InventoryPage />} />
@@ -97,11 +102,13 @@ const AnimatedRoutes = () => {
           <Route path='/battle' element={<BattlePageMUI />} />
           <Route path='/battle/stages' element={<BattleStagesPage />} />
           <Route path='/battle/result' element={<BattleResultPage />} />
-          <Route path='/city' element={<CityPage />} />
+          <Route path='/city' element={<CityPageMUI />} />
           <Route path='/city/buildings' element={<BuildingManagementPage />} />
           <Route path='/shop' element={<ShopPage />} />
           <Route path='/recharge' element={<RechargePage />} />
-          <Route path='/settings' element={<SettingsPage />} />
+          <Route path='/skills' element={<SkillsPage />} />
+          <Route path='/summon' element={<SummonPage />} />
+          <Route path='/settings' element={<SettingsPageMUI />} />
           <Route path='*' element={<Navigate to='/home' replace />} />
         </Routes>
       </motion.div>

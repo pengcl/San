@@ -36,6 +36,8 @@ import {
   Diamond,
   MonetizationOn,
   EmojiEvents,
+  Inventory,
+  AutoAwesome,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 
@@ -64,10 +66,11 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleTheme }) => {
   const navigationItems = [
     { text: '主页', icon: <Home />, path: '/' },
     { text: '武将', icon: <Person />, path: '/heroes' },
+    { text: '召唤', icon: <AutoAwesome />, path: '/summon', isNew: true },
+    { text: '背包', icon: <Inventory />, path: '/inventory' },
     { text: '阵容', icon: <Shield />, path: '/formation' },
     { text: '战斗', icon: <SportsEsports />, path: '/battle' },
     { text: '城池', icon: <Castle />, path: '/city' },
-    { text: '训练', icon: <TrendingUp />, path: '/training' },
     { text: '设置', icon: <Settings />, path: '/settings' },
   ];
 
@@ -171,6 +174,18 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleTheme }) => {
                   fontWeight: isCurrentPath(item.path) ? 'bold' : 'normal',
                 }}
               />
+              {item.isNew && (
+                <Chip
+                  label="新"
+                  size="small"
+                  sx={{
+                    bgcolor: '#ff4757',
+                    color: 'white',
+                    fontSize: '0.7rem',
+                    height: 20,
+                  }}
+                />
+              )}
             </ListItemButton>
           </ListItem>
         ))}

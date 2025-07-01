@@ -104,6 +104,9 @@ export default {
         }
         const stats = calculateCurrentStats(hero, userHero.level, userHero.star);
         
+        // 使用相同的临时逻辑来获取武将属性
+        const { faction, unitType, quality, qualityName, qualityColor } = getHeroRelationships(hero.hero_id);
+        
         return {
           id: userHero.id,
           heroId: hero.hero_id,
@@ -111,8 +114,11 @@ export default {
           level: userHero.level,
           experience: userHero.exp,
           rarity: userHero.star,
-          faction: hero.faction?.faction_id || 'unknown',
-          unitType: hero.unit_type?.type_id || 'unknown',
+          faction: hero.faction?.faction_id || faction,
+          unitType: hero.unit_type?.type_id || unitType,
+          quality: hero.quality?.quality_id || quality,
+          qualityName: hero.quality?.name_zh || qualityName,
+          qualityColor: hero.quality?.color_hex || qualityColor,
           power: userHero.power,
           stats,
           skills: [], // TODO: 实现技能系统
@@ -148,6 +154,71 @@ export default {
         error: {
           code: 'GET_HEROES_ERROR',
           message: '获取武将列表失败'
+        }
+      };
+    }
+  },
+
+  /**
+   * 获取武将模板详情（公开访问，用于武将详情页面）
+   */
+  async findHeroTemplate(ctx: Context) {
+    try {
+      const { id } = ctx.params;
+      
+      // 获取武将模板数据
+      const heroId = Number(id);
+      const heroRelations = getHeroRelationships(heroId);
+      
+      if (!heroRelations) {
+        ctx.status = 404;
+        return ctx.body = {
+          success: false,
+          error: {
+            code: 'HERO_NOT_FOUND',
+            message: '武将不存在'
+          }
+        };
+      }
+
+      // 获取武将基础信息
+      const heroInfo = getHeroInfo(heroId);
+      
+      // 构建武将详情数据
+      const heroDetail = {
+        id: heroId,
+        name: heroInfo.name,
+        description: heroInfo.description,
+        faction: heroRelations.faction,
+        unitType: heroRelations.unitType,
+        quality: heroRelations.quality,
+        qualityName: heroRelations.qualityName,
+        qualityColor: heroRelations.qualityColor,
+        baseStats: heroInfo.baseStats,
+        skills: [], // TODO: 实现技能系统
+        avatar: null,
+        cardImage: null,
+        rarity: heroRelations.quality,
+        level: 1, // 模板默认等级
+        experience: 0,
+        base_hp: heroInfo.baseStats.hp,
+        base_attack: heroInfo.baseStats.attack,
+        base_defense: heroInfo.baseStats.defense,
+        base_speed: heroInfo.baseStats.speed
+      };
+
+      ctx.body = {
+        success: true,
+        data: heroDetail
+      };
+    } catch (error) {
+      console.error('获取武将模板详情错误:', error);
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        error: {
+          code: 'GET_HERO_TEMPLATE_ERROR',
+          message: '获取武将模板详情失败'
         }
       };
     }
@@ -442,19 +513,26 @@ export default {
         );
       }
 
-      const heroes = filteredHeroes.map(hero => ({
-        id: hero.hero_id,
-        name: hero.name,
-        title: hero.description || '',
-        faction: hero.faction?.faction_id || 'unknown',
-        rarity: hero.quality?.quality_id || 1,
-        unitType: hero.unit_type?.type_id || 'unknown',
-        avatar: hero.avatar_url,
-        isOwned: ownedHeroIds.has(hero.id),
-        maxRarityOwned: ownedHeroIds.has(hero.id) ? 
-          Math.max(...userHeroes.filter(uh => uh.hero.id === hero.id).map(uh => uh.star)) : null,
-        obtainMethods: ['summon', 'fragments'] // TODO: 从配置读取
-      }));
+      const heroes = filteredHeroes.map(hero => {
+        // 使用临时逻辑获取武将属性
+        const { faction, unitType, quality, qualityName, qualityColor } = getHeroRelationships(hero.hero_id);
+        
+        return {
+          id: hero.hero_id,
+          name: hero.name,
+          title: hero.description || '',
+          faction: hero.faction?.faction_id || faction,
+          rarity: hero.quality?.quality_id || quality,
+          qualityName: hero.quality?.name_zh || qualityName,
+          qualityColor: hero.quality?.color_hex || qualityColor,
+          unitType: hero.unit_type?.type_id || unitType,
+          avatar: hero.avatar_url,
+          isOwned: ownedHeroIds.has(hero.id),
+          maxRarityOwned: ownedHeroIds.has(hero.id) ? 
+            Math.max(...userHeroes.filter(uh => uh.hero.id === hero.id).map(uh => uh.star)) : null,
+          obtainMethods: ['summon', 'fragments'] // TODO: 从配置读取
+        };
+      });
 
       const collectionStats = {
         total: allHeroes.length,
@@ -881,25 +959,93 @@ export default {
         orderBy: { hero_id: 'asc' }
       });
 
-      // 格式化响应数据
-      const heroTemplates = heroes[0].map(hero => ({
-        id: hero.hero_id,
-        name: hero.name,
-        description: hero.description,
-        faction: hero.faction?.faction_id || 'unknown',
-        unitType: hero.unit_type?.type_id || 'unknown',
-        quality: hero.quality?.quality_id || 1,
-        qualityName: hero.quality?.name_zh || '普通',
-        qualityColor: hero.quality?.color_hex || '#808080',
-        baseStats: {
-          hp: hero.base_hp,
-          attack: hero.base_attack,
-          defense: hero.base_defense,
-          speed: hero.base_speed
-        },
-        avatar: hero.avatar_url,
-        createdAt: hero.createdAt
-      }));
+      // 格式化响应数据 - 临时逻辑：基于hero_id和属性分配品质和阵营
+      const heroTemplates = heroes[0].map(hero => {
+        // 基于hero_id分配阵营
+        let faction = 'unknown';
+        if (hero.hero_id >= 1000 && hero.hero_id < 2000) {
+          faction = '蜀';
+        } else if (hero.hero_id >= 2000 && hero.hero_id < 3000) {
+          faction = '魏';
+        } else if (hero.hero_id >= 3000 && hero.hero_id < 4000) {
+          faction = '吴';
+        } else if (hero.hero_id >= 4000 && hero.hero_id < 5000) {
+          faction = '群雄';
+        }
+
+        // 基于历史地位和hero_id精确分配品质
+        let quality = 3; // 默认精良
+        let qualityName = '精良';
+        let qualityColor = '#0080FF';
+
+        // 神话级 (6星) - 三国最顶级人物
+        if ([1002, 2001, 4004].includes(hero.hero_id)) { // 诸葛亮、曹操、吕布
+          quality = 6; qualityName = '神话'; qualityColor = '#FF0000';
+        }
+        // 传说级 (5星) - 一流名将
+        else if ([1001, 1003, 1005, 2002, 2003, 3001, 3003].includes(hero.hero_id)) { // 刘备、关羽、赵云、司马懿、张辽、孙策、周瑜
+          quality = 5; qualityName = '传说'; qualityColor = '#FF8000';
+        }
+        // 史诗级 (4星) - 知名武将
+        else if ([1004, 1006, 1007, 1008, 1009, 2004, 2005, 2006, 2007, 3002, 3004, 3005, 3006, 4001, 4002, 4003, 4005, 4006, 4007, 4008, 4009, 4010].includes(hero.hero_id)) {
+          quality = 4; qualityName = '史诗'; qualityColor = '#8000FF';
+        }
+        // 优秀级 (2星) - 二线武将
+        else if (hero.hero_id > 1015 || hero.hero_id > 2010 || hero.hero_id > 3010) {
+          quality = 2; qualityName = '优秀'; qualityColor = '#00FF00';
+        }
+
+        // 基于历史职业和特点分配兵种类型
+        let unitType = '步兵'; // 默认步兵
+        
+        // 军师类
+        if ([1002, 1010, 1011, 2002, 2009, 3003, 4005, 4006, 4007].includes(hero.hero_id)) {
+          unitType = '军师';
+        }
+        // 骑兵类
+        else if ([1005, 1006, 2003, 2007, 3001, 4002, 4004].includes(hero.hero_id)) {
+          unitType = '骑兵';
+        }
+        // 弓兵类
+        else if ([1007, 2008, 3006, 4003].includes(hero.hero_id)) {
+          unitType = '弓兵';
+        }
+        // 守护类
+        else if ([1003, 2001, 3002].includes(hero.hero_id)) {
+          unitType = '守护';
+        }
+        // 刺客类
+        else if ([1008, 2010, 3007].includes(hero.hero_id)) {
+          unitType = '刺客';
+        }
+        // 医者
+        else if ([4010].includes(hero.hero_id)) {
+          unitType = '医者';
+        }
+        // 术士
+        else if ([4005, 4006, 4007].includes(hero.hero_id)) {
+          unitType = '术士';
+        }
+
+        return {
+          id: hero.hero_id,
+          name: hero.name,
+          description: hero.description,
+          faction: hero.faction?.faction_id || faction,
+          unitType: hero.unit_type?.type_id || unitType,
+          quality: hero.quality?.quality_id || quality,
+          qualityName: hero.quality?.name_zh || qualityName,
+          qualityColor: hero.quality?.color_hex || qualityColor,
+          baseStats: {
+            hp: hero.base_hp,
+            attack: hero.base_attack,
+            defense: hero.base_defense,
+            speed: hero.base_speed
+          },
+          avatar: hero.avatar_url,
+          createdAt: hero.createdAt
+        };
+      });
 
       const pagination = {
         page: pageNum,
@@ -1012,4 +1158,182 @@ function calculateMaxExperience(level: number): number {
  */
 function getSkillLevel(skillTree: any, skillId: number): number {
   return skillTree?.[skillId] || 1;
+}
+
+/**
+ * 获取武将关系信息（临时解决方案）
+ */
+function getHeroRelationships(heroId: number) {
+  // 基于hero_id分配阵营
+  let faction = 'unknown';
+  if (heroId >= 1000 && heroId < 2000) {
+    faction = '蜀';
+  } else if (heroId >= 2000 && heroId < 3000) {
+    faction = '魏';
+  } else if (heroId >= 3000 && heroId < 4000) {
+    faction = '吴';
+  } else if (heroId >= 4000 && heroId < 5000) {
+    faction = '群雄';
+  }
+
+  // 基于历史地位和hero_id精确分配品质
+  let quality = 3; // 默认精良
+  let qualityName = '精良';
+  let qualityColor = '#0080FF';
+
+  // 神话级 (6星) - 三国最顶级人物
+  if ([1002, 2001, 4004].includes(heroId)) { // 诸葛亮、曹操、吕布
+    quality = 6; qualityName = '神话'; qualityColor = '#FF0000';
+  }
+  // 传说级 (5星) - 一流名将
+  else if ([1001, 1003, 1005, 2002, 2003, 3001, 3003].includes(heroId)) { // 刘备、关羽、赵云、司马懿、张辽、孙策、周瑜
+    quality = 5; qualityName = '传说'; qualityColor = '#FF8000';
+  }
+  // 史诗级 (4星) - 知名武将
+  else if ([1004, 1006, 1007, 1008, 1009, 2004, 2005, 2006, 2007, 3002, 3004, 3005, 3006, 4001, 4002, 4003, 4005, 4006, 4007, 4008, 4009, 4010].includes(heroId)) {
+    quality = 4; qualityName = '史诗'; qualityColor = '#8000FF';
+  }
+  // 优秀级 (2星) - 二线武将
+  else if (heroId > 1015 || heroId > 2010 || heroId > 3010) {
+    quality = 2; qualityName = '优秀'; qualityColor = '#00FF00';
+  }
+
+  // 基于历史职业和特点分配兵种类型
+  let unitType = '步兵'; // 默认步兵
+  
+  // 军师类
+  if ([1002, 1010, 1011, 2002, 2009, 3003, 4005, 4006, 4007].includes(heroId)) {
+    unitType = '军师';
+  }
+  // 骑兵类
+  else if ([1005, 1006, 2003, 2007, 3001, 4002, 4004].includes(heroId)) {
+    unitType = '骑兵';
+  }
+  // 弓兵类
+  else if ([1007, 2008, 3006, 4003].includes(heroId)) {
+    unitType = '弓兵';
+  }
+  // 守护类
+  else if ([1003, 2001, 3002].includes(heroId)) {
+    unitType = '守护';
+  }
+  // 刺客类
+  else if ([1008, 2010, 3007].includes(heroId)) {
+    unitType = '刺客';
+  }
+  // 医者
+  else if ([4010].includes(heroId)) {
+    unitType = '医者';
+  }
+  // 术士
+  else if ([4005, 4006, 4007].includes(heroId)) {
+    unitType = '术士';
+  }
+
+  return { faction, unitType, quality, qualityName, qualityColor };
+}
+
+// 获取武将基础信息
+function getHeroInfo(heroId: number) {
+  // 武将名字和描述映射
+  const heroData = {
+    // 蜀汉武将
+    1001: { name: '刘备', description: '仁德君主，蜀汉开国皇帝，以仁义治天下' },
+    1002: { name: '诸葛亮', description: '卧龙先生，智谋无双，鞠躬尽瘁死而后已' },
+    1003: { name: '关羽', description: '武圣关云长，义薄云天，忠义无双' },
+    1004: { name: '张飞', description: '燕人张翼德，勇猛无敌，咆哮震天' },
+    1005: { name: '赵云', description: '常山赵子龙，一身是胆，龙威天下' },
+    1006: { name: '马超', description: '锦马超，西凉的猛将，驰骋疆场' },
+    1007: { name: '黄忠', description: '老当益壮，百步穿杨，神射无双' },
+    1008: { name: '魏延', description: '蜀汉猛将，勇冠三军，敢为人先' },
+    1009: { name: '姜维', description: '诸葛亮的传人，文武双全，忠心耿耿' },
+    1010: { name: '徐庶', description: '水镜先生门下，足智多谋，忠贞不渝' },
+    
+    // 曹魏武将
+    2001: { name: '曹操', description: '魏武帝，治世之能臣，乱世之英雄' },
+    2002: { name: '司马懿', description: '冢虎，深谋远虑，终成帝业' },
+    2003: { name: '张辽', description: '曹魏五子良将之首，威震逍遥津' },
+    2004: { name: '夏侯惇', description: '曹操的心腹大将，忠勇无双' },
+    2005: { name: '许褚', description: '虎痴，曹操的贴身护卫，力大无穷' },
+    2006: { name: '典韦', description: '古之恶来，为主舍身，忠义典范' },
+    2007: { name: '郭嘉', description: '曹操的首席谋士，料事如神' },
+    2008: { name: '荀彧', description: '曹操的谋主，王佐之才' },
+    2009: { name: '荀攸', description: '曹操的军师，深谋远虑' },
+    2010: { name: '贾诩', description: '毒士，精于算计，善保自身' },
+    
+    // 东吴武将
+    3001: { name: '孙策', description: '小霸王，江东的奠基者，英年早逝' },
+    3002: { name: '孙权', description: '江东之主，善于用人，建立帝业' },
+    3003: { name: '周瑜', description: '美周郎，智勇双全，火烧赤壁' },
+    3004: { name: '太史慈', description: '东莱太史慈，箭法精准，忠义双全' },
+    3005: { name: '甘宁', description: '锦帆贼，水战专家，勇猛无敌' },
+    3006: { name: '陆逊', description: '江东儒将，火烧连营，智谋过人' },
+    3007: { name: '黄盖', description: '老将黄公覆，苦肉计献身' },
+    3008: { name: '程普', description: '江东宿将，德高望重' },
+    3009: { name: '韩当', description: '江东老将，追随孙氏三代' },
+    3010: { name: '周泰', description: '江东猛将，浑身刀疤，忠心护主' },
+    
+    // 群雄武将
+    4001: { name: '董卓', description: '西凉军阀，挟天子以令诸侯的始作俑者' },
+    4002: { name: '袁绍', description: '四世三公，名门望族，官渡败北' },
+    4003: { name: '袁术', description: '袁家次子，称帝南阳，终成笑柄' },
+    4004: { name: '吕布', description: '人中吕布，马中赤兔，三国第一猛将' },
+    4005: { name: '张角', description: '太平道首领，黄巾起义的发起者' },
+    4006: { name: '于吉', description: '太平道传人，善用妖术蛊惑人心' },
+    4007: { name: '左慈', description: '方士左元放，精通奇门遁甲' },
+    4008: { name: '南华老仙', description: '传说中的仙人，太平要术的传授者' },
+    4009: { name: '貂蝉', description: '中国古代四大美女之一，连环计的关键' },
+    4010: { name: '华佗', description: '神医华佗，医术高超，救死扶伤' }
+  };
+
+  const info = heroData[heroId] || { name: `武将${heroId}`, description: '未知武将' };
+  
+  // 基于品质和类型计算基础属性
+  const relations = getHeroRelationships(heroId);
+  const qualityMultiplier = [1.0, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0][relations.quality] || 1.0;
+  
+  // 基础属性（会根据品质调整）
+  let baseAttack = 400;
+  let baseDefense = 400;
+  let baseHp = 3000;
+  let baseSpeed = 80;
+  
+  // 根据兵种类型调整属性
+  switch (relations.unitType) {
+    case '军师':
+      baseAttack = 350; baseDefense = 300; baseHp = 2800; baseSpeed = 100;
+      break;
+    case '骑兵':
+      baseAttack = 450; baseDefense = 350; baseHp = 3200; baseSpeed = 120;
+      break;
+    case '弓兵':
+      baseAttack = 480; baseDefense = 320; baseHp = 2600; baseSpeed = 90;
+      break;
+    case '守护':
+      baseAttack = 350; baseDefense = 550; baseHp = 4500; baseSpeed = 60;
+      break;
+    case '刺客':
+      baseAttack = 500; baseDefense = 280; baseHp = 2400; baseSpeed = 140;
+      break;
+    case '医者':
+      baseAttack = 200; baseDefense = 300; baseHp = 2500; baseSpeed = 70;
+      break;
+    case '术士':
+      baseAttack = 380; baseDefense = 250; baseHp = 2200; baseSpeed = 110;
+      break;
+  }
+  
+  // 应用品质倍数
+  const finalStats = {
+    attack: Math.floor(baseAttack * qualityMultiplier),
+    defense: Math.floor(baseDefense * qualityMultiplier),
+    hp: Math.floor(baseHp * qualityMultiplier),
+    speed: Math.floor(baseSpeed * (1 + (qualityMultiplier - 1) * 0.5)) // 速度增长较缓慢
+  };
+  
+  return {
+    name: info.name,
+    description: info.description,
+    baseStats: finalStats
+  };
 }

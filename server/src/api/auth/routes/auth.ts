@@ -40,10 +40,8 @@ export default {
       path: '/auth/me',
       handler: 'auth.me',
       config: {
-        auth: {
-          scope: ['authenticated']
-        },
-        middlewares: [],
+        auth: false,
+        middlewares: ['global::auth'],
         policies: []
       }
     },
@@ -52,10 +50,8 @@ export default {
       path: '/auth/logout',
       handler: 'auth.logout',
       config: {
-        auth: {
-          scope: ['authenticated']
-        },
-        middlewares: [],
+        auth: false,
+        middlewares: ['global::auth'],
         policies: []
       }
     }

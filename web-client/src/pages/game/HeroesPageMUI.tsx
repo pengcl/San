@@ -43,12 +43,17 @@ import type { Hero } from '../../types';
 const HeroesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { data: heroesData, error, isLoading } = useGetHeroesQuery();
-  
   const [filterRarity, setFilterRarity] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<'level' | 'rarity' | 'attack'>('level');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
+
+  const { data: heroesData, error, isLoading } = useGetHeroesQuery({
+    page: 1,
+    limit: 100,
+    sort: sortBy,
+    order: 'desc'
+  });
 
   // 处理API错误
   useEffect(() => {
@@ -64,18 +69,18 @@ const HeroesPage: React.FC = () => {
     }
   }, [error, dispatch]);
 
-  // 处理武将点击
+  // 处理武将点击 - 直接导航到详情页面
   const handleHeroClick = (hero: Hero) => {
-    setSelectedHero(selectedHero?.id === hero.id ? null : hero);
+    navigate(`/heroes/${hero.id}`);
   };
 
   const handleHeroDetail = (hero: Hero) => {
     navigate(`/heroes/${hero.id}`);
   };
 
-  // 过滤和排序武将
+  // 过滤和排序武将 - 使用后端返回的真实数据
   const getFilteredAndSortedHeroes = () => {
-    const heroes = heroesData?.data || [];
+    const heroes = heroesData?.data?.heroes || [];
     let filteredHeroes = [...heroes];
 
     // 搜索过滤
@@ -88,23 +93,20 @@ const HeroesPage: React.FC = () => {
 
     // 品质过滤
     if (filterRarity !== null) {
-      filteredHeroes = filteredHeroes.filter(hero => {
-        const rarity = Math.min(6, Math.max(1, Math.floor((hero.base_attack || 400) / 100)));
-        return rarity === filterRarity;
-      });
+      filteredHeroes = filteredHeroes.filter(hero => 
+        (hero.quality === filterRarity) || (hero.rarity === filterRarity)
+      );
     }
 
     // 排序
     filteredHeroes.sort((a, b) => {
       switch (sortBy) {
         case 'level':
-          return (b.hero_id || 0) - (a.hero_id || 0);
+          return (b.id || 0) - (a.id || 0); // 按武将ID排序
         case 'rarity':
-          const rarityA = Math.min(6, Math.max(1, Math.floor((a.base_attack || 400) / 100)));
-          const rarityB = Math.min(6, Math.max(1, Math.floor((b.base_attack || 400) / 100)));
-          return rarityB - rarityA;
+          return (b.quality || b.rarity || 1) - (a.quality || a.rarity || 1); // 按品质排序
         case 'attack':
-          return (b.base_attack || 0) - (a.base_attack || 0);
+          return (b.baseStats?.attack || 0) - (a.baseStats?.attack || 0); // 按攻击力排序
         default:
           return 0;
       }
@@ -113,27 +115,27 @@ const HeroesPage: React.FC = () => {
     return filteredHeroes;
   };
 
-  const filteredHeroes = getFilteredAndSortedHeroes();
-  const totalHeroes = heroesData?.data?.length || 0;
+  const filteredHeroes = React.useMemo(() => getFilteredAndSortedHeroes(), [heroesData, searchQuery, filterRarity, sortBy]);
+  const totalHeroes = heroesData?.data?.heroes?.length || 0;
   const rarityOptions = [1, 2, 3, 4, 5, 6];
 
-  // 转换API数据为Hero类型
+  // 转换API数据为Hero类型 - 适配用户武将数据
   const convertToHero = (apiHero: any): Hero => ({
     id: apiHero.id,
     name: apiHero.name || '',
-    title: '',
+    title: apiHero.description || '',
     description: apiHero.description || '',
-    level: Math.floor((apiHero.hero_id || 1000) / 100),
-    experience: 0,
-    rarity: Math.min(6, Math.max(1, Math.floor((apiHero.base_attack || 400) / 100))),
-    faction: apiHero.hero_id ? (apiHero.hero_id < 2000 ? '蜀' : apiHero.hero_id < 3000 ? '魏' : '吴') : '',
-    role: apiHero.base_attack > 600 ? '物理输出' : apiHero.base_hp > 4000 ? '坦克' : apiHero.base_speed > 90 ? '敏攻' : '辅助',
-    unit_type: apiHero.base_speed > 100 ? '骑兵' : apiHero.base_attack > 650 ? '步兵' : '弓兵',
-    cost: Math.floor((apiHero.base_attack || 400) / 80) + 3,
-    health: apiHero.base_hp || 3000,
-    attack: apiHero.base_attack || 400,
-    defense: apiHero.base_defense || 400,
-    speed: apiHero.base_speed || 80,
+    level: apiHero.level || 1,
+    experience: apiHero.experience || 0,
+    rarity: apiHero.rarity || apiHero.quality || 1,
+    faction: apiHero.faction || '未知', // 使用后端返回的阵营
+    role: apiHero.unitType === '骑兵' ? '敏攻' : apiHero.unitType === '步兵' ? '物理输出' : '远程输出',
+    unit_type: apiHero.unitType || '步兵', // 使用后端返回的兵种
+    cost: Math.floor((apiHero.baseStats?.attack || 400) / 80) + 3,
+    health: apiHero.stats?.hp || apiHero.baseStats?.hp || 3000,
+    attack: apiHero.stats?.attack || apiHero.baseStats?.attack || 400,
+    defense: apiHero.stats?.defense || apiHero.baseStats?.defense || 400,
+    speed: apiHero.stats?.speed || apiHero.baseStats?.speed || 80,
     energy: 100,
     skills: [],
     equipment: [],
@@ -154,68 +156,92 @@ const HeroesPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl" disableGutters>
-      {/* 顶部应用栏 */}
+      {/* 顶部应用栏 - 手机端优化 */}
       <AppBar position="static" elevation={0}>
-        <Toolbar>
+        <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
           <IconButton
             edge="start"
             color="inherit"
             onClick={() => navigate(-1)}
-            sx={{ mr: 2 }}
+            sx={{ mr: 1 }}
           >
             <ArrowBack />
           </IconButton>
           
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h4" component="h1" sx={{ fontFamily: 'Cinzel' }}>
+            <Typography 
+              variant="h5" 
+              component="h1" 
+              sx={{ 
+                fontFamily: 'Cinzel',
+                fontSize: { xs: '1.25rem', sm: '1.5rem' }
+              }}
+            >
               武将系统
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              共 {totalHeroes} 名武将 | 已筛选 {filteredHeroes.length} 名
+            <Typography 
+              variant="caption" 
+              color="text.secondary"
+              sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}
+            >
+              共 {totalHeroes} 名 | 已筛选 {filteredHeroes.length} 名
             </Typography>
           </Box>
 
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/heroes/library')}
-            sx={{ ml: 1 }}
-          >
-            武将图鉴
-          </Button>
-          
-          <Button
-            variant="contained"
-            startIcon={<AutoAwesome />}
-            onClick={() =>
-              dispatch(
-                addNotification({
-                  type: 'info',
-                  title: '召唤功能',
-                  message: '武将召唤功能即将开放',
-                  duration: 3000,
-                })
-              )
-            }
-            sx={{ ml: 1 }}
-          >
-            召唤武将
-          </Button>
+          {/* 按钮组 - 手机端显示所有功能，只调整大小和布局 */}
+          <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 1 } }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => navigate('/heroes/library')}
+              sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                px: { xs: 1, sm: 2 }
+              }}
+            >
+              图鉴
+            </Button>
+            
+            <Button
+              variant="contained"
+              size="small"
+              startIcon={<AutoAwesome sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }} />}
+              onClick={() =>
+                dispatch(
+                  addNotification({
+                    type: 'info',
+                    title: '召唤功能',
+                    message: '武将召唤功能即将开放',
+                    duration: 3000,
+                  })
+                )
+              }
+              sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                px: { xs: 1, sm: 2 }
+              }}
+            >
+              <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>召唤武将</Box>
+              <Box sx={{ display: { xs: 'inline', sm: 'none' } }}>召唤</Box>
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
 
       {/* 筛选和搜索区域 */}
-      <Container maxWidth="xl" sx={{ py: 3 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, px: { xs: 2, sm: 3 } }}>
         <Card sx={{ mb: 3 }}>
           <CardContent>
             <Grid container spacing={2} alignItems="center">
-              {/* 搜索框 */}
-              <Grid item xs={12} md={4}>
+              {/* 搜索框 - 手机端占满宽度 */}
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   variant="outlined"
                   placeholder="搜索武将名称或描述..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  size="small"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -226,15 +252,14 @@ const HeroesPage: React.FC = () => {
                 />
               </Grid>
 
-              {/* 品质筛选 */}
-              <Grid item xs={12} md={3}>
-                <FormControl fullWidth>
+              {/* 品质筛选 - 手机端一行两个 */}
+              <Grid item xs={6} sm={4}>
+                <FormControl fullWidth size="small">
                   <InputLabel>品质筛选</InputLabel>
                   <Select
                     value={filterRarity || ''}
                     onChange={(e) => setFilterRarity(e.target.value as number || null)}
                     label="品质筛选"
-                    startAdornment={<FilterList sx={{ mr: 1 }} />}
                   >
                     <MenuItem value="">
                       <em>全部品质</em>
@@ -244,10 +269,10 @@ const HeroesPage: React.FC = () => {
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Box sx={{ display: 'flex' }}>
                             {Array.from({ length: rarity }, (_, i) => (
-                              <Star key={i} sx={{ fontSize: '1rem', color: '#ffd700' }} />
+                              <Star key={i} sx={{ fontSize: '0.8rem', color: '#ffd700' }} />
                             ))}
                           </Box>
-                          <Typography>{rarity}★</Typography>
+                          <Typography variant="body2">{rarity}★</Typography>
                         </Stack>
                       </MenuItem>
                     ))}
@@ -255,15 +280,14 @@ const HeroesPage: React.FC = () => {
                 </FormControl>
               </Grid>
 
-              {/* 排序选择 */}
-              <Grid item xs={12} md={3}>
-                <FormControl fullWidth>
+              {/* 排序选择 - 手机端一行两个 */}
+              <Grid item xs={6} sm={4}>
+                <FormControl fullWidth size="small">
                   <InputLabel>排序方式</InputLabel>
                   <Select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as 'level' | 'rarity' | 'attack')}
                     label="排序方式"
-                    startAdornment={<Sort sx={{ mr: 1 }} />}
                   >
                     <MenuItem value="level">等级排序</MenuItem>
                     <MenuItem value="rarity">品质排序</MenuItem>
@@ -272,11 +296,12 @@ const HeroesPage: React.FC = () => {
                 </FormControl>
               </Grid>
 
-              {/* 清除筛选 */}
-              <Grid item xs={12} md={2}>
+              {/* 清除筛选 - 手机端独占一行，平板以上和上面并列 */}
+              <Grid item xs={12} sm={4}>
                 <Button
                   fullWidth
                   variant="outlined"
+                  size="small"
                   onClick={() => {
                     setFilterRarity(null);
                     setSearchQuery('');
@@ -322,12 +347,12 @@ const HeroesPage: React.FC = () => {
           </Alert>
         )}
 
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 1, sm: 2 }}>
           <AnimatePresence>
             {filteredHeroes.map((heroData, index) => {
               const hero = convertToHero(heroData);
               return (
-                <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={hero.id}>
+                <Grid item xs={6} sm={6} md={4} lg={3} xl={2} key={hero.id}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

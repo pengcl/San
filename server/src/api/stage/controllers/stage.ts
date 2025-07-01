@@ -245,7 +245,7 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
       const { chapter_id, stage_type } = ctx.query;
       const user = ctx.state.user;
 
-      let filters = { is_active: true };
+      let filters: any = { is_active: true };
       if (chapter_id) {
         filters.chapter = chapter_id;
       }
@@ -282,7 +282,8 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
             await strapi.entityService.create('api::stage.stage', {
               data: {
                 ...stageData,
-                chapter: chapterEntityId
+                chapter: chapterEntityId,
+                stage_type: stageData.stage_type as "normal" | "elite" | "heroic" | "event" | "daily"
               }
             });
           }
@@ -295,10 +296,10 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
           populate: ['chapter'],
         });
         
-        return this.processStagesWithProgress(newStages, user);
+        return this.processStagesWithProgress(newStages as any, user);
       }
 
-      return this.processStagesWithProgress(stages, user);
+      return this.processStagesWithProgress(stages as any, user);
     } catch (error) {
       console.error('获取关卡列表失败:', error);
       return ctx.badRequest('获取关卡列表失败', { error: error.message });
@@ -326,24 +327,24 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
       if (user) {
         const userProgress = await strapi.entityService.findMany('api::user-stage-progress.user-stage-progress', {
           filters: { 
-            user: user.id,
-            stage_id: stage.stage_id
+            user: (user as any).id,
+            stage: { stage_id: stage.stage_id }
           },
         });
         progress = userProgress[0] || null;
       }
 
       // 检查关卡是否解锁
-      const isUnlocked = await this.checkStageUnlocked(stage, user);
+      const isUnlocked = await this.checkStageUnlocked(stage as any, user);
 
       const result = {
         ...stage,
         progress,
         is_unlocked: isUnlocked,
-        is_completed: progress?.is_completed || false,
-        stars_earned: progress?.stars_earned || 0,
+        is_completed: progress?.stars > 0 || false,
+        stars_earned: progress?.stars || 0,
         best_clear_time: progress?.best_clear_time || null,
-        attempts_today: progress?.attempts_today || 0
+        attempts_today: progress?.daily_attempts || 0
       };
 
       return this.transformResponse(result);
@@ -371,18 +372,18 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
       }
 
       // 检查关卡是否解锁
-      const isUnlocked = await this.checkStageUnlocked(stage, user);
+      const isUnlocked = await this.checkStageUnlocked(stage as any, user);
       if (!isUnlocked) {
         return ctx.badRequest('关卡未解锁');
       }
 
       // 检查体力是否足够
       const userProfile = await strapi.entityService.findMany('api::user-profile.user-profile', {
-        filters: { user: user.id },
+        filters: { user: (user as any).id },
       });
       
       const profile = userProfile[0];
-      if (!profile || profile.energy < stage.energy_cost) {
+      if (!profile || profile.stamina < stage.energy_cost) {
         return ctx.badRequest('体力不足');
       }
 
@@ -390,13 +391,13 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
       if (stage.daily_attempts > 0) {
         const progress = await strapi.entityService.findMany('api::user-stage-progress.user-stage-progress', {
           filters: { 
-            user: user.id,
-            stage_id: stage.stage_id
+            user: (user as any).id,
+            stage: { stage_id: stage.stage_id }
           },
         });
         
         const todayProgress = progress[0];
-        if (todayProgress && todayProgress.attempts_today >= stage.daily_attempts) {
+        if (todayProgress && todayProgress.daily_attempts >= stage.daily_attempts) {
           return ctx.badRequest('今日挑战次数已用完');
         }
       }
@@ -404,20 +405,19 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
       // 扣除体力
       await strapi.entityService.update('api::user-profile.user-profile', profile.id, {
         data: {
-          energy: profile.energy - stage.energy_cost
+          stamina: profile.stamina - stage.energy_cost
         }
       });
 
       // 创建战斗记录
       const battle = await strapi.entityService.create('api::battle.battle', {
         data: {
-          user: user.id,
+          battle_id: `battle_${Date.now()}_${(user as any).id}`,
+          player: (user as any).id,
           stage_id: stage.stage_id,
           battle_type: 'pve_normal',
-          status: 'ongoing',
-          start_time: new Date(),
-          enemy_formation: stage.enemy_formation,
-          energy_cost: stage.energy_cost
+          result: 'ongoing',
+          enemy_formation: stage.enemy_formation
         }
       });
 
@@ -425,7 +425,7 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
         battle_id: battle.id,
         stage: stage,
         energy_cost: stage.energy_cost,
-        remaining_energy: profile.energy - stage.energy_cost
+        remaining_energy: profile.stamina - stage.energy_cost
       });
     } catch (error) {
       console.error('开始关卡挑战失败:', error);
@@ -448,28 +448,31 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
 
     // 获取用户所有关卡进度
     const userProgress = await strapi.entityService.findMany('api::user-stage-progress.user-stage-progress', {
-      filters: { user: user.id },
+      filters: { user: (user as any).id },
     });
 
-    const progressMap = userProgress.reduce((acc, progress) => {
-      acc[progress.stage_id] = progress;
+    const progressMap = userProgress.reduce((acc: any, progress: any) => {
+      const stageId = progress.stage?.stage_id || progress.stage?.id;
+      if (stageId) {
+        acc[stageId] = progress;
+      }
       return acc;
     }, {});
 
     // 处理每个关卡的解锁状态
     const processedStages = [];
-    for (const stage of stages) {
+    for (const stage of stages as unknown as any[]) {
       const progress = progressMap[stage.stage_id];
-      const isUnlocked = await this.checkStageUnlocked(stage, user);
+      const isUnlocked = await this.checkStageUnlocked(stage as any, user);
       
       processedStages.push({
         ...stage,
         progress,
         is_unlocked: isUnlocked,
-        is_completed: progress?.is_completed || false,
-        stars_earned: progress?.stars_earned || 0,
+        is_completed: progress?.stars > 0 || false,
+        stars_earned: progress?.stars || 0,
         best_clear_time: progress?.best_clear_time || null,
-        attempts_today: progress?.attempts_today || 0
+        attempts_today: progress?.daily_attempts || 0
       });
     }
 
@@ -518,9 +521,9 @@ export default factories.createCoreController('api::stage.stage', ({ strapi }) =
     // 检查前置关卡是否完成
     const prevProgress = await strapi.entityService.findMany('api::user-stage-progress.user-stage-progress', {
       filters: {
-        user: user.id,
-        stage_id: prevStageId,
-        is_completed: true
+        user: (user as any).id,
+        stage: { stage_id: prevStageId },
+        stars: { $gt: 0 }
       },
     });
 
