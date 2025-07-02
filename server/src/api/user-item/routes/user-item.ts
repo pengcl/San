@@ -9,9 +9,9 @@ export default {
       path: '/user-items',
       handler: 'user-item.getUserItems',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -19,9 +19,9 @@ export default {
       path: '/user-items/:id/use',
       handler: 'user-item.useItem',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -29,9 +29,9 @@ export default {
       path: '/user-items/:id/lock',
       handler: 'user-item.toggleItemLock',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -39,9 +39,9 @@ export default {
       path: '/user-items/sell',
       handler: 'user-item.sellItems',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -49,9 +49,9 @@ export default {
       path: '/user-items/add',
       handler: 'user-item.addItem',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     }
   ]

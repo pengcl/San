@@ -9,9 +9,9 @@ export default {
       path: '/item-templates',
       handler: 'item-template.find',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -19,9 +19,9 @@ export default {
       path: '/item-templates/:id',
       handler: 'item-template.findOne',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -29,9 +29,9 @@ export default {
       path: '/item-templates/category/:category',
       handler: 'item-template.getByCategory',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -39,9 +39,9 @@ export default {
       path: '/item-templates/usable/list',
       handler: 'item-template.getUsableItems',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false, // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     }
   ]

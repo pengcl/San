@@ -2,6 +2,7 @@ import type { Core } from '@strapi/strapi';
 import webSocketService from './websocket/websocket.service';
 import { importStageData } from './data/import-stage-data';
 import { importCityData } from './data/import-city-data';
+import { importItemData } from './data/import-item-data';
 
 export default {
   /**
@@ -241,6 +242,10 @@ export default {
       // 导入城池数据
       await importCityData(strapi);
       console.log('✅ City data imported successfully');
+      
+      // 导入物品数据
+      await importItemData(strapi);
+      console.log('✅ Item data imported successfully');
       
       console.log('🎉 All data imported successfully');
     } catch (error) {
