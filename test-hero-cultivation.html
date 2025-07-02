@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武将培养系统功能测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .hero-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        .hero-card:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.2);
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+        
+        input, select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff6b35;
+        }
+        
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255,107,53,0.1);
+            border-radius: 4px;
+        }
+        
+        .upgrade-result {
+            background: rgba(76,175,80,0.2);
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .error-result {
+            background: rgba(244,67,54,0.2);
+            border: 1px solid #f44336;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 武将培养系统测试 ⚔️</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="http://localhost:3000/heroes" class="nav-link" target="_blank">👥 武将页面</a>
+        <a href="test-hero-filtering.html" class="nav-link">🔍 筛选测试</a>
+        <a href="test-formation-system.html" class="nav-link">⚔️ 阵容测试</a>
+        <a href="test-battle-flow.html" class="nav-link">🏟️ 战斗测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 认证登录</h3>
+        <button onclick="testAuth()">🔐 登录获取Token</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 获取武将列表</h3>
+        <button onclick="loadHeroes()">👥 加载武将数据</button>
+        <div id="heroes-result"></div>
+        <div id="heroes-list"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 武将升级测试</h3>
+        <div class="form-group">
+            <label>选择武将:</label>
+            <select id="heroSelect" onchange="displaySelectedHero()">
+                <option value="">请选择武将...</option>
+            </select>
+        </div>
+        
+        <div id="selectedHeroInfo"></div>
+        
+        <div class="form-group">
+            <label>目标等级:</label>
+            <input type="number" id="targetLevel" min="1" max="100" placeholder="输入目标等级">
+        </div>
+        
+        <div class="form-group">
+            <label>使用金币:</label>
+            <input type="number" id="useGold" min="0" placeholder="使用金币数量">
+        </div>
+        
+        <button onclick="testLevelUp()">⬆️ 武将升级</button>
+        <div id="levelup-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. 武将升星测试</h3>
+        <div class="form-group">
+            <label>升星材料:</label>
+            <div>
+                <input type="number" id="duplicates" placeholder="重复武将数量" style="width: 120px;">
+                <input type="number" id="upgradeStones" placeholder="升级石数量" style="width: 120px;">
+                <input type="number" id="rareGems" placeholder="稀有宝石数量" style="width: 120px;">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>升星金币:</label>
+            <input type="number" id="starUpGold" min="0" placeholder="升星所需金币">
+        </div>
+        
+        <button onclick="testStarUp()">⭐ 武将升星</button>
+        <div id="starup-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. 技能升级测试</h3>
+        <div class="form-group">
+            <label>技能ID:</label>
+            <input type="number" id="skillId" placeholder="输入技能ID (如: 1001)">
+        </div>
+        
+        <div class="form-group">
+            <label>技能材料:</label>
+            <div>
+                <input type="number" id="skillBooks" placeholder="技能书数量" style="width: 120px;">
+                <input type="number" id="wisdomScrolls" placeholder="智慧卷轴数量" style="width: 120px;">
+                <input type="number" id="masterTomes" placeholder="大师典籍数量" style="width: 120px;">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>技能升级金币:</label>
+            <input type="number" id="skillUpgradeGold" min="0" placeholder="技能升级所需金币">
+        </div>
+        
+        <button onclick="testSkillUpgrade()">📚 技能升级</button>
+        <div id="skill-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. 前端集成验证</h3>
+        <div class="info">
+            <p>🎯 <strong>测试要点：</strong></p>
+            <ul>
+                <li>验证武将升级接口：使用金币和经验道具提升武将等级</li>
+                <li>验证武将升星接口：使用材料提升武将星级（有成功率）</li>
+                <li>验证技能升级接口：使用技能书等材料提升技能等级</li>
+                <li>验证属性计算：确保升级后属性正确计算</li>
+                <li>验证资源消耗：确保金币和材料正确扣除</li>
+                <li>验证错误处理：资源不足、等级限制等错误情况</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000/heroes', '_blank')">🚀 打开武将页面测试</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let allHeroes = [];
+
+        // 认证
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <div>用户: ${data.data.user.username} | Token: ${authToken.substring(0, 20)}...</div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 加载武将数据
+        async function loadHeroes() {
+            const resultDiv = document.getElementById('heroes-result');
+            const listDiv = document.getElementById('heroes-list');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在加载武将数据...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes?page=1&limit=100`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success || data.data) {
+                    allHeroes = data.data || [];
+                    
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 加载成功</span>
+                        <div>武将数量: ${allHeroes.length}</div>
+                    `;
+                    
+                    // 更新下拉选择框
+                    const heroSelect = document.getElementById('heroSelect');
+                    heroSelect.innerHTML = '<option value="">请选择武将...</option>';
+                    allHeroes.forEach(hero => {
+                        const option = document.createElement('option');
+                        option.value = hero.id;
+                        option.textContent = `${hero.name} (Lv.${hero.level || 1} ${hero.star || 1}⭐)`;
+                        heroSelect.appendChild(option);
+                    });
+                    
+                    // 显示武将列表
+                    listDiv.innerHTML = allHeroes.map(hero => `
+                        <div class="hero-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong>${hero.name}</strong>
+                                <div>Lv.${hero.level || 1} | ${hero.star || 1}⭐ | 战力: ${hero.power || 0}</div>
+                            </div>
+                            <div>阵营: ${hero.faction || '未知'} | 兵种: ${hero.unitType || '未知'}</div>
+                        </div>
+                    `).join('');
+                    
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 显示选中武将信息
+        function displaySelectedHero() {
+            const heroSelect = document.getElementById('heroSelect');
+            const infoDiv = document.getElementById('selectedHeroInfo');
+            const heroId = heroSelect.value;
+            
+            if (!heroId) {
+                infoDiv.innerHTML = '';
+                return;
+            }
+            
+            const hero = allHeroes.find(h => h.id == heroId);
+            if (hero) {
+                const currentStats = calculateStatsForLevel(hero.level || 1, hero.star || 1);
+                infoDiv.innerHTML = `
+                    <div class="hero-card">
+                        <h4>${hero.name} 当前状态</h4>
+                        <div class="stats-display">
+                            <div class="stat-item">
+                                <div><strong>等级</strong></div>
+                                <div>${hero.level || 1}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>星级</strong></div>
+                                <div>${hero.star || 1}⭐</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>生命</strong></div>
+                                <div>${currentStats.hp}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>攻击</strong></div>
+                                <div>${currentStats.attack}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>防御</strong></div>
+                                <div>${currentStats.defense}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>速度</strong></div>
+                                <div>${currentStats.speed}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 武将升级测试
+        async function testLevelUp() {
+            const heroId = document.getElementById('heroSelect').value;
+            const targetLevel = parseInt(document.getElementById('targetLevel').value) || 0;
+            const useGold = parseInt(document.getElementById('useGold').value) || 0;
+            const resultDiv = document.getElementById('levelup-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            if (!heroId) {
+                resultDiv.innerHTML = '<span class="error">❌ 请选择武将</span>';
+                return;
+            }
+            
+            if (targetLevel <= 0 && useGold <= 0) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入目标等级或使用金币数量</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在升级武将...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${heroId}/level-up`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        targetLevel: targetLevel > 0 ? targetLevel : undefined,
+                        useGold: useGold,
+                        useItems: [] // 暂时不使用道具
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    resultDiv.innerHTML = `
+                        <div class="upgrade-result">
+                            <div class="success">✅ 升级成功！</div>
+                            <div><strong>等级提升：</strong> +${result.levelsGained} 级</div>
+                            <div><strong>经验获得：</strong> ${result.experienceGained}</div>
+                            <div><strong>金币消耗：</strong> ${result.costsUsed.gold}</div>
+                            <div><strong>属性提升：</strong></div>
+                            <div class="stats-display">
+                                <div class="stat-item">
+                                    <div><strong>生命</strong></div>
+                                    <div>+${result.statsIncrease.hp}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div><strong>攻击</strong></div>
+                                    <div>+${result.statsIncrease.attack}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div><strong>防御</strong></div>
+                                    <div>+${result.statsIncrease.defense}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div><strong>速度</strong></div>
+                                    <div>+${result.statsIncrease.speed}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 刷新武将列表
+                    await loadHeroes();
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error-result">
+                            <span class="error">❌ 升级失败</span>
+                            <div>错误信息: ${data.error?.message || '未知错误'}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error-result">
+                        <span class="error">❌ 网络错误</span>
+                        <div>错误信息: ${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 武将升星测试
+        async function testStarUp() {
+            const heroId = document.getElementById('heroSelect').value;
+            const duplicates = parseInt(document.getElementById('duplicates').value) || 0;
+            const upgradeStones = parseInt(document.getElementById('upgradeStones').value) || 0;
+            const rareGems = parseInt(document.getElementById('rareGems').value) || 0;
+            const gold = parseInt(document.getElementById('starUpGold').value) || 0;
+            const resultDiv = document.getElementById('starup-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            if (!heroId) {
+                resultDiv.innerHTML = '<span class="error">❌ 请选择武将</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在升星...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${heroId}/star-up`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        materials: {
+                            duplicates,
+                            upgradeStones,
+                            rareGems
+                        },
+                        gold,
+                        confirm: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    const successClass = result.success ? 'upgrade-result' : 'error-result';
+                    const successIcon = result.success ? '✅' : '❌';
+                    const successText = result.success ? '升星成功！' : '升星失败！';
+                    
+                    resultDiv.innerHTML = `
+                        <div class="${successClass}">
+                            <div class="${result.success ? 'success' : 'error'}">${successIcon} ${successText}</div>
+                            <div><strong>新星级：</strong> ${result.newRarity}⭐</div>
+                            <div><strong>材料消耗：</strong></div>
+                            <div>重复武将: ${result.materialsUsed.duplicates || 0}</div>
+                            <div>升级石: ${result.materialsUsed.upgradeStones || 0}</div>
+                            <div>稀有宝石: ${result.materialsUsed.rareGems || 0}</div>
+                            <div><strong>金币消耗：</strong> ${result.goldUsed}</div>
+                            ${result.success ? `
+                                <div><strong>属性提升：</strong></div>
+                                <div class="stats-display">
+                                    <div class="stat-item">
+                                        <div><strong>生命</strong></div>
+                                        <div>+${result.statsIncrease.hp}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div><strong>攻击</strong></div>
+                                        <div>+${result.statsIncrease.attack}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div><strong>防御</strong></div>
+                                        <div>+${result.statsIncrease.defense}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div><strong>速度</strong></div>
+                                        <div>+${result.statsIncrease.speed}</div>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div><strong>补偿物品：</strong></div>
+                                <div>${result.compensationItems.map(item => `${item.type}: ${item.amount}`).join(', ')}</div>
+                            `}
+                        </div>
+                    `;
+                    
+                    // 刷新武将列表
+                    await loadHeroes();
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error-result">
+                            <span class="error">❌ 升星失败</span>
+                            <div>错误信息: ${data.error?.message || '未知错误'}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error-result">
+                        <span class="error">❌ 网络错误</span>
+                        <div>错误信息: ${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 技能升级测试
+        async function testSkillUpgrade() {
+            const heroId = document.getElementById('heroSelect').value;
+            const skillId = parseInt(document.getElementById('skillId').value) || 1001;
+            const skillBooks = parseInt(document.getElementById('skillBooks').value) || 0;
+            const wisdomScrolls = parseInt(document.getElementById('wisdomScrolls').value) || 0;
+            const masterTomes = parseInt(document.getElementById('masterTomes').value) || 0;
+            const gold = parseInt(document.getElementById('skillUpgradeGold').value) || 0;
+            const resultDiv = document.getElementById('skill-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            if (!heroId) {
+                resultDiv.innerHTML = '<span class="error">❌ 请选择武将</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在升级技能...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${heroId}/skills/${skillId}/upgrade`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        materials: {
+                            skillBooks,
+                            wisdomScrolls,
+                            masterTomes
+                        },
+                        gold
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    resultDiv.innerHTML = `
+                        <div class="upgrade-result">
+                            <div class="success">✅ 技能升级成功！</div>
+                            <div><strong>技能ID：</strong> ${result.skill.id}</div>
+                            <div><strong>新等级：</strong> ${result.newLevel}/${result.skill.maxLevel}</div>
+                            <div><strong>材料消耗：</strong></div>
+                            <div>技能书: ${result.materialsUsed.skillBooks || 0}</div>
+                            <div>智慧卷轴: ${result.materialsUsed.wisdomScrolls || 0}</div>
+                            <div>大师典籍: ${result.materialsUsed.masterTomes || 0}</div>
+                            <div><strong>金币消耗：</strong> ${result.goldUsed}</div>
+                            <div><strong>效果提升：</strong></div>
+                            <div>伤害加成: ${result.skillEffectIncrease.damage}</div>
+                            <div>描述: ${result.skillEffectIncrease.description}</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error-result">
+                            <span class="error">❌ 技能升级失败</span>
+                            <div>错误信息: ${data.error?.message || '未知错误'}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error-result">
+                        <span class="error">❌ 网络错误</span>
+                        <div>错误信息: ${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 辅助函数 - 计算等级和星级对应的属性
+        function calculateStatsForLevel(level, star) {
+            const baseStats = {
+                hp: 3000,
+                attack: 400,
+                defense: 400,
+                speed: 80
+            };
+
+            const starMultiplier = 1 + (star - 1) * 0.2;
+            const levelMultiplier = 1 + (level - 1) * 0.1;
+
+            return {
+                hp: Math.floor(baseStats.hp * starMultiplier * levelMultiplier),
+                attack: Math.floor(baseStats.attack * starMultiplier * levelMultiplier),
+                defense: Math.floor(baseStats.defense * starMultiplier * levelMultiplier),
+                speed: Math.floor(baseStats.speed * starMultiplier * levelMultiplier)
+            };
+        }
+
+        // 页面加载时自动登录
+        window.onload = function() {
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

@@ -31,7 +31,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppDispatch } from '../../store';
 import { addNotification } from '../../store/slices/uiSlice';
-import { useGetChaptersQuery, useGetStagesQuery } from '../../store/slices/apiSlice';
+import { useGetBattleStagesQuery } from '../../store/slices/apiSlice';
 
 interface BattleStage {
   id: number;
@@ -61,22 +61,17 @@ const BattleStagesPage: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<'normal' | 'elite' | 'nightmare'>('normal');
   const [selectedChapter, setSelectedChapter] = useState<number>(1);
   
-  // 获取章节列表
-  const { data: chaptersData, error: chaptersError, isLoading: chaptersLoading } = useGetChaptersQuery();
-  
-  // 获取当前章节的关卡
-  const { data: stagesData, error: stagesError, isLoading: stagesLoading } = useGetStagesQuery({
-    chapter_id: selectedChapter,
-    stage_type: selectedDifficulty,
+  // 获取战斗关卡数据
+  const { data: battleData, error, isLoading } = useGetBattleStagesQuery({
+    difficulty: selectedDifficulty,
+    chapter: selectedChapter,
   });
 
-  const chapters = chaptersData?.data || [];
-  const stages = stagesData?.data || [];
-  const isLoading = chaptersLoading || stagesLoading;
-  const error = chaptersError || stagesError;
+  const chapters = battleData?.data?.chapters || [];
+  const stages = chapters.length > 0 ? chapters[0].stages || [] : [];
 
   const handleStageClick = (stage: any) => {
-    if (!stage.is_unlocked) {
+    if (!stage.unlocked) {
       dispatch(addNotification({
         type: 'warning',
         title: '关卡未解锁',

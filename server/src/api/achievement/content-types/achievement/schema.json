@@ -1,0 +1,93 @@
+{
+  "kind": "collectionType",
+  "collectionName": "achievements",
+  "info": {
+    "singularName": "achievement",
+    "pluralName": "achievements",
+    "displayName": "成就模板",
+    "description": "游戏成就系统配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "achievement_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "成就唯一标识符"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "成就名称"
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "description": "成就描述"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["combat", "collection", "progression", "social", "special"],
+      "required": true,
+      "description": "成就分类"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["single", "tiered", "progressive"],
+      "required": true,
+      "description": "成就类型"
+    },
+    "requirements": {
+      "type": "json",
+      "required": true,
+      "description": "完成条件"
+    },
+    "rewards": {
+      "type": "json",
+      "required": true,
+      "description": "奖励配置"
+    },
+    "tiers": {
+      "type": "json",
+      "description": "分级成就配置"
+    },
+    "rarity": {
+      "type": "enumeration",
+      "enum": ["common", "rare", "epic", "legendary", "mythic"],
+      "default": "common",
+      "description": "成就稀有度"
+    },
+    "points": {
+      "type": "integer",
+      "default": 0,
+      "description": "成就积分"
+    },
+    "icon": {
+      "type": "string",
+      "description": "成就图标"
+    },
+    "unlock_level": {
+      "type": "integer",
+      "default": 1,
+      "description": "解锁等级"
+    },
+    "is_hidden": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否为隐藏成就"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否激活"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "显示顺序"
+    }
+  }
+}

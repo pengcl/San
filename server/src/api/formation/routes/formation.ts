@@ -27,9 +27,7 @@ export default {
       path: '/formations',
       handler: 'formation.create',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false
       }
     },
     {
@@ -37,9 +35,7 @@ export default {
       path: '/formations/:id',
       handler: 'formation.update',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false
       }
     },
     {

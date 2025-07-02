@@ -39,9 +39,7 @@ export default {
       path: '/summon/rates',
       handler: 'summon.getSummonRates',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false  // 召唤概率可公开查看
       }
     },
     {

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务成就系统功能测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+        
+        input, select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff6b35;
+        }
+        
+        .quest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .quest-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .quest-card:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.1);
+        }
+        
+        .quest-card.daily { border-left: 4px solid #4caf50; }
+        .quest-card.weekly { border-left: 4px solid #2196f3; }
+        .quest-card.main { border-left: 4px solid #ff9800; }
+        .quest-card.achievement { border-left: 4px solid #9c27b0; }
+        
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .quest-name {
+            font-weight: bold;
+            color: #ff6b35;
+            font-size: 16px;
+        }
+        
+        .quest-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .quest-status.not_started { background: #666; }
+        .quest-status.in_progress { background: #ff9800; }
+        .quest-status.completed { background: #4caf50; }
+        .quest-status.claimed { background: #2196f3; }
+        
+        .quest-description {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .quest-progress {
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35, #f9ca24);
+            transition: width 0.3s;
+        }
+        
+        .quest-rewards {
+            background: rgba(255,107,53,0.1);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .quest-rewards .reward-item {
+            display: inline-block;
+            margin: 2px 5px;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .achievement-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .achievement-card.combat { border-left: 4px solid #f44336; }
+        .achievement-card.collection { border-left: 4px solid #4caf50; }
+        .achievement-card.progression { border-left: 4px solid #2196f3; }
+        .achievement-card.social { border-left: 4px solid #ff9800; }
+        .achievement-card.special { border-left: 4px solid #9c27b0; }
+        
+        .achievement-rarity {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .achievement-rarity.common { background: #9e9e9e; }
+        .achievement-rarity.rare { background: #4caf50; }
+        .achievement-rarity.epic { background: #9c27b0; }
+        .achievement-rarity.legendary { background: #ff9800; }
+        .achievement-rarity.mythic { background: #f44336; }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+        }
+        
+        .tab.active {
+            background: rgba(255,107,53,0.3);
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+        
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,107,53,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 任务成就系统测试 🏆</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="test-shop-system.html" class="nav-link">🛒 商店测试</a>
+        <a href="test-equipment-system.html" class="nav-link">🛡️ 装备测试</a>
+        <a href="test-hero-cultivation.html" class="nav-link">⚔️ 培养测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 认证登录</h3>
+        <button onclick="testAuth()">🔐 登录获取Token</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 任务系统</h3>
+        
+        <div class="tabs" id="quest-tabs">
+            <div class="tab active" data-category="daily">📅 每日任务</div>
+            <div class="tab" data-category="weekly">📆 周常任务</div>
+            <div class="tab" data-category="main">📜 主线任务</div>
+            <div class="tab" data-category="side">🗂️ 支线任务</div>
+            <div class="tab" data-category="all">🌟 全部任务</div>
+        </div>
+        
+        <div class="info">
+            <button onclick="loadQuests(currentQuestCategory)">📋 加载任务列表</button>
+            <button onclick="loadDailyQuests()">📅 加载每日任务</button>
+            <button onclick="refreshDailyQuests()">🔄 刷新每日任务</button>
+        </div>
+        
+        <div id="quest-info"></div>
+        <div id="quest-list" class="quest-grid">
+            <!-- 任务列表将通过JavaScript显示 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. 成就系统</h3>
+        
+        <div class="tabs" id="achievement-tabs">
+            <div class="tab active" data-category="all">🏆 全部成就</div>
+            <div class="tab" data-category="combat">⚔️ 战斗成就</div>
+            <div class="tab" data-category="collection">📦 收集成就</div>
+            <div class="tab" data-category="progression">📈 进度成就</div>
+            <div class="tab" data-category="social">👥 社交成就</div>
+        </div>
+        
+        <div class="info">
+            <button onclick="loadAchievements(currentAchievementCategory)">🏆 加载成就列表</button>
+            <button onclick="loadAchievementStatistics()">📊 加载成就统计</button>
+        </div>
+        
+        <div id="achievement-statistics" class="statistics-grid">
+            <!-- 成就统计将通过JavaScript显示 -->
+        </div>
+        
+        <div id="achievement-list" class="quest-grid">
+            <!-- 成就列表将通过JavaScript显示 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. 进度模拟测试</h3>
+        
+        <h4>📊 任务进度更新</h4>
+        <div class="form-group">
+            <label>任务ID:</label>
+            <input type="text" id="questId" placeholder="输入任务ID" value="daily_battle">
+        </div>
+        
+        <div class="form-group">
+            <label>动作类型:</label>
+            <select id="questAction">
+                <option value="battles_completed">完成战斗</option>
+                <option value="hero_upgrades">武将升级</option>
+                <option value="arena_battles">竞技场战斗</option>
+                <option value="equipment_enhancements">装备强化</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>进度值:</label>
+            <input type="number" id="questValue" placeholder="进度增加值" value="1" min="1">
+        </div>
+        
+        <button onclick="testUpdateQuestProgress()">📈 更新任务进度</button>
+        <div id="quest-progress-result"></div>
+        
+        <h4>🏆 成就进度更新</h4>
+        <div class="form-group">
+            <label>成就ID:</label>
+            <input type="text" id="achievementId" placeholder="输入成就ID" value="first_victory">
+        </div>
+        
+        <div class="form-group">
+            <label>动作类型:</label>
+            <select id="achievementAction">
+                <option value="battles_won">赢得战斗</option>
+                <option value="unique_heroes">收集武将</option>
+                <option value="friends_count">添加好友</option>
+                <option value="guild_joined">加入公会</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>进度值:</label>
+            <input type="number" id="achievementValue" placeholder="进度增加值" value="1" min="1">
+        </div>
+        
+        <button onclick="testUpdateAchievementProgress()">🎯 更新成就进度</button>
+        <div id="achievement-progress-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. 奖励领取测试</h3>
+        
+        <div class="form-group">
+            <label>任务奖励领取:</label>
+            <input type="text" id="rewardQuestId" placeholder="输入任务ID" value="daily_battle">
+            <button onclick="testClaimQuestReward()">💰 领取任务奖励</button>
+        </div>
+        
+        <div class="form-group">
+            <label>成就奖励领取:</label>
+            <input type="text" id="rewardAchievementId" placeholder="输入成就ID" value="first_victory">
+            <button onclick="testClaimAchievementReward()">🎁 领取成就奖励</button>
+        </div>
+        
+        <div id="reward-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. 系统验证</h3>
+        <div class="info">
+            <p>🎯 <strong>任务成就系统测试要点：</strong></p>
+            <ul>
+                <li>验证任务创建：每日任务自动生成和重置</li>
+                <li>验证进度追踪：任务和成就进度正确更新</li>
+                <li>验证完成检测：达到条件时自动标记完成</li>
+                <li>验证奖励系统：正确发放任务和成就奖励</li>
+                <li>验证分级成就：多层级成就进度计算正确</li>
+                <li>验证统计功能：成就完成率和积分统计准确</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000', '_blank')">🚀 打开前端测试</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let currentQuestCategory = 'daily';
+        let currentAchievementCategory = 'all';
+
+        // 认证
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <div>用户: ${data.data.user.username} | Token: ${authToken.substring(0, 20)}...</div>
+                    `;
+                    
+                    // 自动加载每日任务
+                    setTimeout(() => loadDailyQuests(), 500);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 标签切换事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 任务标签切换
+            const questTabs = document.querySelectorAll('#quest-tabs .tab');
+            questTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    questTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentQuestCategory = this.dataset.category;
+                    loadQuests(currentQuestCategory);
+                });
+            });
+
+            // 成就标签切换
+            const achievementTabs = document.querySelectorAll('#achievement-tabs .tab');
+            achievementTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    achievementTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentAchievementCategory = this.dataset.category;
+                    loadAchievements(currentAchievementCategory);
+                });
+            });
+        });
+
+        // 加载任务列表
+        async function loadQuests(category = 'all') {
+            const questListDiv = document.getElementById('quest-list');
+            
+            if (!authToken) {
+                questListDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            questListDiv.innerHTML = '<div class="loading">🔄 正在加载任务...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/quests?category=${category}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayQuests(data.data.quests);
+                } else {
+                    questListDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                questListDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 加载每日任务
+        async function loadDailyQuests() {
+            const questListDiv = document.getElementById('quest-list');
+            const questInfoDiv = document.getElementById('quest-info');
+            
+            if (!authToken) {
+                questListDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            questListDiv.innerHTML = '<div class="loading">🔄 正在加载每日任务...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/quests/daily`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    questInfoDiv.innerHTML = `
+                        <div class="info">
+                            <h4>📅 每日任务概览</h4>
+                            <p><strong>完成进度:</strong> ${data.data.summary.completed}/${data.data.summary.total}</p>
+                            <p><strong>重置时间:</strong> ${data.data.resetTime}</p>
+                            ${data.data.summary.canClaimAll ? '<p style="color: #4caf50;"><strong>🎉 可领取全部完成奖励！</strong></p>' : ''}
+                        </div>
+                    `;
+                    displayQuests(data.data.quests);
+                } else {
+                    questListDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                questListDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示任务列表
+        function displayQuests(quests) {
+            const questListDiv = document.getElementById('quest-list');
+            
+            if (quests.length === 0) {
+                questListDiv.innerHTML = '<div class="info">📭 暂无任务</div>';
+                return;
+            }
+            
+            questListDiv.innerHTML = quests.map(quest => {
+                const progressEntries = Object.entries(quest.progress);
+                const targetEntries = Object.entries(quest.targetValues);
+                
+                // 计算总进度百分比
+                let totalProgress = 0;
+                let totalTarget = 0;
+                targetEntries.forEach(([key, target]) => {
+                    totalProgress += Math.min(quest.progress[key] || 0, target);
+                    totalTarget += target;
+                });
+                const progressPercentage = totalTarget > 0 ? (totalProgress / totalTarget * 100) : 0;
+                
+                return `
+                    <div class="quest-card ${quest.category}">
+                        <div class="quest-header">
+                            <div class="quest-name">${quest.name}</div>
+                            <div class="quest-status ${quest.status}">${getStatusText(quest.status)}</div>
+                        </div>
+                        <div class="quest-description">${quest.description}</div>
+                        
+                        <div class="quest-progress">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="font-size: 12px; color: #ccc;">进度</span>
+                                <span style="font-size: 12px; color: #ff6b35;">${progressPercentage.toFixed(1)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            <div style="font-size: 12px; color: #ccc; margin-top: 5px;">
+                                ${targetEntries.map(([key, target]) => 
+                                    `${key}: ${quest.progress[key] || 0}/${target}`
+                                ).join(' | ')}
+                            </div>
+                        </div>
+                        
+                        <div class="quest-rewards">
+                            <strong>🎁 奖励:</strong>
+                            ${Object.entries(quest.rewards).map(([type, amount]) => 
+                                `<span class="reward-item">${getRewardName(type)}: ${amount}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            ${quest.canClaim ? 
+                                `<button onclick="claimQuestReward('${quest.questId}')" style="background: #4caf50;">💰 领取奖励</button>` :
+                                `<button onclick="updateQuestProgress('${quest.questId}')" ${quest.status === 'claimed' ? 'disabled' : ''}>
+                                    📈 模拟进度
+                                </button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 加载成就列表
+        async function loadAchievements(category = 'all') {
+            const achievementListDiv = document.getElementById('achievement-list');
+            
+            if (!authToken) {
+                achievementListDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            achievementListDiv.innerHTML = '<div class="loading">🔄 正在加载成就...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/achievements?category=${category}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAchievements(data.data.achievements);
+                } else {
+                    achievementListDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                achievementListDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示成就列表
+        function displayAchievements(achievements) {
+            const achievementListDiv = document.getElementById('achievement-list');
+            
+            if (achievements.length === 0) {
+                achievementListDiv.innerHTML = '<div class="info">🏆 暂无成就</div>';
+                return;
+            }
+            
+            achievementListDiv.innerHTML = achievements.map(achievement => `
+                <div class="achievement-card ${achievement.category}">
+                    <div class="quest-header">
+                        <div class="quest-name">
+                            ${achievement.name}
+                            <span class="achievement-rarity ${achievement.rarity}">${achievement.rarity}</span>
+                        </div>
+                        <div class="quest-status ${achievement.status}">${getStatusText(achievement.status)}</div>
+                    </div>
+                    <div class="quest-description">${achievement.description}</div>
+                    
+                    <div class="quest-progress">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="font-size: 12px; color: #ccc;">完成度</span>
+                            <span style="font-size: 12px; color: #ff6b35;">${achievement.progressPercentage.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${achievement.progressPercentage}%"></div>
+                        </div>
+                        ${achievement.type === 'tiered' ? 
+                            `<div style="font-size: 12px; color: #ccc; margin-top: 5px;">
+                                层级: ${achievement.currentTier}/${achievement.maxTier}
+                            </div>` : ''
+                        }
+                    </div>
+                    
+                    <div class="quest-rewards">
+                        <strong>🏆 奖励 (${achievement.points}积分):</strong>
+                        ${Object.entries(achievement.rewards).map(([type, amount]) => 
+                            `<span class="reward-item">${getRewardName(type)}: ${amount}</span>`
+                        ).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        ${achievement.canClaim ? 
+                            `<button onclick="claimAchievementReward('${achievement.achievementId}')" style="background: #4caf50;">🎁 领取奖励</button>` :
+                            `<button onclick="updateAchievementProgress('${achievement.achievementId}')" ${achievement.status === 'claimed' ? 'disabled' : ''}>
+                                🎯 模拟进度
+                            </button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 加载成就统计
+        async function loadAchievementStatistics() {
+            const statisticsDiv = document.getElementById('achievement-statistics');
+            
+            if (!authToken) {
+                statisticsDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/achievements/statistics`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.data;
+                    statisticsDiv.innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalAchievements}</div>
+                            <div class="stat-label">总成就数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.completedAchievements}</div>
+                            <div class="stat-label">已完成</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.completionPercentage}%</div>
+                            <div class="stat-label">完成率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalPoints}</div>
+                            <div class="stat-label">总积分</div>
+                        </div>
+                    `;
+                } else {
+                    statisticsDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                statisticsDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 更新任务进度
+        async function testUpdateQuestProgress() {
+            const questId = document.getElementById('questId').value;
+            const action = document.getElementById('questAction').value;
+            const value = parseInt(document.getElementById('questValue').value) || 1;
+            const resultDiv = document.getElementById('quest-progress-result');
+            
+            if (!questId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入任务ID并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在更新进度...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/quests/progress`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ questId, action, value })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 进度更新成功！</div>
+                        <div><strong>任务:</strong> ${data.data.questId}</div>
+                        <div><strong>状态:</strong> ${getStatusText(data.data.status)}</div>
+                        <div><strong>是否完成:</strong> ${data.data.completed ? '是' : '否'}</div>
+                    `;
+                    
+                    // 刷新任务列表
+                    if (currentQuestCategory === 'daily') {
+                        loadDailyQuests();
+                    } else {
+                        loadQuests(currentQuestCategory);
+                    }
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 更新失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 更新成就进度
+        async function testUpdateAchievementProgress() {
+            const achievementId = document.getElementById('achievementId').value;
+            const action = document.getElementById('achievementAction').value;
+            const value = parseInt(document.getElementById('achievementValue').value) || 1;
+            const resultDiv = document.getElementById('achievement-progress-result');
+            
+            if (!achievementId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入成就ID并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在更新进度...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/achievements/progress`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ achievementId, action, value })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 成就进度更新成功！</div>
+                        <div><strong>成就:</strong> ${data.data.achievementId}</div>
+                        <div><strong>状态:</strong> ${getStatusText(data.data.status)}</div>
+                        <div><strong>进度:</strong> ${data.data.progressPercentage.toFixed(1)}%</div>
+                        <div><strong>当前层级:</strong> ${data.data.currentTier}</div>
+                        ${data.data.newlyCompleted ? '<div style="color: #4caf50;"><strong>🎉 新完成成就！</strong></div>' : ''}
+                    `;
+                    
+                    // 刷新成就列表
+                    loadAchievements(currentAchievementCategory);
+                    loadAchievementStatistics();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 更新失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 领取任务奖励
+        async function testClaimQuestReward() {
+            const questId = document.getElementById('rewardQuestId').value;
+            await claimQuestReward(questId);
+        }
+
+        async function claimQuestReward(questId) {
+            const resultDiv = document.getElementById('reward-result');
+            
+            if (!questId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入任务ID并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在领取奖励...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/quests/claim`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ questId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const rewardText = data.data.rewards.map(r => `${r.name}: ${r.amount}`).join(', ');
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 任务奖励领取成功！</div>
+                        <div><strong>任务:</strong> ${data.data.questId}</div>
+                        <div><strong>奖励:</strong> ${rewardText}</div>
+                    `;
+                    
+                    // 刷新任务列表
+                    if (currentQuestCategory === 'daily') {
+                        loadDailyQuests();
+                    } else {
+                        loadQuests(currentQuestCategory);
+                    }
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 领取失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 领取成就奖励
+        async function testClaimAchievementReward() {
+            const achievementId = document.getElementById('rewardAchievementId').value;
+            await claimAchievementReward(achievementId);
+        }
+
+        async function claimAchievementReward(achievementId) {
+            const resultDiv = document.getElementById('reward-result');
+            
+            if (!achievementId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入成就ID并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在领取奖励...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/achievements/claim`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ achievementId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const rewardText = data.data.rewards.map(r => `${r.name}: ${r.amount}`).join(', ');
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 成就奖励领取成功！</div>
+                        <div><strong>成就:</strong> ${data.data.achievementId}</div>
+                        <div><strong>奖励:</strong> ${rewardText}</div>
+                        <div><strong>积分:</strong> ${data.data.points}</div>
+                    `;
+                    
+                    // 刷新成就列表和统计
+                    loadAchievements(currentAchievementCategory);
+                    loadAchievementStatistics();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 领取失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 快捷更新进度
+        async function updateQuestProgress(questId) {
+            // 模拟任务进度
+            const actionMap = {
+                'daily_battle': 'battles_completed',
+                'daily_upgrade': 'hero_upgrades',
+                'daily_arena': 'arena_battles',
+                'daily_enhance': 'equipment_enhancements'
+            };
+            
+            const action = actionMap[questId] || 'battles_completed';
+            
+            try {
+                const response = await fetch(`${API_BASE}/quests/progress`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ questId, action, value: 1 })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 刷新任务列表
+                    if (currentQuestCategory === 'daily') {
+                        loadDailyQuests();
+                    } else {
+                        loadQuests(currentQuestCategory);
+                    }
+                }
+            } catch (error) {
+                console.error('更新任务进度失败:', error);
+            }
+        }
+
+        // 快捷更新成就进度
+        async function updateAchievementProgress(achievementId) {
+            // 模拟成就进度
+            const actionMap = {
+                'first_victory': 'battles_won',
+                'hero_collector': 'unique_heroes',
+                'friend_maker': 'friends_count',
+                'guild_member': 'guild_joined'
+            };
+            
+            const action = actionMap[achievementId] || 'battles_won';
+            
+            try {
+                const response = await fetch(`${API_BASE}/achievements/progress`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ achievementId, action, value: 1 })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 刷新成就列表
+                    loadAchievements(currentAchievementCategory);
+                    loadAchievementStatistics();
+                }
+            } catch (error) {
+                console.error('更新成就进度失败:', error);
+            }
+        }
+
+        // 刷新每日任务
+        async function refreshDailyQuests() {
+            if (!authToken) {
+                alert('请先登录');
+                return;
+            }
+            
+            // 这里可以实现每日任务重置逻辑
+            alert('🔄 每日任务已刷新（模拟功能）');
+            loadDailyQuests();
+        }
+
+        // 工具函数
+        function getStatusText(status) {
+            const statusMap = {
+                'not_started': '未开始',
+                'in_progress': '进行中',
+                'completed': '已完成',
+                'claimed': '已领取',
+                'locked': '未解锁',
+                'expired': '已过期'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getRewardName(rewardType) {
+            const rewardNames = {
+                gold: '金币',
+                gems: '元宝',
+                energy: '体力',
+                honor: '荣誉',
+                skill_books: '技能书',
+                enhancement_stones: '强化石',
+                hero_fragments: '武将碎片',
+                rare_materials: '稀有材料',
+                legendary_summon_ticket: '传说召唤券',
+                awakening_crystals: '觉醒水晶'
+            };
+            return rewardNames[rewardType] || rewardType;
+        }
+
+        // 页面加载时自动登录
+        window.onload = function() {
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

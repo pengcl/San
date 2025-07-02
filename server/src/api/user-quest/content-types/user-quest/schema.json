@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_quests",
+  "info": {
+    "singularName": "user-quest",
+    "pluralName": "user-quests",
+    "displayName": "用户任务进度",
+    "description": "用户任务完成进度数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": ["not_started", "in_progress", "completed", "claimed", "expired"],
+      "required": true,
+      "default": "not_started",
+      "description": "任务状态"
+    },
+    "progress": {
+      "type": "json",
+      "required": true,
+      "default": {},
+      "description": "当前进度数据"
+    },
+    "target_values": {
+      "type": "json",
+      "required": true,
+      "description": "目标值配置"
+    },
+    "started_at": {
+      "type": "datetime",
+      "description": "任务开始时间"
+    },
+    "completed_at": {
+      "type": "datetime",
+      "description": "任务完成时间"
+    },
+    "claimed_at": {
+      "type": "datetime",
+      "description": "奖励领取时间"
+    },
+    "expires_at": {
+      "type": "datetime",
+      "description": "任务过期时间"
+    },
+    "attempts": {
+      "type": "integer",
+      "default": 0,
+      "description": "尝试次数"
+    },
+    "reset_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "重置次数"
+    },
+    "last_reset": {
+      "type": "datetime",
+      "description": "上次重置时间"
+    },
+    "metadata": {
+      "type": "json",
+      "description": "额外数据"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "quest": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::quest.quest",
+      "required": true
+    }
+  }
+}

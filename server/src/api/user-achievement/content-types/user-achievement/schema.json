@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_achievements",
+  "info": {
+    "singularName": "user-achievement",
+    "pluralName": "user-achievements",
+    "displayName": "用户成就进度",
+    "description": "用户成就完成状态数据"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": ["locked", "in_progress", "completed", "claimed"],
+      "required": true,
+      "default": "locked",
+      "description": "成就状态"
+    },
+    "progress": {
+      "type": "json",
+      "required": true,
+      "default": {},
+      "description": "当前进度"
+    },
+    "current_tier": {
+      "type": "integer",
+      "default": 0,
+      "description": "当前层级（用于分级成就）"
+    },
+    "max_tier": {
+      "type": "integer",
+      "default": 1,
+      "description": "最大层级"
+    },
+    "unlocked_at": {
+      "type": "datetime",
+      "description": "解锁时间"
+    },
+    "completed_at": {
+      "type": "datetime",
+      "description": "完成时间"
+    },
+    "claimed_at": {
+      "type": "datetime",
+      "description": "奖励领取时间"
+    },
+    "progress_percentage": {
+      "type": "decimal",
+      "default": 0.0,
+      "description": "完成百分比"
+    },
+    "metadata": {
+      "type": "json",
+      "description": "额外数据"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "achievement": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::achievement.achievement",
+      "required": true
+    }
+  }
+}

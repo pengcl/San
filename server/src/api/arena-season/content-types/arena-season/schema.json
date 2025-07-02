@@ -1,0 +1,76 @@
+{
+  "kind": "collectionType",
+  "collectionName": "arena_seasons",
+  "info": {
+    "singularName": "arena-season",
+    "pluralName": "arena-seasons",
+    "displayName": "竞技场赛季",
+    "description": "竞技场赛季配置和奖励"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "season_number": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "description": "赛季编号"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "赛季名称"
+    },
+    "description": {
+      "type": "text",
+      "description": "赛季描述"
+    },
+    "start_date": {
+      "type": "datetime",
+      "required": true,
+      "description": "赛季开始时间"
+    },
+    "end_date": {
+      "type": "datetime",
+      "required": true,
+      "description": "赛季结束时间"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否当前赛季"
+    },
+    "rank_rewards": {
+      "type": "json",
+      "required": true,
+      "description": "排名奖励配置"
+    },
+    "participation_reward": {
+      "type": "json",
+      "description": "参与奖励"
+    },
+    "rules": {
+      "type": "json",
+      "description": "赛季规则配置"
+    },
+    "max_battles_per_day": {
+      "type": "integer",
+      "default": 10,
+      "description": "每日最大战斗次数"
+    },
+    "point_system": {
+      "type": "json",
+      "description": "积分计算规则"
+    },
+    "theme": {
+      "type": "string",
+      "description": "赛季主题"
+    },
+    "icon": {
+      "type": "string",
+      "description": "赛季图标"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "kind": "collectionType",
+  "collectionName": "arena_battles",
+  "info": {
+    "singularName": "arena-battle",
+    "pluralName": "arena-battles",
+    "displayName": "竞技场战斗",
+    "description": "竞技场PVP战斗记录"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "battle_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "战斗唯一标识"
+    },
+    "battle_type": {
+      "type": "enumeration",
+      "enum": ["ranked", "casual", "tournament"],
+      "required": true,
+      "default": "ranked",
+      "description": "战斗类型"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["waiting", "in_progress", "completed", "cancelled"],
+      "required": true,
+      "default": "waiting",
+      "description": "战斗状态"
+    },
+    "result": {
+      "type": "enumeration",
+      "enum": ["player1_win", "player2_win", "draw", "cancelled"],
+      "description": "战斗结果"
+    },
+    "duration": {
+      "type": "integer",
+      "description": "战斗持续时间（秒）"
+    },
+    "total_turns": {
+      "type": "integer",
+      "description": "总回合数"
+    },
+    "player1_formation": {
+      "type": "json",
+      "required": true,
+      "description": "玩家1阵容配置"
+    },
+    "player2_formation": {
+      "type": "json",
+      "required": true,
+      "description": "玩家2阵容配置"
+    },
+    "battle_log": {
+      "type": "json",
+      "description": "战斗详细记录"
+    },
+    "point_changes": {
+      "type": "json",
+      "description": "积分变化记录"
+    },
+    "rank_changes": {
+      "type": "json",
+      "description": "排名变化记录"
+    },
+    "rewards": {
+      "type": "json",
+      "description": "战斗奖励"
+    },
+    "season_id": {
+      "type": "integer",
+      "required": true,
+      "description": "所属赛季"
+    },
+    "started_at": {
+      "type": "datetime",
+      "description": "战斗开始时间"
+    },
+    "completed_at": {
+      "type": "datetime",
+      "description": "战斗完成时间"
+    },
+    "player1": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "player2": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quests",
+  "info": {
+    "singularName": "quest",
+    "pluralName": "quests",
+    "displayName": "任务模板",
+    "description": "游戏任务模板配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "quest_id": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "任务唯一标识符"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "任务名称"
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "description": "任务描述"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["daily", "weekly", "main", "side", "achievement", "event"],
+      "required": true,
+      "description": "任务类型"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["battle", "upgrade", "collect", "social", "resource", "special"],
+      "required": true,
+      "description": "任务执行类型"
+    },
+    "requirements": {
+      "type": "json",
+      "required": true,
+      "description": "完成条件配置"
+    },
+    "rewards": {
+      "type": "json",
+      "required": true,
+      "description": "奖励配置"
+    },
+    "unlock_level": {
+      "type": "integer",
+      "default": 1,
+      "description": "解锁等级要求"
+    },
+    "unlock_conditions": {
+      "type": "json",
+      "description": "额外解锁条件"
+    },
+    "priority": {
+      "type": "integer",
+      "default": 1,
+      "description": "任务优先级"
+    },
+    "is_repeatable": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否可重复完成"
+    },
+    "reset_type": {
+      "type": "enumeration",
+      "enum": ["none", "daily", "weekly", "monthly"],
+      "default": "none",
+      "description": "重置类型"
+    },
+    "duration": {
+      "type": "integer",
+      "description": "任务持续时间（秒）"
+    },
+    "icon": {
+      "type": "string",
+      "description": "任务图标"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否激活"
+    },
+    "start_date": {
+      "type": "datetime",
+      "description": "任务开始时间"
+    },
+    "end_date": {
+      "type": "datetime",
+      "description": "任务结束时间"
+    },
+    "tags": {
+      "type": "json",
+      "description": "任务标签"
+    }
+  }
+}

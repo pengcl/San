@@ -44,7 +44,10 @@ const HeroesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [filterRarity, setFilterRarity] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<'level' | 'rarity' | 'attack' | 'power'>('power');
+  const [filterFaction, setFilterFaction] = useState<string>('');
+  const [filterUnitType, setFilterUnitType] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'level' | 'rarity' | 'attack' | 'power' | 'defense' | 'speed'>('power');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
 
@@ -97,28 +100,75 @@ const HeroesPage: React.FC = () => {
       );
     }
 
+    // 阵营过滤
+    if (filterFaction) {
+      filteredHeroes = filteredHeroes.filter(hero => 
+        hero.faction === filterFaction
+      );
+    }
+
+    // 兵种过滤
+    if (filterUnitType) {
+      filteredHeroes = filteredHeroes.filter(hero => 
+        hero.unitType === filterUnitType
+      );
+    }
+
     // 排序
     filteredHeroes.sort((a, b) => {
+      let comparison = 0;
       switch (sortBy) {
         case 'level':
-          return (b.level || 0) - (a.level || 0); // 按等级排序
+          comparison = (a.level || 0) - (b.level || 0);
+          break;
         case 'rarity':
-          return (b.star || 1) - (a.star || 1); // 按星级排序
+          comparison = (a.star || 1) - (b.star || 1);
+          break;
         case 'attack':
-          return (b.stats?.attack || 0) - (a.stats?.attack || 0); // 按攻击力排序
+          comparison = (a.stats?.attack || 0) - (b.stats?.attack || 0);
+          break;
+        case 'defense':
+          comparison = (a.stats?.defense || 0) - (b.stats?.defense || 0);
+          break;
+        case 'speed':
+          comparison = (a.stats?.speed || 0) - (b.stats?.speed || 0);
+          break;
         case 'power':
-          return (b.power || 0) - (a.power || 0); // 按战力排序
+          comparison = (a.power || 0) - (b.power || 0);
+          break;
         default:
           return 0;
       }
+      return sortOrder === 'desc' ? -comparison : comparison;
     });
 
     return filteredHeroes;
   };
 
-  const filteredHeroes = React.useMemo(() => getFilteredAndSortedHeroes(), [heroesData, searchQuery, filterRarity, sortBy]);
+  const filteredHeroes = React.useMemo(() => getFilteredAndSortedHeroes(), [heroesData, searchQuery, filterRarity, filterFaction, filterUnitType, sortBy, sortOrder]);
   const totalHeroes = heroesData?.data?.length || 0;
   const rarityOptions = [1, 2, 3, 4, 5, 6];
+  
+  // 从现有武将中提取可用的阵营和兵种选项
+  const factionOptions = React.useMemo(() => {
+    const factions = new Set<string>();
+    heroesData?.data?.forEach((hero: any) => {
+      if (hero.faction && hero.faction !== 'unknown') {
+        factions.add(hero.faction);
+      }
+    });
+    return Array.from(factions).sort();
+  }, [heroesData]);
+
+  const unitTypeOptions = React.useMemo(() => {
+    const unitTypes = new Set<string>();
+    heroesData?.data?.forEach((hero: any) => {
+      if (hero.unitType && hero.unitType !== 'unknown') {
+        unitTypes.add(hero.unitType);
+      }
+    });
+    return Array.from(unitTypes).sort();
+  }, [heroesData]);
 
   // 转换用户武将数据为Hero类型
   const convertToHero = (userHero: any): Hero => ({
@@ -277,32 +327,109 @@ const HeroesPage: React.FC = () => {
               </Grid>
 
               {/* 排序选择 - 手机端一行两个 */}
-              <Grid item xs={6} sm={4}>
+              <Grid item xs={6} sm={3}>
                 <FormControl fullWidth size="small">
                   <InputLabel>排序方式</InputLabel>
                   <Select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'level' | 'rarity' | 'attack' | 'power')}
+                    onChange={(e) => setSortBy(e.target.value as 'level' | 'rarity' | 'attack' | 'power' | 'defense' | 'speed')}
                     label="排序方式"
                   >
                     <MenuItem value="power">战力排序</MenuItem>
                     <MenuItem value="level">等级排序</MenuItem>
                     <MenuItem value="rarity">星级排序</MenuItem>
                     <MenuItem value="attack">攻击力排序</MenuItem>
+                    <MenuItem value="defense">防御力排序</MenuItem>
+                    <MenuItem value="speed">速度排序</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
 
-              {/* 清除筛选 - 手机端独占一行，平板以上和上面并列 */}
-              <Grid item xs={12} sm={4}>
+              {/* 排序顺序 */}
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>排序顺序</InputLabel>
+                  <Select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                    label="排序顺序"
+                  >
+                    <MenuItem value="desc">从高到低</MenuItem>
+                    <MenuItem value="asc">从低到高</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {/* 阵营筛选 */}
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>阵营筛选</InputLabel>
+                  <Select
+                    value={filterFaction}
+                    onChange={(e) => setFilterFaction(e.target.value)}
+                    label="阵营筛选"
+                  >
+                    <MenuItem value="">
+                      <em>全部阵营</em>
+                    </MenuItem>
+                    {factionOptions.map(faction => (
+                      <MenuItem key={faction} value={faction}>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Box sx={{ 
+                            width: 12, 
+                            height: 12, 
+                            borderRadius: '50%',
+                            bgcolor: faction === '蜀' ? '#e74c3c' : faction === '魏' ? '#3498db' : '#2ecc71'
+                          }} />
+                          <Typography variant="body2">{faction}</Typography>
+                        </Stack>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {/* 兵种筛选 */}
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>兵种筛选</InputLabel>
+                  <Select
+                    value={filterUnitType}
+                    onChange={(e) => setFilterUnitType(e.target.value)}
+                    label="兵种筛选"
+                  >
+                    <MenuItem value="">
+                      <em>全部兵种</em>
+                    </MenuItem>
+                    {unitTypeOptions.map(unitType => (
+                      <MenuItem key={unitType} value={unitType}>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Typography variant="body2" sx={{
+                            color: unitType === '步兵' ? '#ff5722' : unitType === '骑兵' ? '#ff9800' : '#4caf50'
+                          }}>
+                            {unitType === '步兵' ? '🛡️' : unitType === '骑兵' ? '🐎' : '🏹'}
+                          </Typography>
+                          <Typography variant="body2">{unitType}</Typography>
+                        </Stack>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {/* 清除筛选 - 单独一行 */}
+              <Grid item xs={12}>
                 <Button
                   fullWidth
                   variant="outlined"
                   size="small"
                   onClick={() => {
                     setFilterRarity(null);
+                    setFilterFaction('');
+                    setFilterUnitType('');
                     setSearchQuery('');
                     setSortBy('power');
+                    setSortOrder('desc');
                   }}
                 >
                   清除筛选
@@ -311,7 +438,7 @@ const HeroesPage: React.FC = () => {
             </Grid>
 
             {/* 当前筛选条件显示 */}
-            {(filterRarity !== null || searchQuery) && (
+            {(filterRarity !== null || filterFaction || filterUnitType || searchQuery) && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   当前筛选条件:
@@ -322,6 +449,7 @@ const HeroesPage: React.FC = () => {
                       label={`搜索: ${searchQuery}`}
                       onDelete={() => setSearchQuery('')}
                       size="small"
+                      color="primary"
                     />
                   )}
                   {filterRarity !== null && (
@@ -329,6 +457,23 @@ const HeroesPage: React.FC = () => {
                       label={`星级: ${filterRarity}★`}
                       onDelete={() => setFilterRarity(null)}
                       size="small"
+                      color="secondary"
+                    />
+                  )}
+                  {filterFaction && (
+                    <Chip
+                      label={`阵营: ${filterFaction}`}
+                      onDelete={() => setFilterFaction('')}
+                      size="small"
+                      color="error"
+                    />
+                  )}
+                  {filterUnitType && (
+                    <Chip
+                      label={`兵种: ${filterUnitType}`}
+                      onDelete={() => setFilterUnitType('')}
+                      size="small"
+                      color="success"
                     />
                   )}
                 </Stack>
@@ -387,8 +532,11 @@ const HeroesPage: React.FC = () => {
                 variant="contained"
                 onClick={() => {
                   setFilterRarity(null);
+                  setFilterFaction('');
+                  setFilterUnitType('');
                   setSearchQuery('');
                   setSortBy('power');
+                  setSortOrder('desc');
                 }}
               >
                 清除所有筛选条件

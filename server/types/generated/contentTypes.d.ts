@@ -373,6 +373,123 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAchievementAchievement extends Struct.CollectionTypeSchema {
+  collectionName: 'achievements';
+  info: {
+    description: '\u6E38\u620F\u6210\u5C31\u7CFB\u7EDF\u914D\u7F6E';
+    displayName: '\u6210\u5C31\u6A21\u677F';
+    pluralName: 'achievements';
+    singularName: 'achievement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    achievement_id: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    category: Schema.Attribute.Enumeration<
+      ['combat', 'collection', 'progression', 'social', 'special']
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    icon: Schema.Attribute.String;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    is_hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::achievement.achievement'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    points: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    rarity: Schema.Attribute.Enumeration<
+      ['common', 'rare', 'epic', 'legendary', 'mythic']
+    > &
+      Schema.Attribute.DefaultTo<'common'>;
+    requirements: Schema.Attribute.JSON & Schema.Attribute.Required;
+    rewards: Schema.Attribute.JSON & Schema.Attribute.Required;
+    tiers: Schema.Attribute.JSON;
+    type: Schema.Attribute.Enumeration<['single', 'tiered', 'progressive']> &
+      Schema.Attribute.Required;
+    unlock_level: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiArenaBattleArenaBattle extends Struct.CollectionTypeSchema {
+  collectionName: 'arena_battles';
+  info: {
+    description: '\u7ADE\u6280\u573APVP\u6218\u6597\u8BB0\u5F55';
+    displayName: '\u7ADE\u6280\u573A\u6218\u6597';
+    pluralName: 'arena-battles';
+    singularName: 'arena-battle';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    battle_id: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    battle_log: Schema.Attribute.JSON;
+    battle_type: Schema.Attribute.Enumeration<
+      ['ranked', 'casual', 'tournament']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'ranked'>;
+    completed_at: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    duration: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::arena-battle.arena-battle'
+    > &
+      Schema.Attribute.Private;
+    player1: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
+    player1_formation: Schema.Attribute.JSON & Schema.Attribute.Required;
+    player2: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
+    player2_formation: Schema.Attribute.JSON & Schema.Attribute.Required;
+    point_changes: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    rank_changes: Schema.Attribute.JSON;
+    result: Schema.Attribute.Enumeration<
+      ['player1_win', 'player2_win', 'draw', 'cancelled']
+    >;
+    rewards: Schema.Attribute.JSON;
+    season_id: Schema.Attribute.Integer & Schema.Attribute.Required;
+    started_at: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['waiting', 'in_progress', 'completed', 'cancelled']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'waiting'>;
+    total_turns: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiArenaRecordArenaRecord extends Struct.CollectionTypeSchema {
   collectionName: 'arena_records';
   info: {
@@ -427,6 +544,50 @@ export interface ApiArenaRecordArenaRecord extends Struct.CollectionTypeSchema {
     win_streak: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ApiArenaSeasonArenaSeason extends Struct.CollectionTypeSchema {
+  collectionName: 'arena_seasons';
+  info: {
+    description: '\u7ADE\u6280\u573A\u8D5B\u5B63\u914D\u7F6E\u548C\u5956\u52B1';
+    displayName: '\u7ADE\u6280\u573A\u8D5B\u5B63';
+    pluralName: 'arena-seasons';
+    singularName: 'arena-season';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    end_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    icon: Schema.Attribute.String;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::arena-season.arena-season'
+    > &
+      Schema.Attribute.Private;
+    max_battles_per_day: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<10>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    participation_reward: Schema.Attribute.JSON;
+    point_system: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    rank_rewards: Schema.Attribute.JSON & Schema.Attribute.Required;
+    rules: Schema.Attribute.JSON;
+    season_number: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    start_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    theme: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1715,6 +1876,60 @@ export interface ApiQualityQuality extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiQuestQuest extends Struct.CollectionTypeSchema {
+  collectionName: 'quests';
+  info: {
+    description: '\u6E38\u620F\u4EFB\u52A1\u6A21\u677F\u914D\u7F6E';
+    displayName: '\u4EFB\u52A1\u6A21\u677F';
+    pluralName: 'quests';
+    singularName: 'quest';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Schema.Attribute.Enumeration<
+      ['daily', 'weekly', 'main', 'side', 'achievement', 'event']
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    duration: Schema.Attribute.Integer;
+    end_date: Schema.Attribute.DateTime;
+    icon: Schema.Attribute.String;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    is_repeatable: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::quest.quest'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    publishedAt: Schema.Attribute.DateTime;
+    quest_id: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    requirements: Schema.Attribute.JSON & Schema.Attribute.Required;
+    reset_type: Schema.Attribute.Enumeration<
+      ['none', 'daily', 'weekly', 'monthly']
+    > &
+      Schema.Attribute.DefaultTo<'none'>;
+    rewards: Schema.Attribute.JSON & Schema.Attribute.Required;
+    start_date: Schema.Attribute.DateTime;
+    tags: Schema.Attribute.JSON;
+    type: Schema.Attribute.Enumeration<
+      ['battle', 'upgrade', 'collect', 'social', 'resource', 'special']
+    > &
+      Schema.Attribute.Required;
+    unlock_conditions: Schema.Attribute.JSON;
+    unlock_level: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiResourceTransactionResourceTransaction
   extends Struct.CollectionTypeSchema {
   collectionName: 'resource_transactions';
@@ -2254,6 +2469,61 @@ export interface ApiUnitTypeUnitType extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiUserAchievementUserAchievement
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_achievements';
+  info: {
+    description: '\u7528\u6237\u6210\u5C31\u5B8C\u6210\u72B6\u6001\u6570\u636E';
+    displayName: '\u7528\u6237\u6210\u5C31\u8FDB\u5EA6';
+    pluralName: 'user-achievements';
+    singularName: 'user-achievement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    achievement: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::achievement.achievement'
+    > &
+      Schema.Attribute.Required;
+    claimed_at: Schema.Attribute.DateTime;
+    completed_at: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    current_tier: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-achievement.user-achievement'
+    > &
+      Schema.Attribute.Private;
+    max_tier: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    metadata: Schema.Attribute.JSON;
+    progress: Schema.Attribute.JSON &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<{}>;
+    progress_percentage: Schema.Attribute.Decimal &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['locked', 'in_progress', 'completed', 'claimed']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'locked'>;
+    unlocked_at: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
+  };
+}
+
 export interface ApiUserCityPolicyUserCityPolicy
   extends Struct.CollectionTypeSchema {
   collectionName: 'user_city_policies';
@@ -2619,6 +2889,7 @@ export interface ApiUserHeroUserHero extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    equipment: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<{}>;
     exp: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -2794,6 +3065,58 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ApiUserQuestUserQuest extends Struct.CollectionTypeSchema {
+  collectionName: 'user_quests';
+  info: {
+    description: '\u7528\u6237\u4EFB\u52A1\u5B8C\u6210\u8FDB\u5EA6\u6570\u636E';
+    displayName: '\u7528\u6237\u4EFB\u52A1\u8FDB\u5EA6';
+    pluralName: 'user-quests';
+    singularName: 'user-quest';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attempts: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    claimed_at: Schema.Attribute.DateTime;
+    completed_at: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    expires_at: Schema.Attribute.DateTime;
+    last_reset: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-quest.user-quest'
+    > &
+      Schema.Attribute.Private;
+    metadata: Schema.Attribute.JSON;
+    progress: Schema.Attribute.JSON &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<{}>;
+    publishedAt: Schema.Attribute.DateTime;
+    quest: Schema.Attribute.Relation<'manyToOne', 'api::quest.quest'> &
+      Schema.Attribute.Required;
+    reset_count: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    started_at: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['not_started', 'in_progress', 'completed', 'claimed', 'expired']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'not_started'>;
+    target_values: Schema.Attribute.JSON & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
   };
 }
 
@@ -3561,7 +3884,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::achievement.achievement': ApiAchievementAchievement;
+      'api::arena-battle.arena-battle': ApiArenaBattleArenaBattle;
       'api::arena-record.arena-record': ApiArenaRecordArenaRecord;
+      'api::arena-season.arena-season': ApiArenaSeasonArenaSeason;
       'api::battle.battle': ApiBattleBattle;
       'api::chapter.chapter': ApiChapterChapter;
       'api::city-development-path.city-development-path': ApiCityDevelopmentPathCityDevelopmentPath;
@@ -3577,6 +3903,7 @@ declare module '@strapi/strapi' {
       'api::hero.hero': ApiHeroHero;
       'api::item-template.item-template': ApiItemTemplateItemTemplate;
       'api::quality.quality': ApiQualityQuality;
+      'api::quest.quest': ApiQuestQuest;
       'api::resource-transaction.resource-transaction': ApiResourceTransactionResourceTransaction;
       'api::shop-item.shop-item': ApiShopItemShopItem;
       'api::shop.shop': ApiShopShop;
@@ -3585,11 +3912,13 @@ declare module '@strapi/strapi' {
       'api::stage.stage': ApiStageStage;
       'api::summon.summon': ApiSummonSummon;
       'api::unit-type.unit-type': ApiUnitTypeUnitType;
+      'api::user-achievement.user-achievement': ApiUserAchievementUserAchievement;
       'api::user-city-policy.user-city-policy': ApiUserCityPolicyUserCityPolicy;
       'api::user-city.user-city': ApiUserCityUserCity;
       'api::user-hero.user-hero': ApiUserHeroUserHero;
       'api::user-item.user-item': ApiUserItemUserItem;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
+      'api::user-quest.user-quest': ApiUserQuestUserQuest;
       'api::user-resource.user-resource': ApiUserResourceUserResource;
       'api::user-session.user-session': ApiUserSessionUserSession;
       'api::user-stage-progress.user-stage-progress': ApiUserStageProgressUserStageProgress;

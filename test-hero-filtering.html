@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武将筛选和排序功能测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .filter-control {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,107,53,0.3);
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hero-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        .hero-card:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.2);
+        }
+        .faction-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        .faction-shu { background: #e74c3c; }
+        .faction-wei { background: #3498db; }
+        .faction-wu { background: #2ecc71; }
+        
+        .unit-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-left: 5px;
+        }
+        .unit-步兵 { background: #ff5722; }
+        .unit-骑兵 { background: #ff9800; }
+        .unit-弓兵 { background: #4caf50; }
+        
+        .stars {
+            color: #ffd700;
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+        
+        select, input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-align: center;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 武将筛选和排序功能测试 🔍</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="http://localhost:3000/heroes" class="nav-link" target="_blank">👥 武将页面</a>
+        <a href="test-formation-system.html" class="nav-link">⚔️ 阵容测试</a>
+        <a href="test-battle-flow.html" class="nav-link">🏟️ 战斗测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 登录测试</h3>
+        <button onclick="testAuth()">🔐 登录获取Token</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 获取武将数据</h3>
+        <button onclick="loadHeroes()">👥 加载武将数据</button>
+        <div id="load-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 筛选和排序控制台</h3>
+        
+        <div class="filter-controls">
+            <div class="filter-control">
+                <label>🔍 名称搜索：</label>
+                <input type="text" id="searchInput" placeholder="输入武将名称..." onkeyup="applyFilters()">
+            </div>
+            
+            <div class="filter-control">
+                <label>⭐ 星级筛选：</label>
+                <select id="rarityFilter" onchange="applyFilters()">
+                    <option value="">全部星级</option>
+                    <option value="1">1★</option>
+                    <option value="2">2★</option>
+                    <option value="3">3★</option>
+                    <option value="4">4★</option>
+                    <option value="5">5★</option>
+                    <option value="6">6★</option>
+                </select>
+            </div>
+            
+            <div class="filter-control">
+                <label>🏯 阵营筛选：</label>
+                <select id="factionFilter" onchange="applyFilters()">
+                    <option value="">全部阵营</option>
+                    <option value="蜀">🔴 蜀</option>
+                    <option value="魏">🔵 魏</option>
+                    <option value="吴">🟢 吴</option>
+                </select>
+            </div>
+            
+            <div class="filter-control">
+                <label>⚔️ 兵种筛选：</label>
+                <select id="unitTypeFilter" onchange="applyFilters()">
+                    <option value="">全部兵种</option>
+                    <option value="步兵">🛡️ 步兵</option>
+                    <option value="骑兵">🐎 骑兵</option>
+                    <option value="弓兵">🏹 弓兵</option>
+                </select>
+            </div>
+            
+            <div class="filter-control">
+                <label>📊 排序方式：</label>
+                <select id="sortBy" onchange="applyFilters()">
+                    <option value="power">战力排序</option>
+                    <option value="level">等级排序</option>
+                    <option value="star">星级排序</option>
+                    <option value="attack">攻击力排序</option>
+                    <option value="defense">防御力排序</option>
+                    <option value="speed">速度排序</option>
+                </select>
+            </div>
+            
+            <div class="filter-control">
+                <label>🔄 排序顺序：</label>
+                <select id="sortOrder" onchange="applyFilters()">
+                    <option value="desc">从高到低</option>
+                    <option value="asc">从低到高</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="stats-bar" id="filterStats">
+            <div class="stat-item">
+                <div><strong>总武将</strong></div>
+                <div id="totalCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div><strong>筛选结果</strong></div>
+                <div id="filteredCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div><strong>蜀国武将</strong></div>
+                <div id="shuCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div><strong>魏国武将</strong></div>
+                <div id="weiCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div><strong>吴国武将</strong></div>
+                <div id="wuCount">0</div>
+            </div>
+        </div>
+        
+        <button onclick="clearAllFilters()">🧹 清除所有筛选</button>
+        <button onclick="applyFilters()">🔄 重新筛选</button>
+    </div>
+
+    <div class="test-section">
+        <h3>4. 武将列表</h3>
+        <div id="heroesGrid" class="hero-grid">
+            <!-- 武将卡片将通过JavaScript生成 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. 前端集成验证</h3>
+        <div class="info">
+            <p>🎯 <strong>测试要点：</strong></p>
+            <ul>
+                <li>验证搜索功能：输入武将名称实时筛选</li>
+                <li>验证星级筛选：按1-6星级过滤</li>
+                <li>验证阵营筛选：按蜀、魏、吴三国筛选</li>
+                <li>验证兵种筛选：按步兵、骑兵、弓兵筛选</li>
+                <li>验证排序功能：按不同属性和顺序排序</li>
+                <li>验证组合筛选：多个条件同时筛选</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000/heroes', '_blank')">🚀 打开武将页面测试</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let allHeroes = [];
+        let filteredHeroes = [];
+
+        // 认证
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <div>用户: ${data.data.user.username} | Token: ${authToken.substring(0, 20)}...</div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 加载武将数据
+        async function loadHeroes() {
+            const resultDiv = document.getElementById('load-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在加载武将数据...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes?page=1&limit=100`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success || data.data) {
+                    allHeroes = data.data || [];
+                    
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 加载成功</span>
+                        <div>武将数量: ${allHeroes.length}</div>
+                    `;
+                    
+                    updateStatistics();
+                    applyFilters();
+                    
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 应用筛选和排序
+        function applyFilters() {
+            if (allHeroes.length === 0) return;
+            
+            let filtered = [...allHeroes];
+            
+            // 名称搜索
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(hero => 
+                    hero.name?.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // 星级筛选
+            const rarityFilter = document.getElementById('rarityFilter').value;
+            if (rarityFilter) {
+                filtered = filtered.filter(hero => hero.star == rarityFilter);
+            }
+            
+            // 阵营筛选
+            const factionFilter = document.getElementById('factionFilter').value;
+            if (factionFilter) {
+                filtered = filtered.filter(hero => hero.faction === factionFilter);
+            }
+            
+            // 兵种筛选
+            const unitTypeFilter = document.getElementById('unitTypeFilter').value;
+            if (unitTypeFilter) {
+                filtered = filtered.filter(hero => hero.unitType === unitTypeFilter);
+            }
+            
+            // 排序
+            const sortBy = document.getElementById('sortBy').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+            
+            filtered.sort((a, b) => {
+                let comparison = 0;
+                switch (sortBy) {
+                    case 'level':
+                        comparison = (a.level || 0) - (b.level || 0);
+                        break;
+                    case 'star':
+                        comparison = (a.star || 0) - (b.star || 0);
+                        break;
+                    case 'attack':
+                        comparison = (a.stats?.attack || 0) - (b.stats?.attack || 0);
+                        break;
+                    case 'defense':
+                        comparison = (a.stats?.defense || 0) - (b.stats?.defense || 0);
+                        break;
+                    case 'speed':
+                        comparison = (a.stats?.speed || 0) - (b.stats?.speed || 0);
+                        break;
+                    case 'power':
+                        comparison = (a.power || 0) - (b.power || 0);
+                        break;
+                }
+                return sortOrder === 'desc' ? -comparison : comparison;
+            });
+            
+            filteredHeroes = filtered;
+            displayHeroes();
+            updateFilterStats();
+        }
+
+        // 显示武将
+        function displayHeroes() {
+            const grid = document.getElementById('heroesGrid');
+            
+            if (filteredHeroes.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1;"><h3>🔍 没有找到符合条件的武将</h3></div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredHeroes.map(hero => {
+                const stars = '⭐'.repeat(hero.star || 1);
+                const factionClass = `faction-${hero.faction === '蜀' ? 'shu' : hero.faction === '魏' ? 'wei' : 'wu'}`;
+                const unitClass = `unit-${hero.unitType}`;
+                
+                return `
+                    <div class="hero-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong>${hero.name}</strong>
+                            <div class="stars">${stars}</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 10px;">
+                            <span class="faction-badge ${factionClass}">${hero.faction}</span>
+                            <span class="unit-badge ${unitClass}">${hero.unitType}</span>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px;">
+                            <div>等级: ${hero.level}</div>
+                            <div>战力: ${hero.power?.toLocaleString()}</div>
+                            <div>攻击: ${hero.stats?.attack}</div>
+                            <div>防御: ${hero.stats?.defense}</div>
+                            <div>速度: ${hero.stats?.speed}</div>
+                            <div>生命: ${hero.stats?.hp}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 更新统计数据
+        function updateStatistics() {
+            const shuCount = allHeroes.filter(hero => hero.faction === '蜀').length;
+            const weiCount = allHeroes.filter(hero => hero.faction === '魏').length;
+            const wuCount = allHeroes.filter(hero => hero.faction === '吴').length;
+            
+            document.getElementById('totalCount').textContent = allHeroes.length;
+            document.getElementById('shuCount').textContent = shuCount;
+            document.getElementById('weiCount').textContent = weiCount;
+            document.getElementById('wuCount').textContent = wuCount;
+        }
+
+        // 更新筛选统计
+        function updateFilterStats() {
+            document.getElementById('filteredCount').textContent = filteredHeroes.length;
+        }
+
+        // 清除所有筛选
+        function clearAllFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('rarityFilter').value = '';
+            document.getElementById('factionFilter').value = '';
+            document.getElementById('unitTypeFilter').value = '';
+            document.getElementById('sortBy').value = 'power';
+            document.getElementById('sortOrder').value = 'desc';
+            
+            applyFilters();
+        }
+
+        // 页面加载时自动登录
+        window.onload = function() {
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

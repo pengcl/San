@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>战斗流程测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: orange; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 战斗流程测试</h1>
+    
+    <div class="test-section">
+        <h3>1. 用户认证测试</h3>
+        <button onclick="testAuth()">测试登录</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 获取关卡列表</h3>
+        <button onclick="testBattleStages()">获取关卡</button>
+        <div id="stages-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 开始战斗</h3>
+        <button onclick="testStartBattle()">开始战斗</button>
+        <div id="battle-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. 召唤系统测试</h3>
+        <button onclick="testSummonRates()">获取召唤概率</button>
+        <div id="summon-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <pre>用户: ${data.data.user.username}
+邮箱: ${data.data.user.email}
+Token: ${authToken.substring(0, 20)}...</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        async function testBattleStages() {
+            const resultDiv = document.getElementById('stages-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">正在获取关卡...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/battles/stages`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const chapters = data.data.chapters;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 获取成功</span>
+                        <pre>章节数量: ${chapters.length}
+第一章: ${chapters[0]?.name || '无'}
+关卡数量: ${chapters[0]?.stages?.length || 0}
+第一关: ${chapters[0]?.stages?.[0]?.name || '无'}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 获取失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        async function testStartBattle() {
+            const resultDiv = document.getElementById('battle-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">正在开始战斗...</span>';
+            
+            try {
+                const battleData = {
+                    battleType: 'pve_normal',
+                    stageId: '1-1',
+                    formation: [
+                        { heroId: 36, position: 0 },
+                        { heroId: 37, position: 1 },
+                        { heroId: 38, position: 2 }
+                    ],
+                    autoSkill: false
+                };
+                
+                const response = await fetch(`${API_BASE}/battles/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(battleData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const battleState = data.data;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 战斗开始成功</span>
+                        <pre>战斗ID: ${battleState.battleId}
+玩家队伍: ${battleState.playerTeam.heroes.length}个武将
+敌方队伍: ${battleState.enemyTeam.heroes.length}个敌人
+当前回合: ${battleState.battleState.turn}
+下个行动: ${battleState.nextActions[0]?.heroId || '无'}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 战斗开始失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        async function testSummonRates() {
+            const resultDiv = document.getElementById('summon-result');
+            resultDiv.innerHTML = '<span class="loading">正在获取召唤概率...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/summon/rates`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const rates = data.data;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 获取成功</span>
+                        <pre>普通召唤成本: ${rates.normal.cost.amount} ${rates.normal.cost.type}
+高级召唤成本: ${rates.premium.cost.amount} ${rates.premium.cost.type}
+普通召唤 - 5星概率: ${(rates.normal.rates[5] * 100).toFixed(1)}%
+高级召唤 - 5星概率: ${(rates.premium.rates[5] * 100).toFixed(1)}%</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 获取失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 页面加载时自动测试登录
+        window.onload = function() {
+            setTimeout(() => {
+                document.querySelector('h1').style.color = '#ff6b35';
+            }, 500);
+        };
+    </script>
+</body>
+</html>

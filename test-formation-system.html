@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阵容编辑系统测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        pre { 
+            background: rgba(0,0,0,0.3); 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto;
+            border-left: 4px solid #ff6b35;
+            margin: 10px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,107,53,0.3);
+        }
+        .formation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        .position {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .hero-in-position {
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            border-color: #ff6b35;
+            font-size: 12px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        .hero-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .hero-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .hero-card:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.2);
+        }
+        .hero-card.selected {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.3);
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 阵容编辑系统测试 ⚔️</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="http://localhost:3000/formation" class="nav-link" target="_blank">⚔️ 阵容编辑</a>
+        <a href="http://localhost:3000/heroes" class="nav-link" target="_blank">👥 武将管理</a>
+        <a href="test-battle-flow.html" class="nav-link">🏟️ 战斗测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 用户认证</h3>
+        <button onclick="testAuth()">🔐 测试登录</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 获取武将数据</h3>
+        <button onclick="testGetHeroes()">👥 获取武将列表</button>
+        <div id="heroes-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 阵容管理</h3>
+        <button onclick="testGetFormations()">📋 获取阵容列表</button>
+        <button onclick="testCreateFormation()">➕ 创建测试阵容</button>
+        <button onclick="testUpdateFormation()">💾 更新阵容</button>
+        <div id="formations-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. 阵容模拟器</h3>
+        <div id="formation-simulator">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>阵容统计</h4>
+                    <div id="formation-stats">
+                        <div>总战力: <span id="total-power">0</span></div>
+                        <div>已部署: <span id="deployed-count">0</span>/6</div>
+                        <div>平均等级: <span id="avg-level">0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="formation-grid" id="formation-grid">
+                <!-- 阵容网格将由JavaScript生成 -->
+            </div>
+            
+            <div id="available-heroes" class="hero-list">
+                <!-- 可用武将列表将由JavaScript生成 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. 前端集成测试</h3>
+        <div class="info">
+            <p>🎯 <strong>测试目标：</strong></p>
+            <ul>
+                <li>验证阵容编辑页面加载正常</li>
+                <li>测试武将拖拽和点击部署</li>
+                <li>验证阵容保存功能</li>
+                <li>测试移动端适配</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000/formation', '_blank')">🚀 打开阵容编辑页面</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let availableHeroes = [];
+        let currentFormation = Array.from({ length: 6 }, (_, i) => ({ position: i, hero: null }));
+        let selectedHero = null;
+
+        // 认证测试
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <pre>用户: ${data.data.user.username}
+邮箱: ${data.data.user.email}
+Token: ${authToken.substring(0, 30)}...</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 获取武将数据
+        async function testGetHeroes() {
+            const resultDiv = document.getElementById('heroes-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在获取武将数据...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes?page=1&limit=10`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success || data.data) {
+                    const heroes = data.data || [];
+                    availableHeroes = heroes;
+                    
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 获取成功</span>
+                        <pre>武将数量: ${heroes.length}</pre>
+                        <div class="hero-list">
+                            ${heroes.slice(0, 6).map(hero => `
+                                <div class="hero-card" onclick="selectHero(${hero.id})">
+                                    <strong>${hero.name}</strong><br>
+                                    等级: ${hero.level} | 阵营: ${hero.faction} | 兵种: ${hero.unitType}<br>
+                                    战力: ${hero.power || '未知'}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    updateAvailableHeroes();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 获取失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 获取阵容数据
+        async function testGetFormations() {
+            const resultDiv = document.getElementById('formations-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在获取阵容数据...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/formations`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success || data.data) {
+                    const formations = data.data?.formations || [];
+                    
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 获取成功</span>
+                        <pre>阵容数量: ${formations.length}</pre>
+                        ${formations.length > 0 ? `
+                            <div>
+                                <h4>已有阵容:</h4>
+                                ${formations.map(formation => `
+                                    <div class="stat-card">
+                                        <strong>${formation.name}</strong><br>
+                                        描述: ${formation.description || '无'}<br>
+                                        战力: ${formation.total_power || 0}<br>
+                                        部署数: ${formation.deployed_count || 0}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<div class="info">🆕 暂无保存的阵容</div>'}
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 获取失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 创建测试阵容
+        async function testCreateFormation() {
+            const resultDiv = document.getElementById('formations-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            if (availableHeroes.length === 0) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先获取武将数据</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在创建测试阵容...</span>';
+            
+            // 创建一个测试阵容：前3个武将部署到前排
+            const testFormation = Array.from({ length: 6 }, (_, i) => ({
+                position: i,
+                hero: i < 3 && availableHeroes[i] ? availableHeroes[i] : null
+            }));
+            
+            const totalPower = testFormation.reduce((sum, pos) => sum + (pos.hero?.power || 0), 0);
+            const deployedCount = testFormation.filter(pos => pos.hero).length;
+            
+            try {
+                const response = await fetch(`${API_BASE}/formations`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: '测试阵容',
+                        description: '自动创建的测试阵容',
+                        preset_type: 'test',
+                        formation_data: testFormation,
+                        total_power: totalPower,
+                        deployed_count: deployedCount
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success || data.data) {
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 创建成功</span>
+                        <pre>阵容ID: ${data.data?.id || '未知'}
+名称: 测试阵容
+总战力: ${totalPower}
+部署武将: ${deployedCount}/6</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 创建失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 阵容模拟器相关函数
+        function initFormationGrid() {
+            const grid = document.getElementById('formation-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const position = document.createElement('div');
+                position.className = 'position';
+                position.id = `position-${i}`;
+                position.onclick = () => deployHero(i);
+                
+                const positionNames = ['前左', '前中', '前右', '后左', '后中', '后右'];
+                position.innerHTML = `<div style="font-size: 10px;">${positionNames[i]}</div>`;
+                
+                grid.appendChild(position);
+            }
+        }
+
+        function selectHero(heroId) {
+            // 清除之前的选择
+            document.querySelectorAll('.hero-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 选择新武将
+            selectedHero = availableHeroes.find(hero => hero.id === heroId);
+            if (selectedHero) {
+                event.target.closest('.hero-card').classList.add('selected');
+            }
+        }
+
+        function deployHero(position) {
+            if (!selectedHero) {
+                alert('请先选择一个武将');
+                return;
+            }
+            
+            // 检查武将是否已在其他位置
+            const existingPosition = currentFormation.findIndex(pos => pos.hero?.id === selectedHero.id);
+            if (existingPosition !== -1) {
+                currentFormation[existingPosition].hero = null;
+            }
+            
+            // 部署武将到新位置
+            currentFormation[position].hero = selectedHero;
+            
+            updateFormationDisplay();
+            updateFormationStats();
+            updateAvailableHeroes();
+            
+            selectedHero = null;
+            document.querySelectorAll('.hero-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
+        function updateFormationDisplay() {
+            for (let i = 0; i < 6; i++) {
+                const positionElement = document.getElementById(`position-${i}`);
+                const hero = currentFormation[i].hero;
+                
+                if (hero) {
+                    positionElement.className = 'position hero-in-position';
+                    positionElement.innerHTML = `
+                        <div>
+                            <div style="font-size: 10px;">${hero.name}</div>
+                            <div style="font-size: 8px;">Lv.${hero.level}</div>
+                        </div>
+                    `;
+                    positionElement.onclick = () => removeHero(i);
+                } else {
+                    positionElement.className = 'position';
+                    const positionNames = ['前左', '前中', '前右', '后左', '后中', '后右'];
+                    positionElement.innerHTML = `<div style="font-size: 10px;">${positionNames[i]}</div>`;
+                    positionElement.onclick = () => deployHero(i);
+                }
+            }
+        }
+
+        function removeHero(position) {
+            currentFormation[position].hero = null;
+            updateFormationDisplay();
+            updateFormationStats();
+            updateAvailableHeroes();
+        }
+
+        function updateFormationStats() {
+            const deployedHeroes = currentFormation.filter(pos => pos.hero);
+            const totalPower = deployedHeroes.reduce((sum, pos) => sum + (pos.hero.power || 0), 0);
+            const avgLevel = deployedHeroes.length > 0 ? 
+                Math.floor(deployedHeroes.reduce((sum, pos) => sum + pos.hero.level, 0) / deployedHeroes.length) : 0;
+            
+            document.getElementById('total-power').textContent = totalPower.toLocaleString();
+            document.getElementById('deployed-count').textContent = deployedHeroes.length;
+            document.getElementById('avg-level').textContent = avgLevel;
+        }
+
+        function updateAvailableHeroes() {
+            const deployedHeroIds = currentFormation.filter(pos => pos.hero).map(pos => pos.hero.id);
+            const availableForDeploy = availableHeroes.filter(hero => !deployedHeroIds.includes(hero.id));
+            
+            const heroesDiv = document.getElementById('available-heroes');
+            heroesDiv.innerHTML = `
+                <h4>可用武将 (${availableForDeploy.length}/${availableHeroes.length})</h4>
+                ${availableForDeploy.map(hero => `
+                    <div class="hero-card" onclick="selectHero(${hero.id})">
+                        <strong>${hero.name}</strong><br>
+                        等级: ${hero.level} | 阵营: ${hero.faction} | 兵种: ${hero.unitType}<br>
+                        战力: ${hero.power || '未知'}
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // 页面加载时初始化
+        window.onload = function() {
+            initFormationGrid();
+            updateFormationStats();
+            
+            // 自动登录
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交系统功能测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+        
+        input, select, textarea {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+            width: 200px;
+        }
+        
+        textarea {
+            width: 300px;
+            height: 60px;
+            resize: vertical;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff6b35;
+        }
+        
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .friend-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .friend-card:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.1);
+        }
+        
+        .friend-card.online {
+            border-left: 4px solid #4caf50;
+        }
+        
+        .friend-card.offline {
+            border-left: 4px solid #666;
+        }
+        
+        .friend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .friend-name {
+            font-weight: bold;
+            color: #ff6b35;
+            font-size: 16px;
+        }
+        
+        .friend-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .friend-status.online { background: #4caf50; }
+        .friend-status.offline { background: #666; }
+        
+        .friend-info {
+            color: #ccc;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .friendship-level {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .level-badge {
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .friendship-points {
+            color: #ff6b35;
+            font-size: 12px;
+        }
+        
+        .request-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .request-card.received {
+            border-left: 4px solid #4caf50;
+        }
+        
+        .request-card.sent {
+            border-left: 4px solid #ff9800;
+        }
+        
+        .request-card.expired {
+            border-left: 4px solid #f44336;
+            opacity: 0.6;
+        }
+        
+        .user-search-result {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        
+        .user-email {
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+        }
+        
+        .tab.active {
+            background: rgba(255,107,53,0.3);
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+        
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,107,53,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        
+        .message-preview {
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-style: italic;
+            font-size: 14px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 社交系统测试 👥</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="test-quest-system.html" class="nav-link">🏆 任务测试</a>
+        <a href="test-shop-system.html" class="nav-link">🛒 商店测试</a>
+        <a href="test-equipment-system.html" class="nav-link">🛡️ 装备测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 认证登录</h3>
+        <button onclick="testAuth()">🔐 登录获取Token</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 好友列表</h3>
+        
+        <div class="info">
+            <button onclick="loadFriends()">👥 加载好友列表</button>
+            <button onclick="loadFriendRequests('received')">📨 收到的申请</button>
+            <button onclick="loadFriendRequests('sent')">📤 发出的申请</button>
+        </div>
+        
+        <div id="friend-statistics" class="statistics-grid">
+            <!-- 好友统计将通过JavaScript显示 -->
+        </div>
+        
+        <div id="friend-list" class="social-grid">
+            <!-- 好友列表将通过JavaScript显示 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. 用户搜索</h3>
+        
+        <div class="form-group">
+            <label>搜索用户名:</label>
+            <input type="text" id="searchUsername" placeholder="输入用户名">
+        </div>
+        
+        <div class="form-group">
+            <label>搜索邮箱:</label>
+            <input type="text" id="searchEmail" placeholder="输入邮箱">
+        </div>
+        
+        <button onclick="searchUsers()">🔍 搜索用户</button>
+        
+        <div id="search-results">
+            <!-- 搜索结果将通过JavaScript显示 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. 好友申请管理</h3>
+        
+        <div class="tabs" id="request-tabs">
+            <div class="tab active" data-type="received">📨 收到的申请</div>
+            <div class="tab" data-type="sent">📤 发出的申请</div>
+        </div>
+        
+        <div id="friend-requests">
+            <!-- 好友申请列表将通过JavaScript显示 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. 好友互动测试</h3>
+        
+        <h4>📤 发送好友申请</h4>
+        <div class="form-group">
+            <label>好友用户ID:</label>
+            <input type="number" id="friendRequestId" placeholder="输入用户ID" value="2">
+        </div>
+        
+        <div class="form-group">
+            <label>申请消息:</label>
+            <textarea id="friendRequestMessage" placeholder="输入申请消息（可选）">我想和你成为好友！</textarea>
+        </div>
+        
+        <button onclick="sendFriendRequest()">📨 发送好友申请</button>
+        <div id="friend-request-result"></div>
+        
+        <h4>⚡ 赠送体力</h4>
+        <div class="form-group">
+            <label>好友ID:</label>
+            <input type="number" id="energyFriendId" placeholder="输入好友ID" value="2">
+        </div>
+        
+        <div class="form-group">
+            <label>体力数量:</label>
+            <input type="number" id="energyAmount" placeholder="体力数量" value="5" min="1" max="20">
+        </div>
+        
+        <button onclick="sendEnergyToFriend()">🎁 赠送体力</button>
+        <div id="energy-result"></div>
+        
+        <h4>❌ 删除好友</h4>
+        <div class="form-group">
+            <label>要删除的好友ID:</label>
+            <input type="number" id="removeFriendId" placeholder="输入好友ID">
+        </div>
+        
+        <button onclick="removeFriend()" style="background: linear-gradient(45deg, #f44336, #e91e63);">🗑️ 删除好友</button>
+        <div id="remove-friend-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. 系统验证</h3>
+        <div class="info">
+            <p>🎯 <strong>社交系统测试要点：</strong></p>
+            <ul>
+                <li>验证用户搜索：正确搜索并显示用户信息</li>
+                <li>验证好友申请：发送、接收、处理申请流程</li>
+                <li>验证好友管理：添加、删除好友功能</li>
+                <li>验证好友互动：体力赠送、友谊度系统</li>
+                <li>验证申请状态：待处理、已接受、已拒绝状态</li>
+                <li>验证重复检测：防止重复申请和添加</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000', '_blank')">🚀 打开前端测试</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let currentRequestType = 'received';
+
+        // 认证
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <div>用户: ${data.data.user.username} | ID: ${data.data.user.id} | Token: ${authToken.substring(0, 20)}...</div>
+                    `;
+                    
+                    // 自动加载好友列表
+                    setTimeout(() => loadFriends(), 500);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 标签切换事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const requestTabs = document.querySelectorAll('#request-tabs .tab');
+            requestTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    requestTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentRequestType = this.dataset.type;
+                    loadFriendRequests(currentRequestType);
+                });
+            });
+        });
+
+        // 加载好友列表
+        async function loadFriends() {
+            const friendListDiv = document.getElementById('friend-list');
+            const statisticsDiv = document.getElementById('friend-statistics');
+            
+            if (!authToken) {
+                friendListDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            friendListDiv.innerHTML = '<div class="loading">🔄 正在加载好友...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/friends`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayFriends(data.data.friends);
+                    displayFriendStatistics(data.data);
+                } else {
+                    friendListDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                friendListDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示好友列表
+        function displayFriends(friends) {
+            const friendListDiv = document.getElementById('friend-list');
+            
+            if (friends.length === 0) {
+                friendListDiv.innerHTML = '<div class="info">👥 暂无好友，去搜索添加一些好友吧！</div>';
+                return;
+            }
+            
+            friendListDiv.innerHTML = friends.map(friend => `
+                <div class="friend-card ${friend.isOnline ? 'online' : 'offline'}">
+                    <div class="friend-header">
+                        <div class="friend-name">${friend.username}</div>
+                        <div class="friend-status ${friend.isOnline ? 'online' : 'offline'}">
+                            ${friend.isOnline ? '在线' : '离线'}
+                        </div>
+                    </div>
+                    <div class="friend-info">${friend.email}</div>
+                    
+                    <div class="friendship-level">
+                        <div class="level-badge">Lv.${friend.friendshipLevel}</div>
+                        <div class="friendship-points">${friend.friendshipPoints} 友谊点</div>
+                    </div>
+                    
+                    <div style="color: #ccc; font-size: 12px; margin: 10px 0;">
+                        <div>总互动: ${friend.totalInteractions} 次</div>
+                        <div>最后互动: ${friend.lastInteraction ? new Date(friend.lastInteraction).toLocaleString() : '从未'}</div>
+                        <div>今日互动: ${friend.dailyInteracted ? '已完成' : '未完成'}</div>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <button onclick="sendEnergyToFriendQuick(${friend.friendId})" 
+                                ${friend.dailyInteracted ? 'disabled' : ''} 
+                                style="background: #4caf50; font-size: 12px; padding: 8px 12px;">
+                            ⚡ 赠送体力
+                        </button>
+                        <button onclick="removeFriendQuick(${friend.friendId})" 
+                                style="background: #f44336; font-size: 12px; padding: 8px 12px;">
+                            ❌ 删除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 显示好友统计
+        function displayFriendStatistics(data) {
+            const statisticsDiv = document.getElementById('friend-statistics');
+            
+            statisticsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalFriends}</div>
+                    <div class="stat-label">好友总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.onlineFriends}</div>
+                    <div class="stat-label">在线好友</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalFriends - data.onlineFriends}</div>
+                    <div class="stat-label">离线好友</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.onlineFriends > 0 ? ((data.onlineFriends / data.totalFriends) * 100).toFixed(1) : 0}%</div>
+                    <div class="stat-label">在线率</div>
+                </div>
+            `;
+        }
+
+        // 搜索用户
+        async function searchUsers() {
+            const username = document.getElementById('searchUsername').value.trim();
+            const email = document.getElementById('searchEmail').value.trim();
+            const resultsDiv = document.getElementById('search-results');
+            
+            if (!username && !email) {
+                resultsDiv.innerHTML = '<div class="error">❌ 请输入用户名或邮箱</div>';
+                return;
+            }
+            
+            if (!authToken) {
+                resultsDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">🔄 正在搜索...</div>';
+            
+            try {
+                const params = new URLSearchParams();
+                if (username) params.append('username', username);
+                if (email) params.append('email', email);
+                
+                const response = await fetch(`${API_BASE}/friends/search?${params}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displaySearchResults(data.data.users);
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">❌ 搜索失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示搜索结果
+        function displaySearchResults(users) {
+            const resultsDiv = document.getElementById('search-results');
+            
+            if (users.length === 0) {
+                resultsDiv.innerHTML = '<div class="info">🔍 未找到匹配的用户</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = `
+                <h4>🔍 搜索结果 (${users.length})</h4>
+                ${users.map(user => `
+                    <div class="user-search-result">
+                        <div class="user-info">
+                            <div class="user-name">${user.username}</div>
+                            <div class="user-email">${user.email}</div>
+                        </div>
+                        <div class="user-actions">
+                            ${user.isFriend ? 
+                                '<span style="color: #4caf50;">✅ 已是好友</span>' :
+                                user.hasPendingRequest ? 
+                                    '<span style="color: #ff9800;">⏳ 申请待处理</span>' :
+                                    `<button onclick="sendFriendRequestQuick(${user.id})" style="font-size: 12px; padding: 8px 12px;">📨 添加好友</button>`
+                            }
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // 发送好友申请
+        async function sendFriendRequest() {
+            const friendId = parseInt(document.getElementById('friendRequestId').value) || 0;
+            const message = document.getElementById('friendRequestMessage').value.trim();
+            const resultDiv = document.getElementById('friend-request-result');
+            
+            if (!friendId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入好友ID并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在发送申请...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/friends/request`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ friendId, message })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 好友申请发送成功！</div>
+                        <div><strong>目标用户:</strong> ${data.data.targetUser.username}</div>
+                        <div><strong>申请ID:</strong> ${data.data.requestId}</div>
+                    `;
+                    
+                    // 刷新申请列表
+                    loadFriendRequests('sent');
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 发送失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 快捷发送好友申请
+        async function sendFriendRequestQuick(friendId) {
+            try {
+                const response = await fetch(`${API_BASE}/friends/request`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ 
+                        friendId, 
+                        message: '我想和你成为好友！' 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ 好友申请已发送给 ${data.data.targetUser.username}`);
+                    // 重新搜索以更新状态
+                    searchUsers();
+                } else {
+                    alert(`❌ 发送失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 加载好友申请
+        async function loadFriendRequests(type = 'received') {
+            const requestsDiv = document.getElementById('friend-requests');
+            
+            if (!authToken) {
+                requestsDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            requestsDiv.innerHTML = '<div class="loading">🔄 正在加载申请...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/friends/requests?type=${type}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayFriendRequests(data.data.requests, type);
+                } else {
+                    requestsDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                requestsDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示好友申请
+        function displayFriendRequests(requests, type) {
+            const requestsDiv = document.getElementById('friend-requests');
+            
+            if (requests.length === 0) {
+                requestsDiv.innerHTML = `<div class="info">📭 暂无${type === 'received' ? '收到的' : '发出的'}好友申请</div>`;
+                return;
+            }
+            
+            requestsDiv.innerHTML = requests.map(request => {
+                const isExpired = request.isExpired;
+                const user = type === 'received' ? request.fromUser : request.toUser;
+                
+                return `
+                    <div class="request-card ${type} ${isExpired ? 'expired' : ''}">
+                        <div class="friend-header">
+                            <div class="friend-name">${user.username}</div>
+                            <div class="friend-status ${isExpired ? 'expired' : request.status}">
+                                ${isExpired ? '已过期' : getRequestStatusText(request.status)}
+                            </div>
+                        </div>
+                        <div class="friend-info">${user.email}</div>
+                        
+                        ${request.message ? `
+                            <div class="message-preview">
+                                💬 "${request.message}"
+                            </div>
+                        ` : ''}
+                        
+                        <div style="color: #ccc; font-size: 12px; margin: 10px 0;">
+                            <div>申请时间: ${new Date(request.createdAt).toLocaleString()}</div>
+                            <div>过期时间: ${new Date(request.expiresAt).toLocaleString()}</div>
+                        </div>
+                        
+                        ${type === 'received' && !isExpired && request.status === 'pending' ? `
+                            <div style="margin-top: 15px;">
+                                <button onclick="handleFriendRequest(${request.id}, 'accept')" 
+                                        style="background: #4caf50; font-size: 12px; padding: 8px 12px;">
+                                    ✅ 接受
+                                </button>
+                                <button onclick="handleFriendRequest(${request.id}, 'reject')" 
+                                        style="background: #f44336; font-size: 12px; padding: 8px 12px;">
+                                    ❌ 拒绝
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 处理好友申请
+        async function handleFriendRequest(requestId, action) {
+            try {
+                const response = await fetch(`${API_BASE}/friends/request/handle`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ requestId, action })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const actionText = action === 'accept' ? '接受' : '拒绝';
+                    alert(`✅ 已${actionText}来自 ${data.data.fromUser.username} 的好友申请`);
+                    
+                    // 刷新申请列表和好友列表
+                    loadFriendRequests(currentRequestType);
+                    if (action === 'accept') {
+                        loadFriends();
+                    }
+                } else {
+                    alert(`❌ 处理失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 赠送体力
+        async function sendEnergyToFriend() {
+            const friendId = parseInt(document.getElementById('energyFriendId').value) || 0;
+            const amount = parseInt(document.getElementById('energyAmount').value) || 5;
+            const resultDiv = document.getElementById('energy-result');
+            
+            if (!friendId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入好友ID并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在赠送体力...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/friends/send-energy`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ friendId, amount })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 体力赠送成功！</div>
+                        <div><strong>好友ID:</strong> ${data.data.friendId}</div>
+                        <div><strong>赠送体力:</strong> ${data.data.amount}</div>
+                        <div><strong>获得友谊点:</strong> ${data.data.friendshipPoints}</div>
+                    `;
+                    
+                    // 刷新好友列表
+                    loadFriends();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 赠送失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 快捷赠送体力
+        async function sendEnergyToFriendQuick(friendId) {
+            try {
+                const response = await fetch(`${API_BASE}/friends/send-energy`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ friendId, amount: 5 })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ 成功向好友赠送体力！获得友谊点: ${data.data.friendshipPoints}`);
+                    loadFriends();
+                } else {
+                    alert(`❌ 赠送失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 删除好友
+        async function removeFriend() {
+            const friendId = parseInt(document.getElementById('removeFriendId').value) || 0;
+            const resultDiv = document.getElementById('remove-friend-result');
+            
+            if (!friendId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入好友ID并登录</span>';
+                return;
+            }
+            
+            if (!confirm('确定要删除这个好友吗？')) {
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在删除好友...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/friends/remove`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ friendId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 好友删除成功！</div>
+                        <div><strong>已删除好友ID:</strong> ${data.data.friendId}</div>
+                    `;
+                    
+                    // 刷新好友列表
+                    loadFriends();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 删除失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 快捷删除好友
+        async function removeFriendQuick(friendId) {
+            if (!confirm('确定要删除这个好友吗？')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/friends/remove`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ friendId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ 好友删除成功！');
+                    loadFriends();
+                } else {
+                    alert(`❌ 删除失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 工具函数
+        function getRequestStatusText(status) {
+            const statusMap = {
+                'pending': '待处理',
+                'accepted': '已接受',
+                'rejected': '已拒绝',
+                'expired': '已过期'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 页面加载时自动登录
+        window.onload = function() {
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

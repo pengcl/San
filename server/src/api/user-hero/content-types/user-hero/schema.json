@@ -65,6 +65,11 @@
     "position": {
       "type": "integer",
       "default": 0
+    },
+    "equipment": {
+      "type": "json",
+      "default": {},
+      "description": "武将装备配置"
     }
   }
 }

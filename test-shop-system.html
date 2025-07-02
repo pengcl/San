@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商店系统功能测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+        
+        input, select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff6b35;
+        }
+        
+        .resource-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
+        .resource-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,107,53,0.1);
+            border-radius: 6px;
+        }
+        
+        .resource-item .resource-name {
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 5px;
+        }
+        
+        .resource-item .resource-value {
+            font-size: 18px;
+            color: #4caf50;
+        }
+        
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .shop-item {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .shop-item:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.1);
+        }
+        
+        .shop-item.rarity-1 { border-left: 4px solid #9e9e9e; }
+        .shop-item.rarity-2 { border-left: 4px solid #4caf50; }
+        .shop-item.rarity-3 { border-left: 4px solid #2196f3; }
+        .shop-item.rarity-4 { border-left: 4px solid #9c27b0; }
+        .shop-item.rarity-5 { border-left: 4px solid #ff9800; }
+        .shop-item.rarity-6 { border-left: 4px solid #f44336; }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        
+        .item-rarity {
+            color: #ffd700;
+        }
+        
+        .item-price {
+            background: rgba(255,107,53,0.2);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .item-price .price-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        
+        .item-price .currency {
+            color: #ff6b35;
+            margin-left: 5px;
+        }
+        
+        .shop-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .shop-tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .shop-tab:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+        }
+        
+        .shop-tab.active {
+            background: rgba(255,107,53,0.3);
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 商店系统测试 🛒</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="http://localhost:3000/heroes" class="nav-link" target="_blank">👥 武将页面</a>
+        <a href="test-hero-cultivation.html" class="nav-link">⚔️ 培养测试</a>
+        <a href="test-equipment-system.html" class="nav-link">🛡️ 装备测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 认证登录</h3>
+        <button onclick="testAuth()">🔐 登录获取Token</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 用户资源管理</h3>
+        <button onclick="loadUserResources()">💰 加载用户资源</button>
+        <button onclick="testDailyLogin()">📅 每日签到</button>
+        <button onclick="testPurchaseEnergy()">⚡ 购买体力</button>
+        
+        <div id="resources-display" class="resource-display">
+            <!-- 资源信息将通过JavaScript显示 -->
+        </div>
+        
+        <div id="resource-actions"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 商店系统</h3>
+        
+        <div class="shop-tabs" id="shop-tabs">
+            <div class="shop-tab active" data-shop="general">🏪 通用商店</div>
+            <div class="shop-tab" data-shop="arena">⚔️ 竞技场商店</div>
+            <div class="shop-tab" data-shop="guild">🏰 公会商店</div>
+            <div class="shop-tab" data-shop="event">🎉 活动商店</div>
+            <div class="shop-tab" data-shop="vip">💎 VIP商店</div>
+        </div>
+        
+        <div class="info">
+            <button onclick="loadShopTypes()">🏬 加载商店类型</button>
+            <button onclick="loadShopItems(currentShopType)">🛍️ 加载商品</button>
+            <button onclick="testRefreshShop()">🔄 刷新商店</button>
+        </div>
+        
+        <div id="shop-info"></div>
+        <div id="shop-items" class="shop-grid">
+            <!-- 商店商品将通过JavaScript显示 -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. 购买测试</h3>
+        <div class="form-group">
+            <label>商品ID:</label>
+            <input type="number" id="purchaseItemId" placeholder="输入商品ID" value="12">
+        </div>
+        
+        <div class="form-group">
+            <label>购买数量:</label>
+            <input type="number" id="purchaseQuantity" placeholder="购买数量" value="1" min="1">
+        </div>
+        
+        <button onclick="testPurchaseItem()">💰 购买商品</button>
+        <div id="purchase-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. 系统验证</h3>
+        <div class="info">
+            <p>🎯 <strong>商店系统测试要点：</strong></p>
+            <ul>
+                <li>验证资源获取：用户资源正确显示和更新</li>
+                <li>验证商店加载：不同类型商店正确显示商品</li>
+                <li>验证购买逻辑：正确扣除货币并添加物品</li>
+                <li>验证体力购买：元宝兑换体力功能正常</li>
+                <li>验证每日签到：正确发放签到奖励</li>
+                <li>验证商店刷新：商店商品列表正确更新</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000', '_blank')">🚀 打开前端测试</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let currentShopType = 'general';
+        let userResources = {};
+
+        // 认证
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <div>用户: ${data.data.user.username} | Token: ${authToken.substring(0, 20)}...</div>
+                    `;
+                    
+                    // 自动加载用户资源
+                    setTimeout(() => loadUserResources(), 500);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 加载用户资源
+        async function loadUserResources() {
+            const displayDiv = document.getElementById('resources-display');
+            
+            if (!authToken) {
+                displayDiv.innerHTML = '<div class="error">❌ 请先登录</div>';
+                return;
+            }
+            
+            displayDiv.innerHTML = '<div class="loading">🔄 正在加载资源...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-resources`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    userResources = data.data;
+                    displayUserResources();
+                } else {
+                    displayDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                displayDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示用户资源
+        function displayUserResources() {
+            const displayDiv = document.getElementById('resources-display');
+            const { primaryResources, materials, currencies } = userResources;
+            
+            displayDiv.innerHTML = `
+                <div class="resource-item">
+                    <div class="resource-name">金币</div>
+                    <div class="resource-value">${primaryResources.gold.toLocaleString()}</div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-name">元宝</div>
+                    <div class="resource-value">${primaryResources.gems.toLocaleString()}</div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-name">体力</div>
+                    <div class="resource-value">${primaryResources.energy}/${primaryResources.maxEnergy}</div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-name">荣誉</div>
+                    <div class="resource-value">${currencies.honor.toLocaleString()}</div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-name">强化石</div>
+                    <div class="resource-value">${materials.enhancementStones.toLocaleString()}</div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-name">技能书</div>
+                    <div class="resource-value">${materials.skillBooks.toLocaleString()}</div>
+                </div>
+            `;
+        }
+
+        // 商店标签切换
+        document.addEventListener('DOMContentLoaded', function() {
+            const shopTabs = document.querySelectorAll('.shop-tab');
+            shopTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    shopTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentShopType = this.dataset.shop;
+                    loadShopItems(currentShopType);
+                });
+            });
+        });
+
+        // 加载商店类型
+        async function loadShopTypes() {
+            try {
+                const response = await fetch(`${API_BASE}/shops/types`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('商店类型:', data.data.shops);
+                    document.getElementById('shop-info').innerHTML = `
+                        <div class="success">✅ 成功加载 ${data.data.shops.length} 个商店类型</div>
+                    `;
+                } else {
+                    console.error('加载商店类型失败:', data.error?.message);
+                }
+            } catch (error) {
+                console.error('网络错误:', error);
+            }
+        }
+
+        // 加载商店商品
+        async function loadShopItems(shopType = 'general') {
+            const shopItemsDiv = document.getElementById('shop-items');
+            
+            shopItemsDiv.innerHTML = '<div class="loading">🔄 正在加载商品...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/shops?shopType=${shopType}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayShopItems(data.data);
+                } else {
+                    shopItemsDiv.innerHTML = `<div class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                shopItemsDiv.innerHTML = `<div class="error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        // 显示商店商品
+        function displayShopItems(shopData) {
+            const shopItemsDiv = document.getElementById('shop-items');
+            const shopInfoDiv = document.getElementById('shop-info');
+            
+            shopInfoDiv.innerHTML = `
+                <div class="info">
+                    <h4>🏪 ${shopData.shop.name}</h4>
+                    <p>${shopData.shop.description || ''}</p>
+                    <p><strong>主要货币:</strong> ${shopData.shop.currency}</p>
+                    <p><strong>下次刷新:</strong> ${new Date(shopData.shop.refreshTime).toLocaleString()}</p>
+                </div>
+            `;
+            
+            if (shopData.items.length === 0) {
+                shopItemsDiv.innerHTML = '<div class="info">📭 当前商店暂无商品</div>';
+                return;
+            }
+            
+            shopItemsDiv.innerHTML = shopData.items.map(item => `
+                <div class="shop-item rarity-${item.rarity}">
+                    <div class="item-header">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-rarity">${'⭐'.repeat(item.rarity)}</div>
+                    </div>
+                    <div style="color: #ccc; margin-bottom: 10px;">${item.description || ''}</div>
+                    <div style="color: #ff6b35;"><strong>类别:</strong> ${item.category}</div>
+                    <div class="item-price">
+                        <span class="price-value">${item.price.toLocaleString()}</span>
+                        <span class="currency">${item.currency}</span>
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <div><strong>限购:</strong> ${item.limitQuantity}/日</div>
+                        <div><strong>已购:</strong> ${item.purchased}</div>
+                    </div>
+                    <button onclick="purchaseShopItem(${item.itemId}, 1)" 
+                            ${!item.available ? 'disabled' : ''}>
+                        ${item.available ? '💰 购买' : '❌ 已售罄'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 购买商品
+        async function purchaseShopItem(itemId, quantity = 1) {
+            if (!authToken) {
+                alert('请先登录');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/shops/purchase`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        shopType: currentShopType,
+                        itemId: itemId,
+                        quantity: quantity
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ 购买成功！\n商品: ${data.data.purchasedItem.name}\n数量: ${data.data.purchasedItem.quantity}\n花费: ${data.data.totalCost} ${data.data.currency}`);
+                    // 刷新资源显示
+                    loadUserResources();
+                    // 刷新商店显示
+                    loadShopItems(currentShopType);
+                } else {
+                    alert(`❌ 购买失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 测试购买商品
+        async function testPurchaseItem() {
+            const itemId = parseInt(document.getElementById('purchaseItemId').value) || 0;
+            const quantity = parseInt(document.getElementById('purchaseQuantity').value) || 1;
+            const resultDiv = document.getElementById('purchase-result');
+            
+            if (!itemId) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入商品ID</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在购买...</span>';
+            
+            await purchaseShopItem(itemId, quantity);
+        }
+
+        // 刷新商店
+        async function testRefreshShop() {
+            if (!authToken) {
+                alert('请先登录');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/shops/refresh`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        shopType: currentShopType,
+                        useGems: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ 商店刷新成功！\n新商品数量: ${data.data.newItems.length}\n刷新费用: ${data.data.refreshCost} ${data.data.currency}`);
+                    // 重新加载商店
+                    loadShopItems(currentShopType);
+                } else {
+                    alert(`❌ 刷新失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 购买体力
+        async function testPurchaseEnergy() {
+            if (!authToken) {
+                alert('请先登录');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-resources/energy/purchase`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        quantity: 60,
+                        useGems: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ 购买体力成功！\n获得体力: ${data.data.energyAdded}\n当前体力: ${data.data.currentEnergy}/${data.data.maxEnergy}\n花费元宝: ${data.data.gemsUsed}`);
+                    // 刷新资源显示
+                    loadUserResources();
+                } else {
+                    alert(`❌ 购买体力失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 每日签到
+        async function testDailyLogin() {
+            if (!authToken) {
+                alert('请先登录');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-resources/daily-login`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const rewardText = data.data.rewards.map(r => `${r.name}: ${r.quantity}`).join(', ');
+                    alert(`✅ 每日签到成功！\n签到天数: ${data.data.loginDay}\n奖励: ${rewardText}`);
+                    // 刷新资源显示
+                    loadUserResources();
+                } else {
+                    alert(`❌ 签到失败: ${data.error?.message || '未知错误'}`);
+                }
+            } catch (error) {
+                alert(`❌ 网络错误: ${error.message}`);
+            }
+        }
+
+        // 页面加载时自动登录
+        window.onload = function() {
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

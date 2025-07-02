@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>装备系统功能测试</title>
+    <style>
+        body { 
+            font-family: 'Microsoft YaHei', Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section { 
+            border: 1px solid #444; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4caf50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .loading { color: #ff9800; }
+        .info { color: #2196f3; }
+        button { 
+            padding: 12px 20px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #ff6b35, #f9ca24);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        button:hover { 
+            background: linear-gradient(45deg, #ff8c42, #f9d71c);
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .equipment-slot {
+            background: rgba(255,255,255,0.1);
+            border: 2px dashed #666;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .equipment-slot.equipped {
+            border: 2px solid #4caf50;
+            background: rgba(76,175,80,0.2);
+        }
+        .equipment-slot:hover {
+            border-color: #ff6b35;
+            background: rgba(255,107,53,0.2);
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff6b35; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        h3 { color: #ff6b35; border-bottom: 2px solid #ff6b35; padding-bottom: 5px; }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-link {
+            color: #ff6b35;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 1px solid #ff6b35;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255,107,53,0.2);
+        }
+        
+        input, select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff6b35;
+        }
+        
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255,107,53,0.1);
+            border-radius: 4px;
+        }
+        
+        .enhance-levels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .enhance-level {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .enhance-level.active {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .enhance-level.inactive {
+            background: #666;
+            color: #999;
+        }
+        
+        .equipment-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .rarity-1 { border-left: 4px solid #9e9e9e; }
+        .rarity-2 { border-left: 4px solid #4caf50; }
+        .rarity-3 { border-left: 4px solid #2196f3; }
+        .rarity-4 { border-left: 4px solid #9c27b0; }
+        .rarity-5 { border-left: 4px solid #ff9800; }
+        .rarity-6 { border-left: 4px solid #f44336; }
+    </style>
+</head>
+<body>
+    <h1>三国英雄传 - 装备系统测试 ⚔️</h1>
+    
+    <div class="navigation">
+        <a href="http://localhost:3000" class="nav-link" target="_blank">🎮 前端应用</a>
+        <a href="http://localhost:3000/heroes" class="nav-link" target="_blank">👥 武将页面</a>
+        <a href="test-hero-cultivation.html" class="nav-link">⚔️ 培养测试</a>
+        <a href="test-hero-filtering.html" class="nav-link">🔍 筛选测试</a>
+    </div>
+
+    <div class="test-section">
+        <h3>1. 认证登录</h3>
+        <button onclick="testAuth()">🔐 登录获取Token</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 选择武将</h3>
+        <button onclick="loadHeroes()">👥 加载武将列表</button>
+        <div class="form-group">
+            <label>选择武将:</label>
+            <select id="heroSelect" onchange="loadHeroEquipment()">
+                <option value="">请选择武将...</option>
+            </select>
+        </div>
+        <div id="heroes-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 武将装备槽位</h3>
+        <div id="equipment-info"></div>
+        <div class="equipment-grid" id="equipment-grid">
+            <!-- 装备槽位将通过JavaScript生成 -->
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. 装备管理</h3>
+        
+        <h4>🛡️ 装备道具</h4>
+        <div class="form-group">
+            <label>装备槽位:</label>
+            <select id="equipSlot">
+                <option value="weapon">武器</option>
+                <option value="armor">护甲</option>
+                <option value="helmet">头盔</option>
+                <option value="boots">靴子</option>
+                <option value="accessory1">饰品1</option>
+                <option value="accessory2">饰品2</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>装备物品ID:</label>
+            <input type="number" id="equipItemId" placeholder="输入装备物品模板ID" value="12">
+        </div>
+        
+        <button onclick="testEquipItem()">⚔️ 装备道具</button>
+        <div id="equip-result"></div>
+        
+        <h4>🗡️ 卸下装备</h4>
+        <div class="form-group">
+            <label>卸下槽位:</label>
+            <select id="unequipSlot">
+                <option value="weapon">武器</option>
+                <option value="armor">护甲</option>
+                <option value="helmet">头盔</option>
+                <option value="boots">靴子</option>
+                <option value="accessory1">饰品1</option>
+                <option value="accessory2">饰品2</option>
+            </select>
+        </div>
+        
+        <button onclick="testUnequipItem()">🗑️ 卸下装备</button>
+        <div id="unequip-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. 装备强化</h3>
+        
+        <div class="form-group">
+            <label>强化槽位:</label>
+            <select id="enhanceSlot">
+                <option value="weapon">武器</option>
+                <option value="armor">护甲</option>
+                <option value="helmet">头盔</option>
+                <option value="boots">靴子</option>
+                <option value="accessory1">饰品1</option>
+                <option value="accessory2">饰品2</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>目标等级:</label>
+            <input type="number" id="targetLevel" min="1" max="15" placeholder="目标强化等级">
+        </div>
+        
+        <div class="form-group">
+            <label>强化金币:</label>
+            <input type="number" id="enhanceGold" placeholder="强化所需金币" value="5000">
+        </div>
+        
+        <button onclick="testEnhanceEquipment()">✨ 装备强化</button>
+        <div id="enhance-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. 创建测试装备</h3>
+        <div class="info">
+            <p>🛠️ <strong>创建一些测试装备到背包：</strong></p>
+            <button onclick="createTestEquipment()">🎁 添加测试装备</button>
+            <div id="create-equipment-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>7. 系统验证</h3>
+        <div class="info">
+            <p>🎯 <strong>装备系统测试要点：</strong></p>
+            <ul>
+                <li>验证装备穿戴：装备道具后属性正确提升</li>
+                <li>验证装备卸下：卸下装备后属性正确恢复</li>
+                <li>验证装备强化：强化等级提升带来属性增长</li>
+                <li>验证强化成功率：高等级强化有失败概率</li>
+                <li>验证装备替换：更换装备时正确处理旧装备</li>
+                <li>验证背包交互：装备和卸下正确操作背包物品</li>
+            </ul>
+        </div>
+        <button onclick="window.open('http://localhost:3000/heroes', '_blank')">🚀 打开武将页面测试</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:1337/api';
+        let authToken = null;
+        let allHeroes = [];
+        let selectedHeroId = null;
+        let heroEquipment = {};
+
+        // 认证
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<span class="loading">🔄 正在登录...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: 'pengcl',
+                        password: 'zouleyuan',
+                        rememberMe: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 登录成功</span>
+                        <div>用户: ${data.data.user.username} | Token: ${authToken.substring(0, 20)}...</div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 登录失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 加载武将列表
+        async function loadHeroes() {
+            const resultDiv = document.getElementById('heroes-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在加载武将数据...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes?page=1&limit=100`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success || data.data) {
+                    allHeroes = data.data || [];
+                    
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 加载成功</span>
+                        <div>武将数量: ${allHeroes.length}</div>
+                    `;
+                    
+                    // 更新下拉选择框
+                    const heroSelect = document.getElementById('heroSelect');
+                    heroSelect.innerHTML = '<option value="">请选择武将...</option>';
+                    allHeroes.forEach(hero => {
+                        const option = document.createElement('option');
+                        option.value = hero.id;
+                        option.textContent = `${hero.name} (Lv.${hero.level || 1} ${hero.star || 1}⭐)`;
+                        heroSelect.appendChild(option);
+                    });
+                    
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 加载失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 加载武将装备信息
+        async function loadHeroEquipment() {
+            const heroSelect = document.getElementById('heroSelect');
+            const heroId = heroSelect.value;
+            
+            if (!heroId || !authToken) {
+                return;
+            }
+            
+            selectedHeroId = heroId;
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${heroId}/equipment`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    heroEquipment = data.data;
+                    displayEquipmentSlots();
+                    displayEquipmentInfo();
+                } else {
+                    console.error('获取装备信息失败:', data.error?.message);
+                }
+            } catch (error) {
+                console.error('网络错误:', error);
+            }
+        }
+
+        // 显示装备槽位
+        function displayEquipmentSlots() {
+            const grid = document.getElementById('equipment-grid');
+            
+            if (!heroEquipment.equipment) {
+                grid.innerHTML = '<div>请先选择武将</div>';
+                return;
+            }
+            
+            grid.innerHTML = heroEquipment.equipment.map(slot => {
+                const isEquipped = !slot.isEmpty;
+                const slotClass = isEquipped ? 'equipped' : '';
+                
+                return `
+                    <div class="equipment-slot ${slotClass}">
+                        <div><strong>${slot.name}</strong></div>
+                        <div>主属性: ${slot.primaryStat}</div>
+                        ${isEquipped ? `
+                            <div class="equipment-card rarity-${slot.item.rarity}">
+                                <div><strong>${slot.item.name}</strong></div>
+                                <div>稀有度: ${slot.item.rarity}⭐</div>
+                                <div>强化: +${slot.item.enhanceLevel}</div>
+                                <div class="enhance-levels">
+                                    ${Array.from({length: 15}, (_, i) => 
+                                        `<div class="enhance-level ${i < slot.item.enhanceLevel ? 'active' : 'inactive'}">${i+1}</div>`
+                                    ).join('')}
+                                </div>
+                                <div class="stats-display">
+                                    <div class="stat-item">
+                                        <div>生命: ${slot.item.stats.hp}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div>攻击: ${slot.item.stats.attack}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div>防御: ${slot.item.stats.defense}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div>速度: ${slot.item.stats.speed}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="color: #666; font-style: italic;">未装备</div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 显示装备总属性
+        function displayEquipmentInfo() {
+            const infoDiv = document.getElementById('equipment-info');
+            
+            if (!heroEquipment.totalStats) {
+                return;
+            }
+            
+            infoDiv.innerHTML = `
+                <h4>装备总属性加成</h4>
+                <div class="stats-display">
+                    <div class="stat-item">
+                        <div><strong>生命</strong></div>
+                        <div>+${heroEquipment.totalStats.hp}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div><strong>攻击</strong></div>
+                        <div>+${heroEquipment.totalStats.attack}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div><strong>防御</strong></div>
+                        <div>+${heroEquipment.totalStats.defense}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div><strong>速度</strong></div>
+                        <div>+${heroEquipment.totalStats.speed}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 装备道具测试
+        async function testEquipItem() {
+            const slot = document.getElementById('equipSlot').value;
+            const itemId = parseInt(document.getElementById('equipItemId').value) || 0;
+            const resultDiv = document.getElementById('equip-result');
+            
+            if (!selectedHeroId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先选择武将并登录</span>';
+                return;
+            }
+            
+            if (!itemId) {
+                resultDiv.innerHTML = '<span class="error">❌ 请输入装备物品ID</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在装备...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${selectedHeroId}/equipment/${slot}/equip`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ itemId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 装备成功！</div>
+                        <div><strong>装备名称：</strong> ${result.equippedItem.name}</div>
+                        <div><strong>装备稀有度：</strong> ${result.equippedItem.rarity}⭐</div>
+                        <div><strong>属性变化：</strong></div>
+                        <div class="stats-display">
+                            <div class="stat-item">
+                                <div><strong>生命</strong></div>
+                                <div>+${result.statsChange.hp}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>攻击</strong></div>
+                                <div>+${result.statsChange.attack}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>防御</strong></div>
+                                <div>+${result.statsChange.defense}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>速度</strong></div>
+                                <div>+${result.statsChange.speed}</div>
+                            </div>
+                        </div>
+                        ${result.previousItem ? `<div><strong>替换装备：</strong> ${result.previousItem.name} 已返还到背包</div>` : ''}
+                    `;
+                    
+                    // 刷新装备显示
+                    await loadHeroEquipment();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 装备失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 卸下装备测试
+        async function testUnequipItem() {
+            const slot = document.getElementById('unequipSlot').value;
+            const resultDiv = document.getElementById('unequip-result');
+            
+            if (!selectedHeroId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先选择武将并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在卸下装备...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${selectedHeroId}/equipment/${slot}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ 卸下装备成功！</div>
+                        <div><strong>装备名称：</strong> ${result.unequippedItem.name}</div>
+                        <div><strong>属性变化：</strong></div>
+                        <div class="stats-display">
+                            <div class="stat-item">
+                                <div><strong>生命</strong></div>
+                                <div>${result.statsChange.hp}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>攻击</strong></div>
+                                <div>${result.statsChange.attack}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>防御</strong></div>
+                                <div>${result.statsChange.defense}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>速度</strong></div>
+                                <div>${result.statsChange.speed}</div>
+                            </div>
+                        </div>
+                        <div>装备已返还到背包</div>
+                    `;
+                    
+                    // 刷新装备显示
+                    await loadHeroEquipment();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 卸下装备失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 装备强化测试
+        async function testEnhanceEquipment() {
+            const slot = document.getElementById('enhanceSlot').value;
+            const targetLevel = parseInt(document.getElementById('targetLevel').value) || 1;
+            const gold = parseInt(document.getElementById('enhanceGold').value) || 0;
+            const resultDiv = document.getElementById('enhance-result');
+            
+            if (!selectedHeroId || !authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先选择武将并登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在强化装备...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-heroes/${selectedHeroId}/equipment/${slot}/enhance`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        targetLevel,
+                        gold,
+                        materials: {}
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    const successClass = result.success ? 'success' : 'error';
+                    const successIcon = result.success ? '✅' : '❌';
+                    const successText = result.success ? '强化成功！' : '强化失败！';
+                    
+                    resultDiv.innerHTML = `
+                        <div class="${successClass}">${successIcon} ${successText}</div>
+                        <div><strong>新强化等级：</strong> +${result.newLevel}</div>
+                        <div><strong>金币消耗：</strong> ${result.goldUsed}</div>
+                        ${result.success ? `
+                            <div><strong>属性提升：</strong></div>
+                            <div class="stats-display">
+                                <div class="stat-item">
+                                    <div><strong>生命</strong></div>
+                                    <div>+${result.statsIncrease.hp}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div><strong>攻击</strong></div>
+                                    <div>+${result.statsIncrease.attack}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div><strong>防御</strong></div>
+                                    <div>+${result.statsIncrease.defense}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div><strong>速度</strong></div>
+                                    <div>+${result.statsIncrease.speed}</div>
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="color: #f44336;">强化失败，装备等级${result.newLevel > targetLevel - 1 ? '未变化' : '降级至+' + result.newLevel}</div>
+                        `}
+                    `;
+                    
+                    // 刷新装备显示
+                    await loadHeroEquipment();
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 强化失败: ${data.error?.message || '未知错误'}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 网络错误: ${error.message}</span>`;
+            }
+        }
+
+        // 创建测试装备
+        async function createTestEquipment() {
+            const resultDiv = document.getElementById('create-equipment-result');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<span class="error">❌ 请先登录</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<span class="loading">🔄 正在创建测试装备...</span>';
+            
+            // 这里需要调用添加物品的API来创建测试装备
+            // 由于物品系统可能需要管理员权限，这里先显示提示
+            resultDiv.innerHTML = `
+                <div class="info">
+                    <div>📋 <strong>测试装备物品ID列表：</strong></div>
+                    <div>12 - 青铜剑 (武器, 稀有度2)</div>
+                    <div>13 - 精钢刀 (武器, 稀有度3)</div>
+                    <div>14 - 龙泉宝剑 (武器, 稀有度4)</div>
+                    <div>15 - 皮甲 (护甲, 稀有度2)</div>
+                    <div>16 - 铁甲 (护甲, 稀有度3)</div>
+                    <div>17 - 战靴 (靴子, 稀有度2)</div>
+                    <div><em>请使用这些ID进行装备测试</em></div>
+                </div>
+            `;
+        }
+
+        // 页面加载时自动登录
+        window.onload = function() {
+            setTimeout(() => {
+                testAuth();
+            }, 500);
+        };
+    </script>
+</body>
+</html>
