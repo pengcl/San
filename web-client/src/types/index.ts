@@ -40,6 +40,12 @@ export interface Hero extends BaseEntity {
   card_image?: string;
   skills: HeroSkill[];
   equipment?: Equipment[];
+  // 用户武将特有属性
+  star?: number;
+  power?: number;
+  isFavorite?: boolean;
+  quality?: number;
+  heroId?: number;
 }
 
 // 技能相关类型

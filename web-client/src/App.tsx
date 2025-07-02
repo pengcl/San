@@ -36,6 +36,7 @@ import {
   RechargePage,
   SkillsPage,
   SummonPage,
+  BattleDemoPage,
   preloadCoreRoutes,
 } from './router';
 
@@ -97,6 +98,7 @@ const AnimatedRoutes = () => {
           <Route path='/formation/presets' element={<FormationPresetsPage />} />
           <Route path='/battle' element={<BattlePageMUI />} />
           <Route path='/battle/stages' element={<BattleStagesPage />} />
+          <Route path='/battle/demo' element={<BattleDemoPage />} />
           <Route path='/battle/result' element={<BattleResultPage />} />
           <Route path='/city' element={<CityPageMUI />} />
           <Route path='/city/buildings' element={<BuildingManagementPage />} />

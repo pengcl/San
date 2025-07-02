@@ -171,9 +171,16 @@ export const apiSlice = createApi({
       invalidatesTags: ['User'],
     }),
 
-    // 用户英雄API
+    // 用户英雄API - 获取当前用户的武将
     getUserHeroes: builder.query({
-      query: (userId) => `/user-heroes?filters[userId][$eq]=${userId}&populate=*`,
+      query: (params = {}) => {
+        const searchParams = new URLSearchParams();
+        if (params.page) searchParams.append('page', params.page.toString());
+        if (params.limit) searchParams.append('limit', params.limit.toString());
+        if (params.sort) searchParams.append('sort', params.sort);
+        if (params.order) searchParams.append('order', params.order);
+        return `/user-heroes?${searchParams.toString()}`;
+      },
       providesTags: ['Hero'],
     }),
     createUserHero: builder.mutation({

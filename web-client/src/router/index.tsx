@@ -32,6 +32,7 @@ export const ShopPage = lazy(() => import('../pages/game/ShopPage'));
 export const RechargePage = lazy(() => import('../pages/game/RechargePage'));
 export const SkillsPage = lazy(() => import('../pages/game/SkillsPageMUI'));
 export const SummonPage = lazy(() => import('../pages/game/SummonPageMUI'));
+export const BattleDemoPage = lazy(() => import('../pages/game/BattleDemoPage'));
 
 // 路由元数据类型
 export interface RouteMetadata {
@@ -78,6 +79,7 @@ export const routeComponents = {
   RechargePage,
   SkillsPage,
   SummonPage,
+  BattleDemoPage,
 };
 
 export default {

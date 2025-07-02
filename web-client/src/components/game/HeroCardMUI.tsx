@@ -21,6 +21,8 @@ import {
   Speed,
   Star,
   Person,
+  FavoriteBorder,
+  EmojiEvents,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import type { Hero } from '../../types';
@@ -205,6 +207,22 @@ const HeroCard: React.FC<HeroCardProps> = ({
           }}
         />
 
+        {/* 收藏图标 */}
+        {hero.isFavorite && (
+          <IconButton
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 40,
+              right: 8,
+              color: '#ff6b35',
+              zIndex: 2,
+            }}
+          >
+            <Favorite fontSize="small" />
+          </IconButton>
+        )}
+
         <CardContent
           sx={{
             height: '40%',
@@ -249,16 +267,32 @@ const HeroCard: React.FC<HeroCardProps> = ({
               </Typography>
             )}
 
-            <Typography
-              variant="caption"
-              sx={{
-                color: 'text.secondary',
-                display: 'block',
-                mb: 1,
-              }}
-            >
-              {hero.role} · {hero.unit_type}
-            </Typography>
+            {/* 显示战力或角色信息 */}
+            {hero.power ? (
+              <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
+                <EmojiEvents sx={{ fontSize: '0.875rem', color: '#ffd700' }} />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#ffd700',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  战力: {hero.power}
+                </Typography>
+              </Stack>
+            ) : (
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                  display: 'block',
+                  mb: 1,
+                }}
+              >
+                {hero.role} · {hero.unit_type}
+              </Typography>
+            )}
           </Box>
 
           {/* 属性显示 */}

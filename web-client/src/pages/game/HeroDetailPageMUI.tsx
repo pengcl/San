@@ -70,7 +70,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppDispatch } from '../../store';
 import { addNotification } from '../../store/slices/uiSlice';
 import {
-  useGetHeroTemplateQuery,
+  useGetHeroQuery,
   useLevelUpHeroMutation,
   useStarUpHeroMutation,
   useAwakenHeroMutation,
@@ -109,7 +109,7 @@ const HeroDetailPageMUI: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   
-  const { data: heroData, error: heroError, isLoading } = useGetHeroTemplateQuery(heroId || '');
+  const { data: heroData, error: heroError, isLoading } = useGetHeroQuery(heroId || '');
   const { data: userProfile } = useGetUserProfileQuery({});
   const [levelUpHero, { isLoading: levelingUp }] = useLevelUpHeroMutation();
   const [starUpHero] = useStarUpHeroMutation();
@@ -296,7 +296,7 @@ const HeroDetailPageMUI: React.FC = () => {
                 {hero.name} {hero.title && `• ${hero.title}`}
               </Typography>
               <Typography variant="subtitle1" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                武将详情 • 等级 {hero.level || 1} • 战力 {calculatePower(hero).toLocaleString()}
+                武将详情 • 等级 {hero.level || 1} • 战力 {(hero.power || calculatePower(hero)).toLocaleString()}
               </Typography>
             </Box>
 
@@ -351,7 +351,7 @@ const HeroDetailPageMUI: React.FC = () => {
                       sx={{
                         width: 200,
                         height: 200,
-                        border: `4px solid ${getQualityColor(hero.quality || hero.rarity || 1)}`,
+                        border: `4px solid ${getQualityColor(hero.star || hero.rarity || 1)}`,
                         fontSize: '4rem'
                       }}
                     >
@@ -367,7 +367,7 @@ const HeroDetailPageMUI: React.FC = () => {
                       display: 'flex',
                       gap: 0.5
                     }}>
-                      {Array.from({ length: hero.quality || hero.rarity || 1 }, (_, i) => (
+                      {Array.from({ length: hero.star || hero.rarity || 1 }, (_, i) => (
                         <Star key={i} sx={{ color: '#ffd700', fontSize: '1.5rem' }} />
                       ))}
                     </Box>
@@ -390,9 +390,9 @@ const HeroDetailPageMUI: React.FC = () => {
 
                   {/* 品质显示 */}
                   <Chip 
-                    label={hero.qualityName || getQualityName(hero.quality || hero.rarity || 1)}
+                    label={hero.qualityName || getQualityName(hero.star || hero.rarity || 1)}
                     sx={{ 
-                      backgroundColor: hero.qualityColor || getQualityColor(hero.quality || hero.rarity || 1), 
+                      backgroundColor: hero.qualityColor || getQualityColor(hero.star || hero.rarity || 1), 
                       color: 'white',
                       fontWeight: 'bold',
                       mb: 2
@@ -459,7 +459,7 @@ const HeroDetailPageMUI: React.FC = () => {
                           战力
                         </Typography>
                         <Typography variant="h6" sx={{ color: '#ff6b35', fontWeight: 'bold' }}>
-                          {calculatePower(hero).toLocaleString()}
+                          {(hero.power || calculatePower(hero)).toLocaleString()}
                         </Typography>
                       </Paper>
                     </Grid>
@@ -472,12 +472,12 @@ const HeroDetailPageMUI: React.FC = () => {
                         经验值
                       </Typography>
                       <Typography variant="body2" sx={{ color: '#4caf50' }}>
-                        {hero.experience || 0} / {(hero.level || 1) * 1000}
+                        {hero.experience || 0} / {hero.maxExperience || (hero.level || 1) * 1000}
                       </Typography>
                     </Box>
                     <LinearProgress 
                       variant="determinate" 
-                      value={((hero.experience || 0) / ((hero.level || 1) * 1000)) * 100}
+                      value={((hero.experience || 0) / (hero.maxExperience || (hero.level || 1) * 1000)) * 100}
                       sx={{ 
                         height: 8, 
                         borderRadius: 4,
@@ -531,7 +531,7 @@ const HeroDetailPageMUI: React.FC = () => {
                         生命值
                       </Typography>
                       <Typography variant="h6" sx={{ color: '#f44336', fontWeight: 'bold' }}>
-                        {(hero.base_hp || hero.baseStats?.hp || 3000).toLocaleString()}
+                        {(hero.currentStats?.hp || hero.baseStats?.hp || 3000).toLocaleString()}
                       </Typography>
                     </Box>
                     <LinearProgress 
@@ -554,12 +554,12 @@ const HeroDetailPageMUI: React.FC = () => {
                         攻击力
                       </Typography>
                       <Typography variant="h6" sx={{ color: '#ff9800', fontWeight: 'bold' }}>
-                        {hero.base_attack || hero.baseStats?.attack || 400}
+                        {hero.currentStats?.attack || hero.baseStats?.attack || 400}
                       </Typography>
                     </Box>
                     <LinearProgress 
                       variant="determinate" 
-                      value={Math.min(((hero.base_attack || hero.baseStats?.attack || 400) / 1000) * 100, 100)}
+                      value={Math.min(((hero.currentStats?.attack || hero.baseStats?.attack || 400) / 1000) * 100, 100)}
                       sx={{ 
                         height: 6, 
                         borderRadius: 3,
@@ -577,12 +577,12 @@ const HeroDetailPageMUI: React.FC = () => {
                         防御力
                       </Typography>
                       <Typography variant="h6" sx={{ color: '#2196f3', fontWeight: 'bold' }}>
-                        {hero.base_defense || hero.baseStats?.defense || 400}
+                        {hero.currentStats?.defense || hero.baseStats?.defense || 400}
                       </Typography>
                     </Box>
                     <LinearProgress 
                       variant="determinate" 
-                      value={Math.min(((hero.base_defense || hero.baseStats?.defense || 400) / 1000) * 100, 100)}
+                      value={Math.min(((hero.currentStats?.defense || hero.baseStats?.defense || 400) / 1000) * 100, 100)}
                       sx={{ 
                         height: 6, 
                         borderRadius: 3,
@@ -600,12 +600,12 @@ const HeroDetailPageMUI: React.FC = () => {
                         速度
                       </Typography>
                       <Typography variant="h6" sx={{ color: '#4caf50', fontWeight: 'bold' }}>
-                        {hero.base_speed || hero.baseStats?.speed || 80}
+                        {hero.currentStats?.speed || hero.baseStats?.speed || 80}
                       </Typography>
                     </Box>
                     <LinearProgress 
                       variant="determinate" 
-                      value={Math.min(((hero.base_speed || hero.baseStats?.speed || 80) / 200) * 100, 100)}
+                      value={Math.min(((hero.currentStats?.speed || hero.baseStats?.speed || 80) / 200) * 100, 100)}
                       sx={{ 
                         height: 6, 
                         borderRadius: 3,

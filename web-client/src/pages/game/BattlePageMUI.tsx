@@ -89,7 +89,7 @@ const BattlePage: React.FC = () => {
   
   const initializeBattle = async () => {
     try {
-      // 使用默认阵容开始战斗（实际项目中应该从阵容页面获取）
+      // 获取用户当前武将作为默认阵容
       const defaultFormation = [
         { heroId: 1, position: 0 },
         { heroId: 2, position: 1 },

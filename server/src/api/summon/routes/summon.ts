@@ -2,7 +2,7 @@
  * 召唤系统路由配置
  */
 
-module.exports = {
+export default {
   routes: [
     {
       method: 'POST',

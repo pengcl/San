@@ -36,7 +36,7 @@ const FRAGMENT_REQUIREMENTS = {
   1: 10, 2: 20, 3: 50, 4: 80, 5: 100, 6: 150
 };
 
-module.exports = {
+export default {
   /**
    * 普通召唤 - 使用金币
    */

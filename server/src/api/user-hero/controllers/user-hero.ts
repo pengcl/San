@@ -222,6 +222,88 @@ export default factories.createCoreController('api::user-hero.user-hero', ({ str
         }
       };
     }
+  },
+
+  /**
+   * 创建用户武将
+   */
+  async create(ctx: Context) {
+    try {
+      const user = ctx.state.user;
+      const { hero_id, level = 1, star = 1 } = ctx.request.body;
+
+      if (!user) {
+        return ctx.unauthorized('未认证');
+      }
+
+      // 查找武将模板
+      const hero = await strapi.db.query('api::hero.hero').findOne({
+        where: { hero_id }
+      });
+
+      if (!hero) {
+        return ctx.badRequest('武将不存在');
+      }
+
+      // 检查是否已拥有该武将
+      const existingUserHero = await strapi.db.query('api::user-hero.user-hero').findOne({
+        where: {
+          user: user.id,
+          hero: hero.id
+        }
+      });
+
+      if (existingUserHero) {
+        return ctx.badRequest('已拥有该武将');
+      }
+
+      // 计算武将战力
+      const basePower = hero.base_hp + hero.base_attack * 2 + hero.base_defense * 1.5 + hero.base_speed;
+      const levelMultiplier = 1 + (level - 1) * 0.1;
+      const starMultiplier = 1 + (star - 1) * 0.2;
+      const power = Math.floor(basePower * levelMultiplier * starMultiplier);
+
+      // 创建用户武将
+      const userHero = await strapi.db.query('api::user-hero.user-hero').create({
+        data: {
+          user: user.id,
+          hero: hero.id,
+          level,
+          star,
+          exp: 0,
+          breakthrough: 0,
+          skill_points: 0,
+          skill_tree: {},
+          power,
+          is_favorite: false,
+          position: 0,
+          publishedAt: new Date()
+        }
+      });
+
+      ctx.body = {
+        data: {
+          id: userHero.id,
+          heroId: hero.hero_id,
+          name: hero.name,
+          level: userHero.level,
+          star: userHero.star,
+          power: userHero.power,
+          message: '武将创建成功'
+        }
+      };
+    } catch (error) {
+      console.error('创建武将错误:', error);
+      ctx.status = 500;
+      ctx.body = {
+        data: null,
+        error: {
+          status: 500,
+          name: 'InternalServerError',
+          message: '创建武将失败'
+        }
+      };
+    }
   }
 }));
 

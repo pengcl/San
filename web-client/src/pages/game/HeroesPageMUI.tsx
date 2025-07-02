@@ -36,7 +36,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../../store/slices/uiSlice';
-import { useGetHeroesQuery } from '../../store/slices/apiSlice';
+import { useGetUserHeroesQuery } from '../../store/slices/apiSlice';
 import HeroCard from '../../components/game/HeroCardMUI';
 import type { Hero } from '../../types';
 
@@ -44,11 +44,11 @@ const HeroesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [filterRarity, setFilterRarity] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<'level' | 'rarity' | 'attack'>('level');
+  const [sortBy, setSortBy] = useState<'level' | 'rarity' | 'attack' | 'power'>('power');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
 
-  const { data: heroesData, error, isLoading } = useGetHeroesQuery({
+  const { data: heroesData, error, isLoading } = useGetUserHeroesQuery({
     page: 1,
     limit: 100,
     sort: sortBy,
@@ -78,23 +78,22 @@ const HeroesPage: React.FC = () => {
     navigate(`/heroes/${hero.id}`);
   };
 
-  // 过滤和排序武将 - 使用后端返回的真实数据
+  // 过滤和排序武将 - 使用用户武将数据
   const getFilteredAndSortedHeroes = () => {
-    const heroes = heroesData?.data?.heroes || [];
+    const heroes = heroesData?.data || [];
     let filteredHeroes = [...heroes];
 
     // 搜索过滤
     if (searchQuery) {
       filteredHeroes = filteredHeroes.filter(hero =>
-        hero.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        hero.description?.toLowerCase().includes(searchQuery.toLowerCase())
+        hero.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // 品质过滤
+    // 星级过滤
     if (filterRarity !== null) {
       filteredHeroes = filteredHeroes.filter(hero => 
-        (hero.quality === filterRarity) || (hero.rarity === filterRarity)
+        hero.star === filterRarity
       );
     }
 
@@ -102,11 +101,13 @@ const HeroesPage: React.FC = () => {
     filteredHeroes.sort((a, b) => {
       switch (sortBy) {
         case 'level':
-          return (b.id || 0) - (a.id || 0); // 按武将ID排序
+          return (b.level || 0) - (a.level || 0); // 按等级排序
         case 'rarity':
-          return (b.quality || b.rarity || 1) - (a.quality || a.rarity || 1); // 按品质排序
+          return (b.star || 1) - (a.star || 1); // 按星级排序
         case 'attack':
-          return (b.baseStats?.attack || 0) - (a.baseStats?.attack || 0); // 按攻击力排序
+          return (b.stats?.attack || 0) - (a.stats?.attack || 0); // 按攻击力排序
+        case 'power':
+          return (b.power || 0) - (a.power || 0); // 按战力排序
         default:
           return 0;
       }
@@ -116,31 +117,35 @@ const HeroesPage: React.FC = () => {
   };
 
   const filteredHeroes = React.useMemo(() => getFilteredAndSortedHeroes(), [heroesData, searchQuery, filterRarity, sortBy]);
-  const totalHeroes = heroesData?.data?.heroes?.length || 0;
+  const totalHeroes = heroesData?.data?.length || 0;
   const rarityOptions = [1, 2, 3, 4, 5, 6];
 
-  // 转换API数据为Hero类型 - 适配用户武将数据
-  const convertToHero = (apiHero: any): Hero => ({
-    id: apiHero.id,
-    name: apiHero.name || '',
-    title: apiHero.description || '',
-    description: apiHero.description || '',
-    level: apiHero.level || 1,
-    experience: apiHero.experience || 0,
-    rarity: apiHero.rarity || apiHero.quality || 1,
-    faction: apiHero.faction || '未知', // 使用后端返回的阵营
-    role: apiHero.unitType === '骑兵' ? '敏攻' : apiHero.unitType === '步兵' ? '物理输出' : '远程输出',
-    unit_type: apiHero.unitType || '步兵', // 使用后端返回的兵种
-    cost: Math.floor((apiHero.baseStats?.attack || 400) / 80) + 3,
-    health: apiHero.stats?.hp || apiHero.baseStats?.hp || 3000,
-    attack: apiHero.stats?.attack || apiHero.baseStats?.attack || 400,
-    defense: apiHero.stats?.defense || apiHero.baseStats?.defense || 400,
-    speed: apiHero.stats?.speed || apiHero.baseStats?.speed || 80,
+  // 转换用户武将数据为Hero类型
+  const convertToHero = (userHero: any): Hero => ({
+    id: userHero.id,
+    name: userHero.name || '',
+    title: `${userHero.level}级 ${userHero.star}星`,
+    description: `战力: ${userHero.power || 0}`,
+    level: userHero.level || 1,
+    experience: userHero.experience || 0,
+    rarity: userHero.star || 1, // 使用星级作为稀有度
+    faction: userHero.faction || '未知',
+    role: userHero.unitType || '未知',
+    unit_type: userHero.unitType || '未知',
+    cost: Math.floor((userHero.stats?.attack || 400) / 80) + 3,
+    health: userHero.stats?.hp || 3000,
+    attack: userHero.stats?.attack || 400,
+    defense: userHero.stats?.defense || 400,
+    speed: userHero.stats?.speed || 80,
     energy: 100,
-    skills: [],
+    skills: userHero.skills || [],
     equipment: [],
-    created_at: apiHero.createdAt || '',
-    updated_at: apiHero.updatedAt || '',
+    created_at: userHero.createdAt || '',
+    updated_at: userHero.updatedAt || '',
+    // 新增用户武将特有属性
+    star: userHero.star || 1,
+    power: userHero.power || 0,
+    isFavorite: userHero.isFavorite || false,
   });
 
   if (isLoading) {
@@ -177,7 +182,7 @@ const HeroesPage: React.FC = () => {
                 fontSize: { xs: '1.25rem', sm: '1.5rem' }
               }}
             >
-              武将系统
+              我的武将
             </Typography>
             <Typography 
               variant="caption" 
@@ -206,16 +211,7 @@ const HeroesPage: React.FC = () => {
               variant="contained"
               size="small"
               startIcon={<AutoAwesome sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }} />}
-              onClick={() =>
-                dispatch(
-                  addNotification({
-                    type: 'info',
-                    title: '召唤功能',
-                    message: '武将召唤功能即将开放',
-                    duration: 3000,
-                  })
-                )
-              }
+              onClick={() => navigate('/summon')}
               sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 px: { xs: 1, sm: 2 }
@@ -252,17 +248,17 @@ const HeroesPage: React.FC = () => {
                 />
               </Grid>
 
-              {/* 品质筛选 - 手机端一行两个 */}
+              {/* 星级筛选 - 手机端一行两个 */}
               <Grid item xs={6} sm={4}>
                 <FormControl fullWidth size="small">
-                  <InputLabel>品质筛选</InputLabel>
+                  <InputLabel>星级筛选</InputLabel>
                   <Select
                     value={filterRarity || ''}
                     onChange={(e) => setFilterRarity(e.target.value as number || null)}
-                    label="品质筛选"
+                    label="星级筛选"
                   >
                     <MenuItem value="">
-                      <em>全部品质</em>
+                      <em>全部星级</em>
                     </MenuItem>
                     {rarityOptions.map(rarity => (
                       <MenuItem key={rarity} value={rarity}>
@@ -286,11 +282,12 @@ const HeroesPage: React.FC = () => {
                   <InputLabel>排序方式</InputLabel>
                   <Select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'level' | 'rarity' | 'attack')}
+                    onChange={(e) => setSortBy(e.target.value as 'level' | 'rarity' | 'attack' | 'power')}
                     label="排序方式"
                   >
+                    <MenuItem value="power">战力排序</MenuItem>
                     <MenuItem value="level">等级排序</MenuItem>
-                    <MenuItem value="rarity">品质排序</MenuItem>
+                    <MenuItem value="rarity">星级排序</MenuItem>
                     <MenuItem value="attack">攻击力排序</MenuItem>
                   </Select>
                 </FormControl>
@@ -305,7 +302,7 @@ const HeroesPage: React.FC = () => {
                   onClick={() => {
                     setFilterRarity(null);
                     setSearchQuery('');
-                    setSortBy('level');
+                    setSortBy('power');
                   }}
                 >
                   清除筛选
@@ -329,7 +326,7 @@ const HeroesPage: React.FC = () => {
                   )}
                   {filterRarity !== null && (
                     <Chip
-                      label={`品质: ${filterRarity}★`}
+                      label={`星级: ${filterRarity}★`}
                       onDelete={() => setFilterRarity(null)}
                       size="small"
                     />
@@ -391,7 +388,7 @@ const HeroesPage: React.FC = () => {
                 onClick={() => {
                   setFilterRarity(null);
                   setSearchQuery('');
-                  setSortBy('level');
+                  setSortBy('power');
                 }}
               >
                 清除所有筛选条件
