@@ -91,6 +91,12 @@ export default {
           'api::stage.stage.start',
           'api::stage.stage.complete',
           
+          // 用户关卡进度
+          'api::user-stage-progress.user-stage-progress.find',
+          'api::user-stage-progress.user-stage-progress.findOne',
+          'api::user-stage-progress.user-stage-progress.create',
+          'api::user-stage-progress.user-stage-progress.update',
+          
           // 阵容系统权限
           'api::formation.formation.find',
           'api::formation.formation.findOne',

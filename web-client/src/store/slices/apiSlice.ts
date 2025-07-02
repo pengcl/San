@@ -30,6 +30,7 @@ export const apiSlice = createApi({
     'Building',
     'Chapter',
     'Stage',
+    'StageProgress',
     'Summon',
   ],
   endpoints: (builder) => ({
@@ -305,6 +306,21 @@ export const apiSlice = createApi({
       invalidatesTags: ['Battle', 'User'],
     }),
 
+    // 用户关卡进度API
+    getUserStageProgresses: builder.query({
+      query: (params = {}) => {
+        const searchParams = new URLSearchParams();
+        if (params.chapter_id) searchParams.append('chapter_id', params.chapter_id);
+        if (params.stage_type) searchParams.append('stage_type', params.stage_type);
+        return `/user-stage-progresses?${searchParams.toString()}`;
+      },
+      providesTags: ['StageProgress'],
+    }),
+    getUserStageProgress: builder.query({
+      query: (stageId) => `/user-stage-progresses/stage/${stageId}`,
+      providesTags: (result, error, stageId) => [{ type: 'StageProgress', id: stageId }],
+    }),
+
     // 阵容系统API
     getFormations: builder.query({
       query: () => '/formations',
@@ -520,6 +536,9 @@ export const {
   useGetStagesQuery,
   useGetStageQuery,
   useStartStageChallengeMutation,
+  // 用户关卡进度
+  useGetUserStageProgressesQuery,
+  useGetUserStageProgressQuery,
   // 阵容
   useGetFormationsQuery,
   useGetFormationQuery,

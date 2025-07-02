@@ -9,9 +9,9 @@ export default {
       path: '/battles/stages',
       handler: 'battle.getStages',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -19,9 +19,9 @@ export default {
       path: '/battles/start',
       handler: 'battle.startBattle',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -29,9 +29,9 @@ export default {
       path: '/battles/:battleId/action',
       handler: 'battle.executeAction',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -39,9 +39,9 @@ export default {
       path: '/battles/:battleId/auto',
       handler: 'battle.autoBattle',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     },
     {
@@ -49,9 +49,9 @@ export default {
       path: '/battles/:battleId/result',
       handler: 'battle.getBattleResult',
       config: {
-        auth: {
-          scope: ['authenticated']
-        }
+        auth: false,  // 使用自定义JWT中间件
+        middlewares: [],
+        policies: []
       }
     }
   ]

@@ -357,11 +357,21 @@ const FormationPageMUI: React.FC = () => {
         await createFormation(newFormationData).unwrap();
       }
       
+      // 同时保存到localStorage供战斗系统使用
+      const battleFormation = currentFormation
+        .filter(pos => pos.hero) // 只保存有武将的位置
+        .map(pos => ({
+          heroId: pos.hero.id,
+          position: pos.position
+        }));
+      
+      localStorage.setItem('currentFormation', JSON.stringify(battleFormation));
+      
       setHasChanges(false);
       dispatch(addNotification({
         type: 'success',
         title: '保存成功',
-        message: `${currentPreset.name} 已保存`,
+        message: `${currentPreset.name} 已保存，可用于战斗`,
         duration: 3000,
       }));
     } catch (error) {

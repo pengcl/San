@@ -350,6 +350,11 @@ export default {
         
         // 保存战斗记录到数据库
         await saveBattleResult(battle);
+        
+        // 如果是PVE战斗且玩家获胜，更新关卡进度
+        if (battle.battleType.startsWith('pve') && battleEndCheck.winner === 'player') {
+          await updateStageProgress(battle);
+        }
       }
 
       // 计算下一轮行动
@@ -1230,4 +1235,236 @@ function processTurnEndEffects(battle: any) {
       });
     }
   });
+}
+
+// PVE关卡系统相关函数
+
+async function updateStageProgress(battle: any) {
+  try {
+    const userId = battle.playerId;
+    const stageId = battle.stageId;
+    
+    if (!stageId) return;
+    
+    // 查找关卡信息
+    const stage = await strapi.db.query('api::stage.stage').findOne({
+      where: { stage_id: stageId }
+    });
+    
+    if (!stage) {
+      console.error('关卡不存在:', stageId);
+      return;
+    }
+    
+    // 查找用户关卡进度
+    let userProgress = await strapi.db.query('api::user-stage-progress.user-stage-progress').findOne({
+      where: {
+        user: userId,
+        stage: stage.id
+      }
+    });
+    
+    // 计算星级
+    const starsEarned = calculateStarRating(battle);
+    
+    // 计算战斗统计数据
+    const battleStats = calculateBattleStatistics(battle);
+    
+    // 计算战斗时间（回合数转换）
+    const battleTime = battle.battleState.turn * 10; // 假设每回合10秒
+    
+    if (userProgress) {
+      // 更新现有进度
+      const updateData: any = {
+        clear_count: userProgress.clear_count + 1,
+        last_clear_at: new Date(),
+        battle_statistics: {
+          ...userProgress.battle_statistics || {},
+          totalBattles: (userProgress.battle_statistics?.totalBattles || 0) + 1,
+          totalDamage: (userProgress.battle_statistics?.totalDamage || 0) + battleStats.totalDamageDealt,
+          totalHealing: (userProgress.battle_statistics?.totalHealing || 0) + battleStats.totalHealing,
+          criticalHits: (userProgress.battle_statistics?.criticalHits || 0) + battleStats.criticalHits,
+          skillsUsed: (userProgress.battle_statistics?.skillsUsed || 0) + battleStats.skillsUsed
+        }
+      };
+      
+      // 更新最佳分数（基于星级和速度）
+      const currentScore = starsEarned * 1000 + Math.max(0, 1000 - battleTime);
+      if (currentScore > (userProgress.best_score || 0)) {
+        updateData.best_score = currentScore;
+      }
+      
+      // 更新星级
+      if (starsEarned > userProgress.stars) {
+        updateData.stars = starsEarned;
+        if (starsEarned === 3 && !userProgress.three_star_at) {
+          updateData.three_star_at = new Date();
+        }
+      }
+      
+      // 更新最快通关时间
+      if (!userProgress.fastest_clear_time || battleTime < userProgress.fastest_clear_time) {
+        updateData.fastest_clear_time = battleTime;
+      }
+      
+      await strapi.db.query('api::user-stage-progress.user-stage-progress').update({
+        where: { id: userProgress.id },
+        data: updateData
+      });
+      
+    } else {
+      // 创建新的进度记录
+      userProgress = await strapi.db.query('api::user-stage-progress.user-stage-progress').create({
+        data: {
+          user: userId,
+          stage: stage.id,
+          stars: starsEarned,
+          best_score: starsEarned * 1000 + Math.max(0, 1000 - battleTime),
+          clear_count: 1,
+          daily_attempts: 1,
+          first_clear_at: new Date(),
+          last_clear_at: new Date(),
+          three_star_at: starsEarned === 3 ? new Date() : null,
+          fastest_clear_time: battleTime,
+          is_unlocked: true,
+          rewards_claimed: {},
+          battle_statistics: {
+            totalBattles: 1,
+            totalDamage: battleStats.totalDamageDealt,
+            totalHealing: battleStats.totalHealing,
+            criticalHits: battleStats.criticalHits,
+            skillsUsed: battleStats.skillsUsed
+          }
+        }
+      });
+    }
+    
+    // 解锁下一关卡
+    await unlockNextStage(userId, stage);
+    
+    // 发放首次通关奖励
+    if (userProgress.clear_count === 1 || !userProgress.rewards_claimed?.firstClear) {
+      await grantFirstClearRewards(userId, stage, starsEarned);
+      
+      // 更新奖励领取状态
+      await strapi.db.query('api::user-stage-progress.user-stage-progress').update({
+        where: { id: userProgress.id },
+        data: {
+          rewards_claimed: {
+            ...userProgress.rewards_claimed || {},
+            firstClear: true
+          }
+        }
+      });
+    }
+    
+    console.log(`✅ 用户 ${userId} 完成关卡 ${stageId}，获得 ${starsEarned} 星`);
+    
+  } catch (error) {
+    console.error('更新关卡进度失败:', error);
+  }
+}
+
+async function unlockNextStage(userId: number, currentStage: any) {
+  try {
+    // 查找下一关卡
+    const nextStageId = getNextStageId(currentStage.stage_id);
+    if (!nextStageId) return;
+    
+    const nextStage = await strapi.db.query('api::stage.stage').findOne({
+      where: { stage_id: nextStageId }
+    });
+    
+    if (!nextStage) return;
+    
+    // 检查下一关卡是否已经解锁
+    const existingProgress = await strapi.db.query('api::user-stage-progress.user-stage-progress').findOne({
+      where: {
+        user: userId,
+        stage: nextStage.id
+      }
+    });
+    
+    if (!existingProgress) {
+      // 创建解锁记录
+      await strapi.db.query('api::user-stage-progress.user-stage-progress').create({
+        data: {
+          user: userId,
+          stage: nextStage.id,
+          stars: 0,
+          best_score: 0,
+          clear_count: 0,
+          daily_attempts: 0,
+          is_unlocked: true,
+          rewards_claimed: {},
+          battle_statistics: {}
+        }
+      });
+      
+      console.log(`✅ 用户 ${userId} 解锁新关卡 ${nextStageId}`);
+    } else if (!existingProgress.is_unlocked) {
+      // 更新解锁状态
+      await strapi.db.query('api::user-stage-progress.user-stage-progress').update({
+        where: { id: existingProgress.id },
+        data: { is_unlocked: true }
+      });
+      
+      console.log(`✅ 用户 ${userId} 解锁关卡 ${nextStageId}`);
+    }
+    
+  } catch (error) {
+    console.error('解锁下一关卡失败:', error);
+  }
+}
+
+function getNextStageId(currentStageId: string): string | null {
+  // 解析关卡ID格式：chapter-stage (例如: 1-1, 1-2, 2-1)
+  const parts = currentStageId.split('-');
+  if (parts.length !== 2) return null;
+  
+  const chapter = parseInt(parts[0]);
+  const stage = parseInt(parts[1]);
+  
+  // 简单的下一关卡逻辑
+  if (stage < 10) {
+    return `${chapter}-${stage + 1}`;
+  } else {
+    return `${chapter + 1}-1`;
+  }
+}
+
+async function grantFirstClearRewards(userId: number, stage: any, starsEarned: number) {
+  try {
+    // 获取用户资料
+    const userProfile = await strapi.db.query('api::user-profile.user-profile').findOne({
+      where: { user: userId }
+    });
+    
+    if (!userProfile) return;
+    
+    // 计算奖励
+    const baseRewards = stage.base_rewards || {};
+    const starMultiplier = 1 + (starsEarned - 1) * 0.5; // 每多一星增加50%奖励
+    
+    const rewards = {
+      gold: Math.floor((baseRewards.gold || 100) * starMultiplier),
+      exp: Math.floor((baseRewards.exp || 50) * starMultiplier)
+    };
+    
+    // 发放奖励
+    await strapi.db.query('api::user-profile.user-profile').update({
+      where: { id: userProfile.id },
+      data: {
+        gold: userProfile.gold + rewards.gold,
+        experience: userProfile.experience + rewards.exp
+      }
+    });
+    
+    console.log(`✅ 用户 ${userId} 获得首次通关奖励: 金币 ${rewards.gold}, 经验 ${rewards.exp}`);
+    
+    // TODO: 发放物品奖励到背包
+    
+  } catch (error) {
+    console.error('发放首次通关奖励失败:', error);
+  }
 }
