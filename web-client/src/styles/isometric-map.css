@@ -1,0 +1,406 @@
+/* 2.5D等距地图样式 */
+
+.isometric-map-canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  cursor: grab;
+  user-select: none;
+  background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+}
+
+.isometric-map-canvas:active {
+  cursor: grabbing;
+}
+
+.isometric-controls {
+  backdrop-filter: blur(15px);
+  background: rgba(26, 26, 46, 0.92) !important;
+  border: 1px solid #ff6b35;
+  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3);
+}
+
+.isometric-controls .MuiTypography-h6 {
+  color: #ff6b35;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.isometric-controls .MuiSlider-thumb {
+  background: #ff6b35;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+}
+
+.isometric-controls .MuiSlider-track {
+  background: linear-gradient(90deg, #ff6b35, #ff8a65);
+}
+
+.isometric-controls .MuiSlider-rail {
+  background: #444;
+}
+
+.isometric-controls .MuiSwitch-switchBase.Mui-checked {
+  color: #ff6b35;
+}
+
+.isometric-controls .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+  background-color: #ff6b35;
+}
+
+/* 等距瓦片动画效果 */
+.isometric-tile {
+  transition: all 0.2s ease;
+}
+
+.isometric-tile:hover {
+  filter: brightness(1.2) drop-shadow(0 4px 8px rgba(255, 107, 53, 0.5));
+  transform: translateY(-2px);
+}
+
+.isometric-tile.selected {
+  filter: brightness(1.4) drop-shadow(0 6px 12px rgba(255, 107, 53, 0.8));
+  transform: translateY(-4px);
+}
+
+/* 高度指示器 */
+.height-indicator {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
+}
+
+.height-indicator.negative {
+  background: linear-gradient(135deg, #2196F3, #42A5F5);
+  box-shadow: 0 2px 6px rgba(33, 150, 243, 0.4);
+}
+
+/* 阴影效果 */
+.isometric-shadow {
+  opacity: 0.3;
+  filter: blur(2px);
+  mix-blend-mode: multiply;
+}
+
+/* 城池3D效果 */
+.isometric-city {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+}
+
+.isometric-city:hover {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4)) brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.isometric-city.selected {
+  filter: drop-shadow(0 12px 24px rgba(255, 215, 0, 0.6)) brightness(1.3);
+  transform: translateY(-4px);
+}
+
+/* 等距网格效果 */
+.isometric-grid {
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 1;
+  stroke-dasharray: 2, 3;
+  animation: gridPulse 3s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* 地形特效 */
+.terrain-water-iso {
+  animation: waterFlowIso 4s ease-in-out infinite;
+}
+
+@keyframes waterFlowIso {
+  0%, 100% { 
+    filter: hue-rotate(0deg) brightness(1) saturate(1.2);
+    transform: translateY(0);
+  }
+  33% { 
+    filter: hue-rotate(10deg) brightness(1.1) saturate(1.3);
+    transform: translateY(-1px);
+  }
+  66% { 
+    filter: hue-rotate(-10deg) brightness(0.9) saturate(1.1);
+    transform: translateY(1px);
+  }
+}
+
+.terrain-forest-iso {
+  animation: forestSwayIso 6s ease-in-out infinite;
+}
+
+@keyframes forestSwayIso {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(1deg) scale(1.02); }
+  50% { transform: rotate(0deg) scale(1); }
+  75% { transform: rotate(-1deg) scale(0.98); }
+}
+
+.terrain-mountain-iso {
+  filter: drop-shadow(3px 6px 8px rgba(0, 0, 0, 0.4));
+}
+
+.terrain-desert-iso {
+  animation: desertShimmer 5s ease-in-out infinite;
+}
+
+@keyframes desertShimmer {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(1.15) saturate(1.2) hue-rotate(5deg); }
+}
+
+/* 光照效果 */
+.lighting-enabled {
+  filter: contrast(1.1) brightness(1.05);
+}
+
+.lighting-dawn {
+  filter: sepia(0.3) hue-rotate(30deg) brightness(0.8);
+}
+
+.lighting-day {
+  filter: brightness(1.2) contrast(1.1);
+}
+
+.lighting-dusk {
+  filter: sepia(0.2) hue-rotate(-20deg) brightness(0.9);
+}
+
+.lighting-night {
+  filter: brightness(0.4) contrast(1.3) hue-rotate(220deg);
+}
+
+/* 粒子效果 */
+.particle-effect {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.particle-sparkle {
+  animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { 
+    opacity: 0; 
+    transform: translateY(0) scale(0.5); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateY(-20px) scale(1); 
+  }
+}
+
+/* 建筑动画 */
+.building-construction {
+  animation: buildingRise 2s ease-out;
+}
+
+@keyframes buildingRise {
+  0% { 
+    opacity: 0; 
+    transform: translateY(50px) scale(0.5); 
+  }
+  60% { 
+    opacity: 0.8; 
+    transform: translateY(-5px) scale(1.1); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* 星星评级效果 */
+.star-rating {
+  animation: starGlow 2s ease-in-out infinite;
+}
+
+@keyframes starGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 2px #FFD700); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 8px #FFD700) brightness(1.3); 
+  }
+}
+
+/* 等距相机动画 */
+.camera-pan {
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.camera-zoom {
+  transition: transform 0.5s ease-out;
+}
+
+/* 选择框效果 */
+.selection-highlight {
+  stroke: #ff6b35;
+  stroke-width: 3;
+  fill: rgba(255, 107, 53, 0.2);
+  stroke-dasharray: 8, 4;
+  animation: selectionPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selectionPulse {
+  0%, 100% { 
+    opacity: 0.8; 
+    stroke-dashoffset: 0; 
+  }
+  50% { 
+    opacity: 1; 
+    stroke-dashoffset: 12; 
+  }
+}
+
+/* 深度缓冲视觉效果 */
+.depth-layer-0 { z-index: 10; }
+.depth-layer-1 { z-index: 20; }
+.depth-layer-2 { z-index: 30; }
+.depth-layer-3 { z-index: 40; }
+.depth-layer-4 { z-index: 50; }
+.depth-layer-5 { z-index: 60; }
+
+/* 等距UI元素 */
+.isometric-ui-panel {
+  background: linear-gradient(135deg, 
+    rgba(26, 26, 46, 0.95) 0%, 
+    rgba(22, 33, 62, 0.9) 50%, 
+    rgba(15, 52, 96, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  border: 2px solid transparent;
+  border-image: linear-gradient(45deg, #ff6b35, #ffa726, #ff6b35) 1;
+  box-shadow: 
+    0 8px 32px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.isometric-button {
+  background: linear-gradient(135deg, #ff6b35, #ff8a65);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 15px rgba(255, 107, 53, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.isometric-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(255, 107, 53, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.isometric-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 10px rgba(255, 107, 53, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .isometric-controls {
+    position: fixed !important;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: auto;
+    border-radius: 20px 20px 0 0;
+    max-height: 45vh;
+    min-width: auto;
+  }
+  
+  .isometric-map-canvas {
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .isometric-controls {
+    border: 3px solid white;
+    background: black !important;
+  }
+  
+  .isometric-map-canvas {
+    filter: contrast(1.5);
+  }
+  
+  .isometric-grid {
+    stroke: white;
+    stroke-width: 2;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .terrain-water-iso,
+  .terrain-forest-iso,
+  .terrain-desert-iso,
+  .building-construction,
+  .star-rating,
+  .camera-pan,
+  .camera-zoom,
+  .isometric-tile,
+  .isometric-city {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* 深色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .isometric-map-canvas {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+  
+  .height-indicator {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .isometric-controls,
+  .isometric-ui-panel {
+    display: none;
+  }
+  
+  .isometric-map-canvas {
+    border: 2px solid black;
+    background: white !important;
+  }
+}
+
+/* 性能优化类 */
+.hardware-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.gpu-layer {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

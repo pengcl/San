@@ -43,6 +43,7 @@ import {
   PixelArtMapPage,
   StrategicBoardMapPage,
   TiledMapPage,
+  IsometricMapPage,
   CityManagePage,
   preloadCoreRoutes,
 } from './router';
@@ -113,7 +114,8 @@ const AnimatedRoutes = () => {
           <Route path='/recharge' element={<RechargePage />} />
           <Route path='/skills' element={<SkillsPage />} />
           <Route path='/summon' element={<SummonPage />} />
-          <Route path='/map' element={<TiledMapPage />} />
+          <Route path='/map' element={<IsometricMapPage />} />
+          <Route path='/map/tiled' element={<TiledMapPage />} />
           <Route path='/map/strategic' element={<StrategicBoardMapPage />} />
           <Route path='/map/3d' element={<ThreeKingdoms3DMapPage />} />
           <Route path='/map/2d' element={<ThreeKingdomsMapPage />} />

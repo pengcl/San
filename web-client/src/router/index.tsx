@@ -39,6 +39,7 @@ export const ThreeKingdoms3DMapPage = lazy(() => import('../pages/ThreeKingdoms3
 export const PixelArtMapPage = lazy(() => import('../pages/PixelArtMapPage'));
 export const StrategicBoardMapPage = lazy(() => import('../pages/StrategicBoardMapPage'));
 export const TiledMapPage = lazy(() => import('../pages/TiledMapPage'));
+export const IsometricMapPage = lazy(() => import('../pages/IsometricMapPage'));
 export const CityManagePage = lazy(() => import('../pages/CityManagePage'));
 
 // 路由元数据类型
@@ -93,6 +94,7 @@ export const routeComponents = {
   PixelArtMapPage,
   StrategicBoardMapPage,
   TiledMapPage,
+  IsometricMapPage,
   CityManagePage,
 };
 
