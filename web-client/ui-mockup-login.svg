@@ -1,0 +1,215 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <defs>
+    <linearGradient id="loginBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3748;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#1a202c;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffed4e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="buttonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4299e1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2b6cb0;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <filter id="dropshadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <rect width="375" height="812" fill="url(#loginBg)"/>
+  
+  <!-- 背景装饰元素 -->
+  <g opacity="0.1">
+    <!-- 古代纹样 -->
+    <circle cx="80" cy="150" r="40" fill="#ffd700" opacity="0.3"/>
+    <circle cx="300" cy="200" r="25" fill="#4299e1" opacity="0.4"/>
+    <circle cx="50" cy="600" r="30" fill="#48bb78" opacity="0.3"/>
+    
+    <!-- 装饰线条 -->
+    <path d="M0,100 Q100,120 200,100 T400,100" stroke="#ffd700" stroke-width="2" fill="none" opacity="0.2"/>
+    <path d="M0,700 Q150,680 300,700 T600,700" stroke="#4299e1" stroke-width="2" fill="none" opacity="0.2"/>
+  </g>
+  
+  <!-- 游戏Logo区域 -->
+  <g transform="translate(187,120)">
+    <!-- Logo背景光环 -->
+    <circle cx="0" cy="0" r="60" fill="url(#goldGradient)" opacity="0.2" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="45" fill="url(#goldGradient)" opacity="0.1" filter="url(#glow)"/>
+    
+    <!-- 主Logo -->
+    <circle cx="0" cy="0" r="35" fill="url(#goldGradient)" filter="url(#dropshadow)"/>
+    <text x="0" y="8" text-anchor="middle" fill="white" font-family="serif" font-size="24" font-weight="bold">三</text>
+    
+    <!-- 装饰边框 -->
+    <circle cx="0" cy="0" r="35" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.8"/>
+    <circle cx="0" cy="0" r="42" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+  </g>
+  
+  <!-- 游戏标题 -->
+  <g transform="translate(187,200)">
+    <text x="0" y="0" text-anchor="middle" fill="url(#goldGradient)" font-family="serif" font-size="28" font-weight="bold" filter="url(#glow)">三国英雄传</text>
+    <text x="0" y="25" text-anchor="middle" fill="#a0aec0" font-family="serif" font-size="14">Three Kingdoms Heroes</text>
+  </g>
+  
+  <!-- 登录表单卡片 -->
+  <g transform="translate(30,280)">
+    <rect x="0" y="0" width="315" height="320" rx="16" fill="url(#cardGradient)" stroke="#4299e1" stroke-width="1" opacity="0.95" filter="url(#dropshadow)"/>
+    
+    <!-- 表单标题 -->
+    <text x="157" y="35" text-anchor="middle" fill="#e2e8f0" font-family="serif" font-size="18" font-weight="bold">登录游戏</text>
+    
+    <!-- 用户名输入框 -->
+    <g transform="translate(25,60)">
+      <rect x="0" y="0" width="265" height="45" rx="8" fill="rgba(66,153,225,0.1)" stroke="#4299e1" stroke-width="1"/>
+      <text x="15" y="15" fill="#a0aec0" font-size="12">用户名/邮箱</text>
+      <text x="15" y="32" fill="#e2e8f0" font-size="14">player@example.com</text>
+      
+      <!-- 用户图标 -->
+      <g transform="translate(235,12)">
+        <circle cx="10" cy="10" r="8" fill="rgba(66,153,225,0.2)"/>
+        <text x="10" y="15" text-anchor="middle" fill="#4299e1" font-size="10">👤</text>
+      </g>
+    </g>
+    
+    <!-- 密码输入框 -->
+    <g transform="translate(25,120)">
+      <rect x="0" y="0" width="265" height="45" rx="8" fill="rgba(66,153,225,0.1)" stroke="#4299e1" stroke-width="1"/>
+      <text x="15" y="15" fill="#a0aec0" font-size="12">密码</text>
+      <text x="15" y="32" fill="#e2e8f0" font-size="14">••••••••</text>
+      
+      <!-- 密码图标 -->
+      <g transform="translate(235,12)">
+        <circle cx="10" cy="10" r="8" fill="rgba(66,153,225,0.2)"/>
+        <text x="10" y="15" text-anchor="middle" fill="#4299e1" font-size="10">🔒</text>
+      </g>
+    </g>
+    
+    <!-- 记住密码和忘记密码 -->
+    <g transform="translate(25,180)">
+      <!-- 记住密码 -->
+      <g>
+        <rect x="0" y="0" width="16" height="16" rx="3" fill="rgba(66,153,225,0.2)" stroke="#4299e1" stroke-width="1"/>
+        <text x="8" y="12" text-anchor="middle" fill="#4299e1" font-size="10">✓</text>
+        <text x="25" y="12" fill="#a0aec0" font-size="12">记住密码</text>
+      </g>
+      
+      <!-- 忘记密码 -->
+      <text x="200" y="12" fill="#4299e1" font-size="12" text-decoration="underline">忘记密码？</text>
+    </g>
+    
+    <!-- 登录按钮 -->
+    <g transform="translate(25,210)">
+      <rect x="0" y="0" width="265" height="45" rx="22" fill="url(#buttonGradient)" filter="url(#glow)"/>
+      <text x="132" y="30" text-anchor="middle" fill="white" font-size="16" font-weight="bold">登录游戏</text>
+    </g>
+    
+    <!-- 分割线 -->
+    <g transform="translate(25,275)">
+      <line x1="0" y1="0" x2="100" y2="0" stroke="#4a5568" stroke-width="1"/>
+      <text x="132" y="5" text-anchor="middle" fill="#a0aec0" font-size="12">或</text>
+      <line x1="165" y1="0" x2="265" y2="0" stroke="#4a5568" stroke-width="1"/>
+    </g>
+    
+    <!-- 第三方登录 -->
+    <g transform="translate(25,290)">
+      <!-- 微信登录 -->
+      <g>
+        <circle cx="22" cy="15" r="18" fill="#07c160" filter="url(#dropshadow)"/>
+        <text x="22" y="21" text-anchor="middle" fill="white" font-size="12">微</text>
+      </g>
+      
+      <!-- QQ登录 -->
+      <g transform="translate(60,0)">
+        <circle cx="22" cy="15" r="18" fill="#1296db" filter="url(#dropshadow)"/>
+        <text x="22" y="21" text-anchor="middle" fill="white" font-size="12">Q</text>
+      </g>
+      
+      <!-- 游客登录 -->
+      <g transform="translate(120,0)">
+        <circle cx="22" cy="15" r="18" fill="#a0aec0" filter="url(#dropshadow)"/>
+        <text x="22" y="21" text-anchor="middle" fill="white" font-size="12">游</text>
+      </g>
+      
+      <!-- Apple登录 -->
+      <g transform="translate(180,0)">
+        <circle cx="22" cy="15" r="18" fill="#000000" filter="url(#dropshadow)"/>
+        <text x="22" y="21" text-anchor="middle" fill="white" font-size="12">🍎</text>
+      </g>
+      
+      <!-- Google登录 -->
+      <g transform="translate(240,0)">
+        <circle cx="22" cy="15" r="18" fill="#4285f4" filter="url(#dropshadow)"/>
+        <text x="22" y="21" text-anchor="middle" fill="white" font-size="12">G</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 注册提示 -->
+  <g transform="translate(187,620)">
+    <text x="0" y="0" text-anchor="middle" fill="#a0aec0" font-size="14">还没有账号？</text>
+    <text x="0" y="20" text-anchor="middle" fill="#4299e1" font-size="14" font-weight="bold" text-decoration="underline">立即注册</text>
+  </g>
+  
+  <!-- 版本信息 -->
+  <g transform="translate(187,680)">
+    <text x="0" y="0" text-anchor="middle" fill="#4a5568" font-size="12">版本 v1.0.0</text>
+    <text x="0" y="15" text-anchor="middle" fill="#4a5568" font-size="10">© 2024 三国英雄传. All rights reserved.</text>
+  </g>
+  
+  <!-- 服务器状态 -->
+  <g transform="translate(30,750)">
+    <rect x="0" y="0" width="315" height="40" rx="12" fill="rgba(72,187,120,0.1)" stroke="#48bb78" stroke-width="1"/>
+    
+    <!-- 服务器状态指示器 -->
+    <g transform="translate(20,20)">
+      <circle cx="0" cy="0" r="4" fill="#48bb78" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="15" y="5" fill="#48bb78" font-size="12" font-weight="bold">服务器状态：正常</text>
+    </g>
+    
+    <!-- 在线人数 -->
+    <text x="200" y="25" fill="#a0aec0" font-size="11">在线玩家：12,847</text>
+  </g>
+  
+  <!-- 装饰性动画元素 -->
+  <g opacity="0.6">
+    <!-- 飘动的光点 -->
+    <circle cx="100" cy="300" r="2" fill="#ffd700" filter="url(#glow)">
+      <animate attributeName="cy" values="300;280;300" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="280" cy="450" r="1.5" fill="#4299e1" filter="url(#glow)">
+      <animate attributeName="cy" values="450;430;450" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="60" cy="500" r="1" fill="#48bb78" filter="url(#glow)">
+      <animate attributeName="cy" values="500;485;500" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- 顶部装饰边框 -->
+  <rect x="0" y="0" width="375" height="2" fill="url(#goldGradient)" opacity="0.8"/>
+  
+  <!-- 底部装饰边框 -->
+  <rect x="0" y="810" width="375" height="2" fill="url(#goldGradient)" opacity="0.8"/>
+</svg>

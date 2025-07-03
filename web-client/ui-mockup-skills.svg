@@ -1,0 +1,308 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <defs>
+    <linearGradient id="skillsBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a202c;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2d3748;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a5568;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#2d3748;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="skillGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9f7aea;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#805ad5;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="fireGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f56565;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#e53e3e;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="iceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4299e1;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#3182ce;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="lightGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:0.8" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <filter id="dropshadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <rect width="375" height="812" fill="url(#skillsBg)"/>
+  
+  <!-- 装饰性背景图案 -->
+  <g opacity="0.1">
+    <circle cx="60" cy="150" r="35" fill="#9f7aea"/>
+    <circle cx="320" cy="250" r="20" fill="#f56565"/>
+    <circle cx="80" cy="650" r="25" fill="#4299e1"/>
+    <polygon points="300,100 320,130 280,130" fill="#ffd700"/>
+  </g>
+  
+  <!-- 顶部导航栏 -->
+  <rect x="0" y="0" width="375" height="88" fill="rgba(26,32,44,0.95)"/>
+  <rect x="0" y="88" width="375" height="1" fill="#9f7aea" opacity="0.3"/>
+  
+  <!-- 返回按钮 -->
+  <g transform="translate(16,44)">
+    <circle cx="20" cy="20" r="18" fill="rgba(159,122,234,0.2)" stroke="#9f7aea" stroke-width="1"/>
+    <path d="M25 15 L15 20 L25 25" stroke="#9f7aea" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 页面标题 -->
+  <text x="187" y="68" text-anchor="middle" fill="#9f7aea" font-family="serif" font-size="20" font-weight="bold">技能系统</text>
+  
+  <!-- 技能书按钮 -->
+  <g transform="translate(320,44)">
+    <circle cx="20" cy="20" r="18" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="1"/>
+    <text x="20" y="26" text-anchor="middle" fill="#ffd700" font-size="12">📚</text>
+  </g>
+  
+  <!-- 当前武将信息 -->
+  <g transform="translate(20,108)">
+    <rect x="0" y="0" width="335" height="80" rx="12" fill="url(#cardGradient)" stroke="#9f7aea" stroke-width="1" opacity="0.9" filter="url(#dropshadow)"/>
+    
+    <!-- 武将头像 -->
+    <g transform="translate(20,15)">
+      <circle cx="25" cy="25" r="22" fill="url(#lightGradient)" stroke="#ffd700" stroke-width="2" filter="url(#glow)"/>
+      <text x="25" y="32" text-anchor="middle" fill="white" font-size="16" font-weight="bold">关</text>
+    </g>
+    
+    <!-- 武将信息 -->
+    <g transform="translate(70,15)">
+      <text x="0" y="15" fill="#ffd700" font-size="16" font-weight="bold">关羽</text>
+      <text x="0" y="30" fill="#e2e8f0" font-size="12">等级 45 | 品质 SSR</text>
+      <text x="0" y="45" fill="#a0aec0" font-size="10">技能点数: 12</text>
+    </g>
+    
+    <!-- 战力 -->
+    <g transform="translate(250,15)">
+      <text x="0" y="15" fill="#a0aec0" font-size="12">战力</text>
+      <text x="0" y="35" fill="#f56565" font-size="20" font-weight="bold">8,650</text>
+    </g>
+    
+    <!-- 切换武将按钮 -->
+    <g transform="translate(280,45)">
+      <rect x="0" y="0" width="50" height="20" rx="10" fill="rgba(159,122,234,0.2)" stroke="#9f7aea" stroke-width="1"/>
+      <text x="25" y="14" text-anchor="middle" fill="#9f7aea" font-size="10" font-weight="bold">切换</text>
+    </g>
+  </g>
+  
+  <!-- 技能分类标签 -->
+  <g transform="translate(20,208)">
+    <g>
+      <rect x="0" y="0" width="60" height="28" rx="14" fill="url(#skillGradient)" filter="url(#glow)"/>
+      <text x="30" y="19" text-anchor="middle" fill="white" font-size="12" font-weight="bold">主动</text>
+    </g>
+    
+    <g transform="translate(70,0)">
+      <rect x="0" y="0" width="60" height="28" rx="14" fill="rgba(159,122,234,0.2)" stroke="#9f7aea" stroke-width="1"/>
+      <text x="30" y="19" text-anchor="middle" fill="#9f7aea" font-size="12" font-weight="bold">被动</text>
+    </g>
+    
+    <g transform="translate(140,0)">
+      <rect x="0" y="0" width="60" height="28" rx="14" fill="rgba(159,122,234,0.2)" stroke="#9f7aea" stroke-width="1"/>
+      <text x="30" y="19" text-anchor="middle" fill="#9f7aea" font-size="12" font-weight="bold">天赋</text>
+    </g>
+    
+    <g transform="translate(210,0)">
+      <rect x="0" y="0" width="60" height="28" rx="14" fill="rgba(159,122,234,0.2)" stroke="#9f7aea" stroke-width="1"/>
+      <text x="30" y="19" text-anchor="middle" fill="#9f7aea" font-size="12" font-weight="bold">觉醒</text>
+    </g>
+  </g>
+  
+  <!-- 主动技能列表 -->
+  <g transform="translate(20,255)">
+    <!-- 技能1: 青龙斩 -->
+    <g>
+      <rect x="0" y="0" width="335" height="90" rx="12" fill="url(#cardGradient)" stroke="#f56565" stroke-width="1" filter="url(#dropshadow)"/>
+      
+      <!-- 技能图标 -->
+      <g transform="translate(20,20)">
+        <circle cx="25" cy="25" r="22" fill="url(#fireGradient)" stroke="#f56565" stroke-width="2" filter="url(#glow)"/>
+        <text x="25" y="32" text-anchor="middle" fill="white" font-size="16">⚔️</text>
+      </g>
+      
+      <!-- 技能信息 -->
+      <g transform="translate(70,15)">
+        <text x="0" y="15" fill="#f56565" font-size="16" font-weight="bold">青龙斩</text>
+        <text x="0" y="30" fill="#e2e8f0" font-size="12">对敌方单体造成180%攻击力伤害</text>
+        <text x="0" y="45" fill="#a0aec0" font-size="10">冷却时间: 3回合 | 消耗怒气: 100</text>
+        <text x="0" y="60" fill="#48bb78" font-size="10">当前等级: 8/10</text>
+      </g>
+      
+      <!-- 技能等级 -->
+      <g transform="translate(280,15)">
+        <text x="0" y="15" fill="#a0aec0" font-size="12">Lv.8</text>
+        
+        <!-- 升级按钮 -->
+        <g transform="translate(0,25)">
+          <rect x="0" y="0" width="45" height="25" rx="12" fill="url(#fireGradient)"/>
+          <text x="22" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold">升级</text>
+        </g>
+        
+        <!-- 升级消耗 -->
+        <text x="0" y="70" fill="#ffd700" font-size="9">💰 5000</text>
+      </g>
+    </g>
+    
+    <!-- 技能2: 武圣之怒 -->
+    <g transform="translate(0,105)">
+      <rect x="0" y="0" width="335" height="90" rx="12" fill="url(#cardGradient)" stroke="#ffd700" stroke-width="1" filter="url(#dropshadow)"/>
+      
+      <!-- 技能图标 -->
+      <g transform="translate(20,20)">
+        <circle cx="25" cy="25" r="22" fill="url(#lightGradient)" stroke="#ffd700" stroke-width="2" filter="url(#glow)"/>
+        <text x="25" y="32" text-anchor="middle" fill="white" font-size="16">⚡</text>
+      </g>
+      
+      <!-- 技能信息 -->
+      <g transform="translate(70,15)">
+        <text x="0" y="15" fill="#ffd700" font-size="16" font-weight="bold">武圣之怒</text>
+        <text x="0" y="30" fill="#e2e8f0" font-size="12">提升自身攻击力50%，持续3回合</text>
+        <text x="0" y="45" fill="#a0aec0" font-size="10">冷却时间: 5回合 | 消耗怒气: 150</text>
+        <text x="0" y="60" fill="#48bb78" font-size="10">当前等级: 6/10</text>
+      </g>
+      
+      <!-- 技能等级 -->
+      <g transform="translate(280,15)">
+        <text x="0" y="15" fill="#a0aec0" font-size="12">Lv.6</text>
+        
+        <!-- 升级按钮 -->
+        <g transform="translate(0,25)">
+          <rect x="0" y="0" width="45" height="25" rx="12" fill="url(#lightGradient)"/>
+          <text x="22" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold">升级</text>
+        </g>
+        
+        <!-- 升级消耗 -->
+        <text x="0" y="70" fill="#ffd700" font-size="9">💰 8000</text>
+      </g>
+    </g>
+    
+    <!-- 技能3: 义薄云天 -->
+    <g transform="translate(0,210)">
+      <rect x="0" y="0" width="335" height="90" rx="12" fill="url(#cardGradient)" stroke="#4299e1" stroke-width="1" filter="url(#dropshadow)"/>
+      
+      <!-- 技能图标 -->
+      <g transform="translate(20,20)">
+        <circle cx="25" cy="25" r="22" fill="url(#iceGradient)" stroke="#4299e1" stroke-width="2" filter="url(#glow)"/>
+        <text x="25" y="32" text-anchor="middle" fill="white" font-size="16">🛡️</text>
+      </g>
+      
+      <!-- 技能信息 -->
+      <g transform="translate(70,15)">
+        <text x="0" y="15" fill="#4299e1" font-size="16" font-weight="bold">义薄云天</text>
+        <text x="0" y="30" fill="#e2e8f0" font-size="12">为全体队友提供护盾，吸收伤害</text>
+        <text x="0" y="45" fill="#a0aec0" font-size="10">冷却时间: 4回合 | 消耗怒气: 120</text>
+        <text x="0" y="60" fill="#48bb78" font-size="10">当前等级: 4/10</text>
+      </g>
+      
+      <!-- 技能等级 -->
+      <g transform="translate(280,15)">
+        <text x="0" y="15" fill="#a0aec0" font-size="12">Lv.4</text>
+        
+        <!-- 升级按钮 -->
+        <g transform="translate(0,25)">
+          <rect x="0" y="0" width="45" height="25" rx="12" fill="url(#iceGradient)"/>
+          <text x="22" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold">升级</text>
+        </g>
+        
+        <!-- 升级消耗 -->
+        <text x="0" y="70" fill="#ffd700" font-size="9">💰 6000</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 技能升级材料 -->
+  <g transform="translate(20,580)">
+    <rect x="0" y="0" width="335" height="60" rx="12" fill="url(#cardGradient)" stroke="#48bb78" stroke-width="1" opacity="0.9"/>
+    
+    <text x="167" y="20" text-anchor="middle" fill="#48bb78" font-family="serif" font-size="14" font-weight="bold">📖 技能升级材料</text>
+    
+    <!-- 材料列表 -->
+    <g transform="translate(30,30)">
+      <!-- 技能书 -->
+      <g>
+        <circle cx="15" cy="10" r="8" fill="rgba(72,187,120,0.3)" stroke="#48bb78" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#48bb78" font-size="8">📚</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x15</text>
+      </g>
+      
+      <!-- 精华 -->
+      <g transform="translate(60,0)">
+        <circle cx="15" cy="10" r="8" fill="rgba(159,122,234,0.3)" stroke="#9f7aea" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#9f7aea" font-size="8">💎</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x8</text>
+      </g>
+      
+      <!-- 金币 -->
+      <g transform="translate(120,0)">
+        <circle cx="15" cy="10" r="8" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#ffd700" font-size="8">🪙</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x50K</text>
+      </g>
+      
+      <!-- 获取按钮 -->
+      <g transform="translate(200,0)">
+        <rect x="0" y="0" width="80" height="20" rx="10" fill="rgba(72,187,120,0.3)" stroke="#48bb78" stroke-width="1"/>
+        <text x="40" y="14" text-anchor="middle" fill="#48bb78" font-size="10" font-weight="bold">获取材料</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 技能搭配推荐 -->
+  <g transform="translate(20,655)">
+    <rect x="0" y="0" width="335" height="50" rx="12" fill="url(#cardGradient)" stroke="#9f7aea" stroke-width="1" opacity="0.9"/>
+    
+    <text x="167" y="18" text-anchor="middle" fill="#9f7aea" font-family="serif" font-size="14" font-weight="bold">⭐ 推荐技能搭配</text>
+    <text x="167" y="32" text-anchor="middle" fill="#e2e8f0" font-size="11">攻击流: 青龙斩 + 武圣之怒</text>
+    <text x="167" y="44" text-anchor="middle" fill="#a0aec0" font-size="10">防御流: 义薄云天 + 钢铁意志</text>
+  </g>
+  
+  <!-- 底部操作栏 -->
+  <g transform="translate(20,720)">
+    <!-- 一键升级 -->
+    <g>
+      <rect x="0" y="0" width="100" height="35" rx="17" fill="url(#skillGradient)" filter="url(#glow)"/>
+      <text x="50" y="24" text-anchor="middle" fill="white" font-size="12" font-weight="bold">一键升级</text>
+    </g>
+    
+    <!-- 重置技能 -->
+    <g transform="translate(115,0)">
+      <rect x="0" y="0" width="100" height="35" rx="17" fill="rgba(245,101,101,0.3)" stroke="#f56565" stroke-width="1"/>
+      <text x="50" y="24" text-anchor="middle" fill="#f56565" font-size="12" font-weight="bold">重置技能</text>
+    </g>
+    
+    <!-- 技能预设 -->
+    <g transform="translate(230,0)">
+      <rect x="0" y="0" width="105" height="35" rx="17" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="1"/>
+      <text x="52" y="24" text-anchor="middle" fill="#ffd700" font-size="12" font-weight="bold">技能预设</text>
+    </g>
+  </g>
+  
+  <!-- 底部导航栏 -->
+  <rect x="0" y="768" width="375" height="44" fill="rgba(26,32,44,0.95)"/>
+  <rect x="0" y="768" width="375" height="1" fill="#9f7aea" opacity="0.3"/>
+  
+  <!-- 装饰性技能特效 -->
+  <g opacity="0.6">
+    <circle cx="100" cy="300" r="2" fill="#f56565" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="280" cy="400" r="1.5" fill="#ffd700" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="500" r="1" fill="#4299e1" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

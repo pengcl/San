@@ -1,0 +1,304 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <defs>
+    <linearGradient id="trainingBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a202c;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2d3748;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a5568;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#2d3748;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="strengthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f56565;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#e53e3e;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="agilityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#48bb78;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#38a169;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="intelligenceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4299e1;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#3182ce;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:0.8" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <filter id="dropshadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <rect width="375" height="812" fill="url(#trainingBg)"/>
+  
+  <!-- 装饰性背景图案 -->
+  <g opacity="0.1">
+    <circle cx="60" cy="150" r="35" fill="#f56565"/>
+    <circle cx="320" cy="250" r="20" fill="#48bb78"/>
+    <circle cx="80" cy="650" r="25" fill="#4299e1"/>
+    <polygon points="300,100 320,130 280,130" fill="#ffd700"/>
+  </g>
+  
+  <!-- 顶部导航栏 -->
+  <rect x="0" y="0" width="375" height="88" fill="rgba(26,32,44,0.95)"/>
+  <rect x="0" y="88" width="375" height="1" fill="#f56565" opacity="0.3"/>
+  
+  <!-- 返回按钮 -->
+  <g transform="translate(16,44)">
+    <circle cx="20" cy="20" r="18" fill="rgba(245,101,101,0.2)" stroke="#f56565" stroke-width="1"/>
+    <path d="M25 15 L15 20 L25 25" stroke="#f56565" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 页面标题 -->
+  <text x="187" y="68" text-anchor="middle" fill="#f56565" font-family="serif" font-size="20" font-weight="bold">英雄训练</text>
+  
+  <!-- 训练记录按钮 -->
+  <g transform="translate(320,44)">
+    <circle cx="20" cy="20" r="18" fill="rgba(72,187,120,0.2)" stroke="#48bb78" stroke-width="1"/>
+    <text x="20" y="26" text-anchor="middle" fill="#48bb78" font-size="12">📊</text>
+  </g>
+  
+  <!-- 当前训练英雄 -->
+  <g transform="translate(20,108)">
+    <rect x="0" y="0" width="335" height="100" rx="12" fill="url(#cardGradient)" stroke="#f56565" stroke-width="1" opacity="0.9" filter="url(#dropshadow)"/>
+    
+    <!-- 英雄头像 -->
+    <g transform="translate(25,25)">
+      <circle cx="25" cy="25" r="22" fill="url(#goldGradient)" stroke="#ffd700" stroke-width="2" filter="url(#glow)"/>
+      <text x="25" y="32" text-anchor="middle" fill="white" font-size="16" font-weight="bold">关</text>
+    </g>
+    
+    <!-- 英雄信息 -->
+    <g transform="translate(75,20)">
+      <text x="0" y="15" fill="#ffd700" font-size="16" font-weight="bold">关羽</text>
+      <text x="0" y="30" fill="#e2e8f0" font-size="12">等级 45 | 品质 SSR</text>
+      <text x="0" y="45" fill="#a0aec0" font-size="10">训练次数: 128/200</text>
+      <text x="0" y="60" fill="#48bb78" font-size="10">今日可训练: 5次</text>
+    </g>
+    
+    <!-- 战力显示 -->
+    <g transform="translate(250,20)">
+      <text x="0" y="15" fill="#a0aec0" font-size="12">当前战力</text>
+      <text x="0" y="35" fill="#f56565" font-size="18" font-weight="bold">8,650</text>
+      <text x="0" y="50" fill="#48bb78" font-size="10">+150 ↗️</text>
+    </g>
+    
+    <!-- 切换英雄 -->
+    <g transform="translate(270,65)">
+      <rect x="0" y="0" width="50" height="20" rx="10" fill="rgba(245,101,101,0.2)" stroke="#f56565" stroke-width="1"/>
+      <text x="25" y="14" text-anchor="middle" fill="#f56565" font-size="10" font-weight="bold">切换</text>
+    </g>
+  </g>
+  
+  <!-- 训练类型选择 -->
+  <g transform="translate(20,228)">
+    <g>
+      <rect x="0" y="0" width="70" height="28" rx="14" fill="url(#strengthGradient)" filter="url(#glow)"/>
+      <text x="35" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">力量训练</text>
+    </g>
+    
+    <g transform="translate(80,0)">
+      <rect x="0" y="0" width="70" height="28" rx="14" fill="rgba(72,187,120,0.2)" stroke="#48bb78" stroke-width="1"/>
+      <text x="35" y="19" text-anchor="middle" fill="#48bb78" font-size="11" font-weight="bold">敏捷训练</text>
+    </g>
+    
+    <g transform="translate(160,0)">
+      <rect x="0" y="0" width="70" height="28" rx="14" fill="rgba(66,153,225,0.2)" stroke="#4299e1" stroke-width="1"/>
+      <text x="35" y="19" text-anchor="middle" fill="#4299e1" font-size="11" font-weight="bold">智力训练</text>
+    </g>
+    
+    <g transform="translate(240,0)">
+      <rect x="0" y="0" width="70" height="28" rx="14" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="1"/>
+      <text x="35" y="19" text-anchor="middle" fill="#ffd700" font-size="11" font-weight="bold">综合训练</text>
+    </g>
+  </g>
+  
+  <!-- 当前属性显示 -->
+  <g transform="translate(20,275)">
+    <rect x="0" y="0" width="335" height="120" rx="12" fill="url(#cardGradient)" stroke="#f56565" stroke-width="1" opacity="0.9" filter="url(#dropshadow)"/>
+    
+    <text x="167" y="20" text-anchor="middle" fill="#f56565" font-size="14" font-weight="bold">💪 力量训练</text>
+    
+    <!-- 属性条 -->
+    <g transform="translate(30,35)">
+      <!-- 攻击力 -->
+      <g>
+        <text x="0" y="15" fill="#e2e8f0" font-size="12" font-weight="bold">攻击力</text>
+        <text x="200" y="15" fill="#f56565" font-size="12" font-weight="bold">1,250 → 1,280</text>
+        
+        <rect x="0" y="20" width="275" height="8" rx="4" fill="rgba(245,101,101,0.2)"/>
+        <rect x="0" y="20" width="220" height="8" rx="4" fill="url(#strengthGradient)"/>
+        <rect x="220" y="20" width="15" height="8" rx="4" fill="#ffd700" filter="url(#glow)"/>
+      </g>
+      
+      <!-- 生命值 -->
+      <g transform="translate(0,35)">
+        <text x="0" y="15" fill="#e2e8f0" font-size="12" font-weight="bold">生命值</text>
+        <text x="200" y="15" fill="#f56565" font-size="12" font-weight="bold">8,500 → 8,650</text>
+        
+        <rect x="0" y="20" width="275" height="8" rx="4" fill="rgba(245,101,101,0.2)"/>
+        <rect x="0" y="20" width="200" height="8" rx="4" fill="url(#strengthGradient)"/>
+        <rect x="200" y="20" width="20" height="8" rx="4" fill="#ffd700" filter="url(#glow)"/>
+      </g>
+      
+      <!-- 防御力 -->
+      <g transform="translate(0,70)">
+        <text x="0" y="15" fill="#e2e8f0" font-size="12" font-weight="bold">防御力</text>
+        <text x="200" y="15" fill="#f56565" font-size="12" font-weight="bold">680 → 695</text>
+        
+        <rect x="0" y="20" width="275" height="8" rx="4" fill="rgba(245,101,101,0.2)"/>
+        <rect x="0" y="20" width="180" height="8" rx="4" fill="url(#strengthGradient)"/>
+        <rect x="180" y="20" width="12" height="8" rx="4" fill="#ffd700" filter="url(#glow)"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 训练消耗 -->
+  <g transform="translate(20,415)">
+    <rect x="0" y="0" width="335" height="60" rx="12" fill="url(#cardGradient)" stroke="#ffd700" stroke-width="1" opacity="0.9"/>
+    
+    <text x="167" y="20" text-anchor="middle" fill="#ffd700" font-size="14" font-weight="bold">💰 训练消耗</text>
+    
+    <g transform="translate(50,30)">
+      <!-- 金币 -->
+      <g>
+        <circle cx="15" cy="10" r="8" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#ffd700" font-size="8">🪙</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">5,000</text>
+      </g>
+      
+      <!-- 训练石 -->
+      <g transform="translate(60,0)">
+        <circle cx="15" cy="10" r="8" fill="rgba(245,101,101,0.3)" stroke="#f56565" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#f56565" font-size="8">💎</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x3</text>
+      </g>
+      
+      <!-- 体力 -->
+      <g transform="translate(120,0)">
+        <circle cx="15" cy="10" r="8" fill="rgba(72,187,120,0.3)" stroke="#48bb78" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#48bb78" font-size="8">⚡</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">20</text>
+      </g>
+      
+      <!-- 开始训练按钮 -->
+      <g transform="translate(180,0)">
+        <rect x="0" y="0" width="80" height="20" rx="10" fill="url(#strengthGradient)" filter="url(#glow)"/>
+        <text x="40" y="14" text-anchor="middle" fill="white" font-size="11" font-weight="bold">开始训练</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 训练效果预览 -->
+  <g transform="translate(20,490)">
+    <rect x="0" y="0" width="335" height="80" rx="12" fill="url(#cardGradient)" stroke="#48bb78" stroke-width="1" opacity="0.9"/>
+    
+    <text x="167" y="20" text-anchor="middle" fill="#48bb78" font-size="14" font-weight="bold">📈 训练效果预览</text>
+    
+    <g transform="translate(30,30)">
+      <text x="0" y="15" fill="#e2e8f0" font-size="11">成功率: </text>
+      <text x="50" y="15" fill="#48bb78" font-size="11" font-weight="bold">85%</text>
+      
+      <text x="120" y="15" fill="#e2e8f0" font-size="11">属性提升: </text>
+      <text x="180" y="15" fill="#ffd700" font-size="11" font-weight="bold">+15~30</text>
+      
+      <text x="0" y="35" fill="#e2e8f0" font-size="11">暴击概率: </text>
+      <text x="60" y="35" fill="#f56565" font-size="11" font-weight="bold">15%</text>
+      
+      <text x="120" y="35" fill="#e2e8f0" font-size="11">暴击效果: </text>
+      <text x="180" y="35" fill="#f56565" font-size="11" font-weight="bold">双倍提升</text>
+    </g>
+  </g>
+  
+  <!-- 训练材料库存 -->
+  <g transform="translate(20,585)">
+    <rect x="0" y="0" width="335" height="60" rx="12" fill="url(#cardGradient)" stroke="#4299e1" stroke-width="1" opacity="0.9"/>
+    
+    <text x="167" y="20" text-anchor="middle" fill="#4299e1" font-size="14" font-weight="bold">🎒 训练材料库存</text>
+    
+    <g transform="translate(30,30)">
+      <!-- 力量石 -->
+      <g>
+        <circle cx="15" cy="10" r="8" fill="rgba(245,101,101,0.3)" stroke="#f56565" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#f56565" font-size="8">💪</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x25</text>
+      </g>
+      
+      <!-- 敏捷石 -->
+      <g transform="translate(60,0)">
+        <circle cx="15" cy="10" r="8" fill="rgba(72,187,120,0.3)" stroke="#48bb78" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#48bb78" font-size="8">🏃</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x18</text>
+      </g>
+      
+      <!-- 智力石 -->
+      <g transform="translate(120,0)">
+        <circle cx="15" cy="10" r="8" fill="rgba(66,153,225,0.3)" stroke="#4299e1" stroke-width="1"/>
+        <text x="15" y="15" text-anchor="middle" fill="#4299e1" font-size="8">🧠</text>
+        <text x="15" y="25" text-anchor="middle" fill="#e2e8f0" font-size="8">x12</text>
+      </g>
+      
+      <!-- 获取材料 -->
+      <g transform="translate(180,0)">
+        <rect x="0" y="0" width="80" height="20" rx="10" fill="rgba(66,153,225,0.3)" stroke="#4299e1" stroke-width="1"/>
+        <text x="40" y="14" text-anchor="middle" fill="#4299e1" font-size="10" font-weight="bold">获取材料</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 训练记录 -->
+  <g transform="translate(20,660)">
+    <rect x="0" y="0" width="335" height="50" rx="12" fill="url(#cardGradient)" stroke="#9f7aea" stroke-width="1" opacity="0.9"/>
+    
+    <text x="167" y="18" text-anchor="middle" fill="#9f7aea" font-size="14" font-weight="bold">📋 最近训练记录</text>
+    <text x="167" y="32" text-anchor="middle" fill="#e2e8f0" font-size="11">力量训练 +28 攻击力 (暴击)</text>
+    <text x="167" y="44" text-anchor="middle" fill="#a0aec0" font-size="10">2小时前 | 消耗: 5000金币, 3力量石</text>
+  </g>
+  
+  <!-- 底部快捷操作 -->
+  <g transform="translate(20,725)">
+    <!-- 批量训练 -->
+    <g>
+      <rect x="0" y="0" width="105" height="30" rx="15" fill="rgba(245,101,101,0.3)" stroke="#f56565" stroke-width="1"/>
+      <text x="52" y="20" text-anchor="middle" fill="#f56565" font-size="11" font-weight="bold">🔄 批量训练</text>
+    </g>
+    
+    <!-- 自动训练 -->
+    <g transform="translate(115,0)">
+      <rect x="0" y="0" width="105" height="30" rx="15" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="1"/>
+      <text x="52" y="20" text-anchor="middle" fill="#ffd700" font-size="11" font-weight="bold">🤖 自动训练</text>
+    </g>
+    
+    <!-- 训练计划 -->
+    <g transform="translate(230,0)">
+      <rect x="0" y="0" width="105" height="30" rx="15" fill="rgba(159,122,234,0.3)" stroke="#9f7aea" stroke-width="1"/>
+      <text x="52" y="20" text-anchor="middle" fill="#9f7aea" font-size="11" font-weight="bold">📅 训练计划</text>
+    </g>
+  </g>
+  
+  <!-- 底部导航栏 -->
+  <rect x="0" y="768" width="375" height="44" fill="rgba(26,32,44,0.95)"/>
+  <rect x="0" y="768" width="375" height="1" fill="#f56565" opacity="0.3"/>
+  
+  <!-- 训练特效 -->
+  <g opacity="0.6">
+    <circle cx="120" cy="350" r="2" fill="#f56565" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="450" r="1.5" fill="#48bb78" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="80" cy="550" r="1" fill="#4299e1" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

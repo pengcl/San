@@ -136,6 +136,23 @@ export default {
           'api::summon.summon.getSummonHistory',
           'api::summon.summon.getSummonRates',
           'api::summon.summon.synthesizeHero',
+          
+          // 地图系统
+          'api::map.map.find',
+          'api::map.map.update',
+          'api::map.map.getSpawnLocation',
+          'api::map.map.getMapData',
+          'api::map.map.attackCity',
+          'api::map.map.defendCity',
+          'api::map.map.collectResources',
+          'api::map.map.upgradeCity',
+          'api::map.map.getDevelopmentInfo',
+          
+          // 用户城池系统
+          'api::user-city.user-city.find',
+          'api::user-city.user-city.findOne',
+          'api::user-city.user-city.create',
+          'api::user-city.user-city.update',
         ];
 
         for (const permission of authenticatedPermissions) {

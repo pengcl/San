@@ -1,0 +1,325 @@
+/* 策略棋盘地图样式 */
+
+.strategic-board-canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  cursor: crosshair;
+  transition: transform 0.2s ease;
+}
+
+.strategic-board-canvas:hover {
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.strategic-controls {
+  backdrop-filter: blur(10px);
+  background: rgba(26, 26, 46, 0.9) !important;
+  border: 1px solid #ff6b35;
+}
+
+.strategic-controls .MuiTypography-h6 {
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+.strategic-controls .MuiSlider-thumb {
+  background: #ff6b35;
+}
+
+.strategic-controls .MuiSlider-track {
+  background: #ff6b35;
+}
+
+.strategic-controls .MuiSlider-rail {
+  background: #444;
+}
+
+.strategic-controls .MuiSwitch-switchBase.Mui-checked {
+  color: #ff6b35;
+}
+
+.strategic-controls .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+  background-color: #ff6b35;
+}
+
+/* 动画效果 */
+.army-move-animation {
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.city-upgrade-animation {
+  animation: cityUpgrade 1s ease-in-out;
+}
+
+@keyframes cityUpgrade {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); filter: brightness(1.5); }
+  100% { transform: scale(1); }
+}
+
+.territory-expansion-animation {
+  animation: territoryExpansion 2s ease-out;
+}
+
+@keyframes territoryExpansion {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.battle-prediction-line {
+  stroke-dasharray: 5, 5;
+  animation: dashMove 1s linear infinite;
+}
+
+@keyframes dashMove {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 10; }
+}
+
+/* 悬停效果 */
+.strategic-board-canvas:hover .city-hover {
+  filter: brightness(1.3);
+  transform: scale(1.1);
+}
+
+.strategic-board-canvas:hover .army-hover {
+  filter: drop-shadow(0 0 8px #ff6b35);
+}
+
+/* 选中状态 */
+.army-selected {
+  filter: drop-shadow(0 0 12px #ff6b35);
+  animation: selectedPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.city-selected {
+  filter: brightness(1.4) drop-shadow(0 0 12px #ffd700);
+}
+
+/* 回合指示器 */
+.turn-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(45deg, #ff6b35, #ffd700);
+  color: white;
+  padding: 20px;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.5);
+  animation: turnIndicator 3s ease-in-out;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes turnIndicator {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* 战斗特效 */
+.battle-effect {
+  position: absolute;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.battle-explosion {
+  animation: battleExplosion 1.5s ease-out;
+}
+
+@keyframes battleExplosion {
+  0% { 
+    opacity: 0; 
+    transform: scale(0); 
+    filter: brightness(2); 
+  }
+  30% { 
+    opacity: 1; 
+    transform: scale(1.5); 
+    filter: brightness(1.5); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: scale(3); 
+    filter: brightness(0.5); 
+  }
+}
+
+/* 建筑建造动画 */
+.building-construction {
+  animation: buildingConstruction 2s ease-in-out;
+}
+
+@keyframes buildingConstruction {
+  0% { 
+    opacity: 0; 
+    transform: scale(0) rotate(0deg); 
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.2) rotate(180deg); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotate(360deg); 
+  }
+}
+
+/* 资源收集动画 */
+.resource-collection {
+  animation: resourceCollection 1s ease-out;
+}
+
+@keyframes resourceCollection {
+  0% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(-50px) scale(0.5); 
+  }
+}
+
+/* 外交关系线条 */
+.diplomacy-line {
+  stroke-width: 3;
+  stroke-dasharray: 10, 5;
+  animation: diplomacyPulse 3s ease-in-out infinite;
+}
+
+.diplomacy-line.alliance {
+  stroke: #4caf50;
+}
+
+.diplomacy-line.war {
+  stroke: #f44336;
+}
+
+.diplomacy-line.neutral {
+  stroke: #9e9e9e;
+}
+
+@keyframes diplomacyPulse {
+  0%, 100% { opacity: 0.6; stroke-width: 3; }
+  50% { opacity: 1; stroke-width: 5; }
+}
+
+/* 季节变化效果 */
+.season-spring {
+  filter: hue-rotate(20deg) saturate(1.2);
+}
+
+.season-summer {
+  filter: brightness(1.1) saturate(1.3);
+}
+
+.season-autumn {
+  filter: hue-rotate(-30deg) saturate(1.1);
+}
+
+.season-winter {
+  filter: brightness(0.8) saturate(0.7) hue-rotate(180deg);
+}
+
+/* 天气效果 */
+.weather-rain::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent 0%, rgba(173, 216, 230, 0.1) 50%, transparent 100%);
+  animation: rainEffect 0.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rainEffect {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.weather-snow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(2px 2px at 20px 30px, white, transparent),
+                    radial-gradient(2px 2px at 40px 70px, white, transparent),
+                    radial-gradient(1px 1px at 90px 40px, white, transparent);
+  animation: snowEffect 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes snowEffect {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .strategic-controls {
+    position: fixed !important;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: auto;
+    border-radius: 16px 16px 0 0;
+    max-height: 40vh;
+    min-width: auto;
+  }
+  
+  .strategic-board-canvas {
+    max-width: 90vw;
+    max-height: 60vh;
+  }
+}
+
+/* 可访问性增强 */
+.strategic-board-canvas:focus {
+  outline: 3px solid #ff6b35;
+  outline-offset: 2px;
+}
+
+.army-unit[data-can-move="true"] {
+  cursor: grab;
+}
+
+.army-unit[data-can-move="true"]:active {
+  cursor: grabbing;
+}
+
+.strategic-cell[data-valid-move="true"] {
+  background: rgba(76, 175, 80, 0.3);
+  cursor: crosshair;
+}
+
+.strategic-cell[data-enemy-territory="true"] {
+  background: rgba(244, 67, 54, 0.2);
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .strategic-controls {
+    border: 2px solid white;
+    background: black !important;
+  }
+  
+  .strategic-board-canvas {
+    border: 3px solid white;
+  }
+}

@@ -37,6 +37,13 @@ import {
   SkillsPage,
   SummonPage,
   BattleDemoPage,
+  GameMapPage,
+  ThreeKingdomsMapPage,
+  ThreeKingdoms3DMapPage,
+  PixelArtMapPage,
+  StrategicBoardMapPage,
+  TiledMapPage,
+  CityManagePage,
   preloadCoreRoutes,
 } from './router';
 
@@ -86,7 +93,7 @@ const AnimatedRoutes = () => {
         className='w-full'
       >
         <Routes location={location}>
-          <Route path='/' element={<Navigate to='/home' replace />} />
+          <Route path='/' element={<Navigate to='/map' replace />} />
           <Route path='/home' element={<HomePageMUI />} />
           <Route path='/heroes' element={<HeroesPageMUI />} />
           <Route path='/heroes/library' element={<HeroLibraryPage />} />
@@ -106,6 +113,13 @@ const AnimatedRoutes = () => {
           <Route path='/recharge' element={<RechargePage />} />
           <Route path='/skills' element={<SkillsPage />} />
           <Route path='/summon' element={<SummonPage />} />
+          <Route path='/map' element={<TiledMapPage />} />
+          <Route path='/map/strategic' element={<StrategicBoardMapPage />} />
+          <Route path='/map/3d' element={<ThreeKingdoms3DMapPage />} />
+          <Route path='/map/2d' element={<ThreeKingdomsMapPage />} />
+          <Route path='/map/pixel' element={<PixelArtMapPage />} />
+          <Route path='/map/coordinate' element={<GameMapPage />} />
+          <Route path='/city/:cityId' element={<CityManagePage />} />
           <Route path='/settings' element={<SettingsPageMUI />} />
           <Route path='*' element={<Navigate to='/home' replace />} />
         </Routes>

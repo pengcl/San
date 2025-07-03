@@ -1,0 +1,311 @@
+/* 调试面板样式 */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+  }
+}
+
+.debug-panel {
+  background: linear-gradient(135deg, 
+    rgba(26, 26, 46, 0.98), 
+    rgba(16, 21, 62, 0.95)) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 2px solid #ff6b35 !important;
+  border-radius: 12px !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.debug-panel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(255, 107, 53, 0.5), 
+    rgba(255, 215, 0, 0.3), 
+    rgba(255, 107, 53, 0.5));
+  border-radius: 14px;
+  z-index: -1;
+  opacity: 0.7;
+  animation: debugGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes debugGlow {
+  0% { 
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  100% { 
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+/* Accordion 样式 */
+.debug-panel .MuiAccordion-root {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 107, 53, 0.2) !important;
+  border-radius: 8px !important;
+  margin: 8px 0 !important;
+}
+
+.debug-panel .MuiAccordion-root::before {
+  display: none;
+}
+
+.debug-panel .MuiAccordionSummary-root {
+  background: rgba(255, 107, 53, 0.1) !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.debug-panel .MuiAccordionSummary-content {
+  margin: 12px 0 !important;
+}
+
+.debug-panel .MuiAccordionDetails-root {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0 0 8px 8px !important;
+  padding: 16px !important;
+}
+
+/* 文字样式 */
+.debug-panel .MuiTypography-root {
+  color: #ffffff !important;
+  font-family: 'Courier New', 'Monaco', monospace !important;
+}
+
+.debug-panel .MuiTypography-h6 {
+  color: #ff6b35 !important;
+  font-weight: bold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.debug-panel .MuiTypography-subtitle2 {
+  color: #ffd700 !important;
+  font-weight: bold !important;
+  margin-bottom: 8px !important;
+}
+
+.debug-panel .MuiTypography-caption {
+  color: #999 !important;
+  font-style: italic !important;
+}
+
+/* Chip 样式 */
+.debug-panel .MuiChip-root {
+  font-family: 'Courier New', monospace !important;
+  font-size: 11px !important;
+  height: 24px !important;
+  border-radius: 4px !important;
+}
+
+.debug-panel .MuiChip-colorSuccess {
+  background: linear-gradient(45deg, #4caf50, #81c784) !important;
+  color: #000 !important;
+  font-weight: bold !important;
+}
+
+.debug-panel .MuiChip-colorDefault {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 107, 53, 0.3) !important;
+}
+
+/* 按钮样式 */
+.debug-panel .MuiButton-root {
+  font-family: 'Courier New', monospace !important;
+  font-size: 12px !important;
+  text-transform: none !important;
+  border-radius: 6px !important;
+}
+
+.debug-panel .MuiButton-outlined {
+  border-color: #ff6b35 !important;
+  color: #fff !important;
+  background: rgba(255, 107, 53, 0.1) !important;
+}
+
+.debug-panel .MuiButton-outlined:hover {
+  background: rgba(255, 107, 53, 0.2) !important;
+  border-color: #ffd700 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3) !important;
+}
+
+/* Switch 样式 */
+.debug-panel .MuiSwitch-root {
+  margin-left: 8px !important;
+}
+
+.debug-panel .MuiSwitch-track {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 107, 53, 0.3) !important;
+}
+
+.debug-panel .MuiSwitch-thumb {
+  background: #ff6b35 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.debug-panel .Mui-checked .MuiSwitch-thumb {
+  background: linear-gradient(45deg, #ffd700, #ff6b35) !important;
+}
+
+.debug-panel .Mui-checked + .MuiSwitch-track {
+  background: rgba(255, 215, 0, 0.3) !important;
+  border-color: #ffd700 !important;
+}
+
+/* 进度条样式 */
+.debug-panel .MuiLinearProgress-root {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 3px !important;
+  height: 6px !important;
+}
+
+.debug-panel .MuiLinearProgress-barColorSuccess {
+  background: linear-gradient(90deg, #4caf50, #81c784) !important;
+}
+
+.debug-panel .MuiLinearProgress-barColorWarning {
+  background: linear-gradient(90deg, #ff9800, #ffb74d) !important;
+}
+
+.debug-panel .MuiLinearProgress-barColorError {
+  background: linear-gradient(90deg, #f44336, #ef5350) !important;
+}
+
+/* 浮动按钮样式 */
+.debug-float-button {
+  background: linear-gradient(45deg, #ff6b35, #ffd700) !important;
+  box-shadow: 
+    0 4px 12px rgba(255, 107, 53, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
+}
+
+.debug-float-button:hover {
+  background: linear-gradient(45deg, #ffd700, #ff6b35) !important;
+  transform: scale(1.1) !important;
+  box-shadow: 
+    0 8px 24px rgba(255, 107, 53, 0.6),
+    0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 状态指示器 */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.status-indicator.success {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.status-indicator.pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.status-indicator.error {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* 数据统计卡片 */
+.debug-stats-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.debug-stats-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.debug-stats-item:last-child {
+  border-bottom: none;
+}
+
+.debug-stats-label {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.debug-stats-value {
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .debug-panel {
+    width: calc(100vw - 32px) !important;
+    max-width: 350px !important;
+    left: 16px !important;
+    bottom: 16px !important;
+  }
+  
+  .debug-float-button {
+    bottom: 16px !important;
+    left: 16px !important;
+    z-index: 1001 !important;
+  }
+  
+  .debug-panel .MuiAccordionDetails-root {
+    padding: 12px !important;
+  }
+}
+
+/* 滚动条样式 */
+.debug-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.debug-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.debug-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.5);
+  border-radius: 3px;
+}
+
+.debug-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 53, 0.7);
+}

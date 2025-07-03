@@ -1,0 +1,310 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <defs>
+    <linearGradient id="heroPageBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heroCardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3748;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#1a202c;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffb347;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect width="375" height="812" fill="url(#heroPageBg)"/>
+  
+  <!-- 装饰性背景图案 -->
+  <g opacity="0.1">
+    <circle cx="50" cy="100" r="30" fill="#ffd700"/>
+    <circle cx="320" cy="200" r="25" fill="#ff6b6b"/>
+    <circle cx="80" cy="300" r="20" fill="#4ecdc4"/>
+    <circle cx="300" cy="400" r="35" fill="#45b7d1"/>
+  </g>
+  
+  <!-- 顶部导航栏 -->
+  <rect x="0" y="0" width="375" height="88" fill="rgba(0,0,0,0.8)"/>
+  
+  <!-- 返回按钮 -->
+  <g transform="translate(20,54)">
+    <circle cx="0" cy="0" r="18" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <path d="M-6,-3 L-6,3 L6,0 Z" fill="#ffd700"/>
+  </g>
+  
+  <!-- 页面标题 -->
+  <text x="187.5" y="60" text-anchor="middle" fill="#ffd700" font-size="20" font-weight="bold">武将殿堂</text>
+  
+  <!-- 搜索按钮 -->
+  <g transform="translate(335,54)">
+    <circle cx="0" cy="0" r="18" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <circle cx="-3" cy="-3" r="6" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+    <path d="M3,3 L8,8" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 武将筛选标签 -->
+  <g transform="translate(0,100)">
+    <!-- 全部 -->
+    <rect x="20" y="0" width="60" height="32" rx="16" fill="#ffd700" opacity="0.9"/>
+    <text x="50" y="20" text-anchor="middle" fill="#1a1a2e" font-size="14" font-weight="bold">全部</text>
+    
+    <!-- 蜀国 -->
+    <rect x="90" y="0" width="60" height="32" rx="16" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="120" y="20" text-anchor="middle" fill="#ffd700" font-size="14">蜀国</text>
+    
+    <!-- 魏国 -->
+    <rect x="160" y="0" width="60" height="32" rx="16" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="190" y="20" text-anchor="middle" fill="#ffd700" font-size="14">魏国</text>
+    
+    <!-- 吴国 -->
+    <rect x="230" y="0" width="60" height="32" rx="16" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="260" y="20" text-anchor="middle" fill="#ffd700" font-size="14">吴国</text>
+    
+    <!-- 群雄 -->
+    <rect x="300" y="0" width="60" height="32" rx="16" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="330" y="20" text-anchor="middle" fill="#ffd700" font-size="14">群雄</text>
+  </g>
+  
+  <!-- 武将列表 -->
+  <g transform="translate(0,150)">
+    <!-- 第一行武将 -->
+    <!-- 关羽 -->
+    <g transform="translate(20,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#ffd700" stroke-width="2"/>
+      <!-- 品质背景 -->
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(255,215,0,0.1)"/>
+      <!-- 武将头像 -->
+      <circle cx="50" cy="40" r="25" fill="#8B4513" stroke="#ffd700" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#ffd700" font-size="12" font-weight="bold">关羽</text>
+      <!-- 星级 -->
+      <g transform="translate(15,60)">
+        <text x="0" y="0" fill="#ffd700" font-size="12">★★★★★</text>
+      </g>
+      <!-- 等级 -->
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.45</text>
+      <!-- 战力 -->
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 8520</text>
+      <!-- 职业 -->
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(255,107,107,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#ff6b6b" font-size="10">武将</text>
+      <!-- 已拥有标识 -->
+      <circle cx="85" cy="15" r="8" fill="#4ecdc4"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">✓</text>
+    </g>
+    
+    <!-- 张飞 -->
+    <g transform="translate(137.5,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#9d4edd" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(157,78,221,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#2F4F4F" stroke="#9d4edd" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#9d4edd" font-size="12" font-weight="bold">张飞</text>
+      <g transform="translate(20,60)">
+        <text x="0" y="0" fill="#9d4edd" font-size="12">★★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.42</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 7890</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(255,107,107,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#ff6b6b" font-size="10">武将</text>
+      <circle cx="85" cy="15" r="8" fill="#4ecdc4"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">✓</text>
+    </g>
+    
+    <!-- 赵云 -->
+    <g transform="translate(255,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#06d6a0" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(6,214,160,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#4682B4" stroke="#06d6a0" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#06d6a0" font-size="12" font-weight="bold">赵云</text>
+      <g transform="translate(25,60)">
+        <text x="0" y="0" fill="#06d6a0" font-size="12">★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.38</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 6750</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(255,107,107,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#ff6b6b" font-size="10">武将</text>
+      <!-- 未拥有 -->
+      <rect x="77" y="7" width="16" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">?</text>
+    </g>
+  </g>
+  
+  <!-- 第二行武将 -->
+  <g transform="translate(0,310)">
+    <!-- 诸葛亮 -->
+    <g transform="translate(20,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#ffd700" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(255,215,0,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#8A2BE2" stroke="#ffd700" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#ffd700" font-size="11" font-weight="bold">诸葛亮</text>
+      <g transform="translate(15,60)">
+        <text x="0" y="0" fill="#ffd700" font-size="12">★★★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.50</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 9200</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(78,205,196,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#4ecdc4" font-size="10">谋士</text>
+      <circle cx="85" cy="15" r="8" fill="#4ecdc4"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">✓</text>
+    </g>
+    
+    <!-- 曹操 -->
+    <g transform="translate(137.5,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#ff6b6b" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(255,107,107,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#8B0000" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="bold">曹操</text>
+      <g transform="translate(20,60)">
+        <text x="0" y="0" fill="#ff6b6b" font-size="12">★★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.47</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 8100</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(255,107,107,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#ff6b6b" font-size="10">君主</text>
+      <rect x="77" y="7" width="16" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">?</text>
+    </g>
+    
+    <!-- 孙权 -->
+    <g transform="translate(255,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#45b7d1" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(69,183,209,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#4169E1" stroke="#45b7d1" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#45b7d1" font-size="12" font-weight="bold">孙权</text>
+      <g transform="translate(25,60)">
+        <text x="0" y="0" fill="#45b7d1" font-size="12">★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.35</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 6200</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(255,107,107,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#ff6b6b" font-size="10">君主</text>
+      <rect x="77" y="7" width="16" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">?</text>
+    </g>
+  </g>
+  
+  <!-- 第三行武将 -->
+  <g transform="translate(0,470)">
+    <!-- 吕布 -->
+    <g transform="translate(20,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#dc2626" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(220,38,38,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#8B0000" stroke="#dc2626" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="bold">吕布</text>
+      <g transform="translate(15,60)">
+        <text x="0" y="0" fill="#dc2626" font-size="12">★★★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.?</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: ???</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(255,107,107,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#ff6b6b" font-size="10">武将</text>
+      <rect x="77" y="7" width="16" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">?</text>
+    </g>
+    
+    <!-- 貂蝉 -->
+    <g transform="translate(137.5,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#ec4899" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(236,72,153,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#FF69B4" stroke="#ec4899" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#ec4899" font-size="12" font-weight="bold">貂蝉</text>
+      <g transform="translate(20,60)">
+        <text x="0" y="0" fill="#ec4899" font-size="12">★★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.?</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: ???</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(78,205,196,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#4ecdc4" font-size="10">谋士</text>
+      <rect x="77" y="7" width="16" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">?</text>
+    </g>
+    
+    <!-- 周瑜 -->
+    <g transform="translate(255,0)">
+      <rect x="0" y="0" width="100" height="140" rx="8" fill="url(#heroCardBg)" stroke="#06d6a0" stroke-width="2"/>
+      <rect x="2" y="2" width="96" height="136" rx="6" fill="rgba(6,214,160,0.1)"/>
+      <circle cx="50" cy="40" r="25" fill="#20B2AA" stroke="#06d6a0" stroke-width="2"/>
+      <text x="50" y="45" text-anchor="middle" fill="#06d6a0" font-size="12" font-weight="bold">周瑜</text>
+      <g transform="translate(20,60)">
+        <text x="0" y="0" fill="#06d6a0" font-size="12">★★★★</text>
+      </g>
+      <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-size="12">Lv.40</text>
+      <text x="50" y="95" text-anchor="middle" fill="#ff6b6b" font-size="10">战力: 7200</text>
+      <rect x="10" y="105" width="80" height="20" rx="10" fill="rgba(78,205,196,0.2)"/>
+      <text x="50" y="118" text-anchor="middle" fill="#4ecdc4" font-size="10">谋士</text>
+      <circle cx="85" cy="15" r="8" fill="#4ecdc4"/>
+      <text x="85" y="18" text-anchor="middle" fill="#ffffff" font-size="8">✓</text>
+    </g>
+  </g>
+  
+  <!-- 武将统计信息 -->
+  <g transform="translate(0,630)">
+    <rect x="20" y="0" width="335" height="60" rx="8" fill="rgba(0,0,0,0.6)" stroke="#ffd700" stroke-width="1"/>
+    
+    <!-- 已拥有武将 -->
+    <text x="40" y="20" fill="#4ecdc4" font-size="12" font-weight="bold">已拥有: 5/9</text>
+    <rect x="40" y="25" width="100" height="6" rx="3" fill="rgba(255,255,255,0.2)"/>
+    <rect x="40" y="25" width="55" height="6" rx="3" fill="#4ecdc4"/>
+    
+    <!-- 总战力 -->
+    <text x="200" y="20" fill="#ff6b6b" font-size="12" font-weight="bold">总战力: 40,562</text>
+    
+    <!-- 收集进度 -->
+    <text x="40" y="45" fill="#ffd700" font-size="10">收集进度: 55.6%</text>
+    
+    <!-- 推荐武将 -->
+    <text x="200" y="45" fill="#45b7d1" font-size="10">推荐获取: 吕布</text>
+  </g>
+  
+  <!-- 底部操作栏 -->
+  <g transform="translate(0,710)">
+    <rect x="0" y="0" width="375" height="80" fill="rgba(0,0,0,0.8)"/>
+    
+    <!-- 武将招募 -->
+    <g transform="translate(30,20)">
+      <rect x="0" y="0" width="80" height="40" rx="20" fill="#ffd700" filter="url(#glow)"/>
+      <text x="40" y="25" text-anchor="middle" fill="#1a1a2e" font-size="14" font-weight="bold">招募</text>
+    </g>
+    
+    <!-- 武将培养 -->
+    <g transform="translate(130,20)">
+      <rect x="0" y="0" width="80" height="40" rx="20" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+      <text x="40" y="25" text-anchor="middle" fill="#ffd700" font-size="14">培养</text>
+    </g>
+    
+    <!-- 武将图鉴 -->
+    <g transform="translate(230,20)">
+      <rect x="0" y="0" width="80" height="40" rx="20" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+      <text x="40" y="25" text-anchor="middle" fill="#ffd700" font-size="14">图鉴</text>
+    </g>
+  </g>
+  
+  <!-- 装饰性光效 -->
+  <g opacity="0.3">
+    <circle cx="100" cy="200" r="2" fill="#ffd700">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="280" cy="350" r="1.5" fill="#4ecdc4">
+      <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="500" r="2.5" fill="#ff6b6b">
+      <animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- 新武将提示 -->
+  <g transform="translate(300,120)" opacity="0.8">
+    <circle cx="0" cy="0" r="8" fill="#ff6b6b"/>
+    <text x="0" y="3" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">!</text>
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="1s" repeatCount="indefinite"/>
+  </g>
+</svg>

@@ -71,10 +71,76 @@
       "type": "boolean",
       "default": true
     },
+    "territory_range": {
+      "type": "json",
+      "description": "领土范围配置，包含起始坐标区域",
+      "default": {
+        "min_x": 0,
+        "max_x": 1000,
+        "min_y": 0,
+        "max_y": 1000
+      }
+    },
+    "spawn_areas": {
+      "type": "json",
+      "description": "新玩家主城生成区域配置",
+      "default": [
+        {
+          "min_x": 0,
+          "max_x": 1000,
+          "min_y": 0,
+          "max_y": 1000,
+          "weight": 1
+        }
+      ]
+    },
+    "map_color": {
+      "type": "string",
+      "required": true,
+      "maxLength": 7,
+      "default": "#FF0000",
+      "description": "在地图上显示的颜色"
+    },
+    "initial_cities": {
+      "type": "json",
+      "description": "初始控制的城池ID列表",
+      "default": []
+    },
+    "faction_ai_behavior": {
+      "type": "enumeration",
+      "enum": ["aggressive", "defensive", "balanced", "economic"],
+      "default": "balanced",
+      "description": "AI阵营行为模式"
+    },
+    "diplomatic_stance": {
+      "type": "json",
+      "description": "对其他阵营的外交立场",
+      "default": {}
+    },
+    "territory_control_bonus": {
+      "type": "json",
+      "description": "控制领土的加成效果",
+      "default": {
+        "resource_bonus": 0,
+        "defense_bonus": 0,
+        "recruitment_bonus": 0
+      }
+    },
+    "faction_special_units": {
+      "type": "json",
+      "description": "阵营特色兵种配置",
+      "default": []
+    },
     "heroes": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::hero.hero",
+      "mappedBy": "faction"
+    },
+    "user_cities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-city.user-city",
       "mappedBy": "faction"
     }
   }

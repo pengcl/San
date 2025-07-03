@@ -33,6 +33,13 @@ export const RechargePage = lazy(() => import('../pages/game/RechargePage'));
 export const SkillsPage = lazy(() => import('../pages/game/SkillsPageMUI'));
 export const SummonPage = lazy(() => import('../pages/game/SummonPageMUI'));
 export const BattleDemoPage = lazy(() => import('../pages/game/BattleDemoPage'));
+export const GameMapPage = lazy(() => import('../pages/GameMapPage'));
+export const ThreeKingdomsMapPage = lazy(() => import('../pages/ThreeKingdomsMapPage'));
+export const ThreeKingdoms3DMapPage = lazy(() => import('../pages/ThreeKingdoms3DMapPage'));
+export const PixelArtMapPage = lazy(() => import('../pages/PixelArtMapPage'));
+export const StrategicBoardMapPage = lazy(() => import('../pages/StrategicBoardMapPage'));
+export const TiledMapPage = lazy(() => import('../pages/TiledMapPage'));
+export const CityManagePage = lazy(() => import('../pages/CityManagePage'));
 
 // 路由元数据类型
 export interface RouteMetadata {
@@ -80,6 +87,13 @@ export const routeComponents = {
   SkillsPage,
   SummonPage,
   BattleDemoPage,
+  GameMapPage,
+  ThreeKingdomsMapPage,
+  ThreeKingdoms3DMapPage,
+  PixelArtMapPage,
+  StrategicBoardMapPage,
+  TiledMapPage,
+  CityManagePage,
 };
 
 export default {

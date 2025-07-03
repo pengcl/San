@@ -1,5 +1,74 @@
 # 三国卡牌游戏开发规范 - Claude Code 提示词
 
+## 【最高优先级】三国大地图系统开发计划
+
+### 系统概述
+将游戏打造成一个真实的三国世界，所有玩家共享同一张大地图。玩家通过占领和发展城池来扩张势力，通过阵营战争来争夺天下。这个地图系统将成为游戏的核心导航和世界观展现方式。
+
+### 核心玩法设计
+
+#### 1. 地图世界观
+- 地图尺寸：1000x1000 坐标系统
+- 包含历史名城：洛阳、长安、成都、建业、许昌等
+- 地形系统：平原、山地、河流、关隘，影响行军和战斗
+
+#### 2. 城池系统
+- **主城**：玩家起始城池，不可被攻占，可升级发展
+- **NPC城池**：可攻占的历史名城，提供资源加成
+- **资源点**：农田、矿山、商路等，提供额外资源
+
+#### 3. 阵营玩法
+- 加入条件：玩家等级达到20级
+- 阵营任务：每日/每周任务，获得贡献度
+- 阵营战争：定期开启，争夺重要城池
+- 阵营科技：通过集体贡献解锁增益效果
+
+### 开发任务清单（优先级排序）
+
+#### 第一阶段：基础架构【P0】
+1. **拓展 user-city**：添加坐标(x,y)、城池等级、防御值等字段
+2. **拓展 faction**：添加领土范围、势力颜色、初始坐标区域等配置
+3. **创建 map Content-Type**：定义地图大小、区域划分、地形类型
+4. **实现坐标分配API**：玩家注册时基于阵营自动分配主城坐标
+
+#### 第二阶段：地图功能【P1】
+5. **地图数据获取API**：返回可视区域内的城池信息（分页加载）
+6. **开发大地图前端组件**：Canvas/SVG渲染，Material-UI集成
+7. **实现地图交互**：缩放、拖拽、城池点击、触控手势
+
+#### 第三阶段：系统集成【P2】
+8. **导航系统改造**：地图作为游戏主界面，整合所有功能入口
+9. **城池交互功能**：查看详情、发起攻击、资源采集
+10. **小地图组件**：快速定位和导航
+
+#### 第四阶段：战争系统【P3】
+11. **攻城基础机制**：部队调遣、战斗计算、城池占领
+12. **资源产出系统**：基于城池和建筑的资源生成
+13. **阵营战争**：战争宣告、领土变更、战功奖励
+
+### 坐标分配规则
+- **魏国**：地图北部（y > 700，x: 200-800）
+- **蜀国**：地图西南（x < 300，y < 500）
+- **吴国**：地图东南（x > 700，y < 500）
+- **群雄**：地图中部（其他区域）
+- **保护机制**：新玩家主城与现有主城至少保持10个坐标单位距离
+
+### 技术实现要求
+- 必须使用 Material-UI 组件体系
+- 所有地图数据通过真实 API 获取，禁止硬编码
+- 支持移动端触控操作（缩放、拖拽）
+- 性能优化：虚拟滚动、按需渲染、缓存策略
+- WebSocket 实时更新战争状态和领土变化
+
+### 当前任务状态
+所有任务已创建并标记为高优先级，请按照以下顺序执行：
+1. 先完成后端数据模型拓展（user-city、faction、map）
+2. 实现坐标分配和地图数据API
+3. 开发前端地图组件和交互功能
+4. 最后实现战争和资源系统
+
+---
+
 ## 项目概述
 
 这是一个三国题材的卡牌游戏项目《三国英雄传》，使用 React (TypeScript) + @mui/material + Strapi v5 开发。项目已建立完整的开发标准和规范，所有开发必须严格遵循这些标准。
@@ -216,119 +285,6 @@ const authenticatedPermissions = [
    }
    ```
 
-#### B. 权限配置规范
-
-1. **程序化权限配置（推荐）**
-   在 `src/index.ts` 的 bootstrap 中配置：
-   ```typescript
-   async bootstrap({ strapi }) {
-     // 获取认证用户角色
-     const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({
-       where: { type: 'authenticated' }
-     });
-
-     if (authenticatedRole) {
-       // 定义需要配置的权限
-       const permissions = [
-         'api::user-hero.user-hero.find',
-         'api::user-hero.user-hero.findOne',
-         'api::user-hero.user-hero.create',
-         'api::user-hero.user-hero.update',
-         'api::user-hero.user-hero.delete',
-         // 自定义路由权限
-         'api::hero.hero.library',
-         'api::hero.hero.levelUp'
-       ];
-
-       for (const permission of permissions) {
-         const existingPermission = await strapi.db.query('plugin::users-permissions.permission').findOne({
-           where: {
-             role: authenticatedRole.id,
-             action: permission
-           }
-         });
-
-         if (!existingPermission) {
-           await strapi.db.query('plugin::users-permissions.permission').create({
-             data: {
-               role: authenticatedRole.id,
-               action: permission,
-               enabled: true
-             }
-           });
-         } else if (!existingPermission.enabled) {
-           await strapi.db.query('plugin::users-permissions.permission').update({
-             where: { id: existingPermission.id },
-             data: { enabled: true }
-           });
-         }
-       }
-
-       console.log('✅ Authenticated API permissions configured');
-     }
-
-     // 配置公开权限（如果需要）
-     const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
-       where: { type: 'public' }
-     });
-
-     if (publicRole) {
-       const publicPermissions = [
-         'api::hero.hero.library',  // 武将图鉴可以公开访问
-         // 其他公开API
-       ];
-
-       for (const permission of publicPermissions) {
-         const existingPermission = await strapi.db.query('plugin::users-permissions.permission').findOne({
-           where: {
-             role: publicRole.id,
-             action: permission
-           }
-         });
-
-         if (!existingPermission) {
-           await strapi.db.query('plugin::users-permissions.permission').create({
-             data: {
-               role: publicRole.id,
-               action: permission,
-               enabled: true
-             }
-           });
-         }
-       }
-
-       console.log('✅ Public API permissions configured');
-     }
-   }
-   ```
-
-2. **路由权限配置**
-   ```typescript
-   // 在 routes/[content-type].ts 中
-   export default {
-     routes: [
-       {
-         method: 'GET',
-         path: '/user-heroes',
-         handler: 'user-hero.find',
-         config: {
-           auth: {
-             scope: ['authenticated']  // 需要认证
-           }
-         }
-       },
-       {
-         method: 'GET',
-         path: '/heroes/library',
-         handler: 'hero.library',
-         config: {
-           auth: false  // 公开访问
-         }
-       }
-     ]
-   };
-   ```
-
 #### C. 权限命名规范
 
 1. **标准CRUD权限**
@@ -410,9 +366,7 @@ const authenticatedPermissions = [
 **每次添加新API时必须执行：**
 
 1. ☐ 创建 Content-Type 和相关文件
-2. ☐ 在 `src/index.ts` bootstrap 中添加权限配置
 3. ☐ 设置正确的路由认证配置
-4. ☐ 重启 Strapi 服务器
 5. ☐ 使用有效 token 测试 API
 6. ☐ 验证权限设置正确
 

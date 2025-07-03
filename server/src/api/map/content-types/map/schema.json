@@ -1,0 +1,276 @@
+{
+  "kind": "singleType",
+  "collectionName": "maps",
+  "info": {
+    "singularName": "map",
+    "pluralName": "maps",
+    "displayName": "游戏地图",
+    "description": "三国地图配置"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "map_width": {
+      "type": "integer",
+      "required": true,
+      "default": 1000,
+      "min": 100,
+      "max": 2000,
+      "description": "地图宽度"
+    },
+    "map_height": {
+      "type": "integer",
+      "required": true,
+      "default": 1000,
+      "min": 100,
+      "max": 2000,
+      "description": "地图高度"
+    },
+    "grid_size": {
+      "type": "integer",
+      "default": 10,
+      "min": 1,
+      "max": 50,
+      "description": "网格大小"
+    },
+    "terrain_types": {
+      "type": "json",
+      "description": "地形类型配置",
+      "default": {
+        "plain": {
+          "name": "平原",
+          "color": "#90EE90",
+          "movement_cost": 1,
+          "defense_bonus": 0
+        },
+        "mountain": {
+          "name": "山地",
+          "color": "#8B7355",
+          "movement_cost": 3,
+          "defense_bonus": 20
+        },
+        "river": {
+          "name": "河流",
+          "color": "#4682B4",
+          "movement_cost": 2,
+          "defense_bonus": -10
+        },
+        "forest": {
+          "name": "森林",
+          "color": "#228B22",
+          "movement_cost": 2,
+          "defense_bonus": 10
+        },
+        "fortress": {
+          "name": "关隘",
+          "color": "#696969",
+          "movement_cost": 1,
+          "defense_bonus": 50
+        }
+      }
+    },
+    "regions": {
+      "type": "json",
+      "description": "区域划分配置",
+      "default": {
+        "north": {
+          "name": "北方",
+          "description": "黄河以北地区",
+          "coordinates": {
+            "min_x": 0,
+            "max_x": 1000,
+            "min_y": 700,
+            "max_y": 1000
+          }
+        },
+        "central": {
+          "name": "中原",
+          "description": "黄河与长江之间",
+          "coordinates": {
+            "min_x": 300,
+            "max_x": 700,
+            "min_y": 300,
+            "max_y": 700
+          }
+        },
+        "southwest": {
+          "name": "西南",
+          "description": "巴蜀地区",
+          "coordinates": {
+            "min_x": 0,
+            "max_x": 300,
+            "min_y": 0,
+            "max_y": 500
+          }
+        },
+        "southeast": {
+          "name": "东南",
+          "description": "江东地区",
+          "coordinates": {
+            "min_x": 700,
+            "max_x": 1000,
+            "min_y": 0,
+            "max_y": 500
+          }
+        }
+      }
+    },
+    "spawn_rules": {
+      "type": "json",
+      "description": "主城生成规则",
+      "default": {
+        "min_distance": 10,
+        "protected_radius": 5,
+        "max_retries": 100,
+        "faction_spawn_areas": {
+          "wei": {
+            "areas": [
+              {
+                "min_x": 200,
+                "max_x": 800,
+                "min_y": 700,
+                "max_y": 950,
+                "weight": 1
+              }
+            ]
+          },
+          "shu": {
+            "areas": [
+              {
+                "min_x": 50,
+                "max_x": 300,
+                "min_y": 50,
+                "max_y": 450,
+                "weight": 1
+              }
+            ]
+          },
+          "wu": {
+            "areas": [
+              {
+                "min_x": 700,
+                "max_x": 950,
+                "min_y": 50,
+                "max_y": 450,
+                "weight": 1
+              }
+            ]
+          },
+          "neutral": {
+            "areas": [
+              {
+                "min_x": 300,
+                "max_x": 700,
+                "min_y": 300,
+                "max_y": 700,
+                "weight": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    "historical_cities": {
+      "type": "json",
+      "description": "历史名城位置",
+      "default": [
+        {
+          "name": "洛阳",
+          "x": 500,
+          "y": 600,
+          "type": "capital",
+          "importance": 5
+        },
+        {
+          "name": "长安",
+          "x": 300,
+          "y": 650,
+          "type": "capital",
+          "importance": 5
+        },
+        {
+          "name": "成都",
+          "x": 150,
+          "y": 250,
+          "type": "capital",
+          "importance": 4
+        },
+        {
+          "name": "建业",
+          "x": 850,
+          "y": 200,
+          "type": "capital",
+          "importance": 4
+        },
+        {
+          "name": "许昌",
+          "x": 550,
+          "y": 700,
+          "type": "major",
+          "importance": 3
+        }
+      ]
+    },
+    "resource_points": {
+      "type": "json",
+      "description": "资源点配置",
+      "default": {
+        "farms": {
+          "density": 0.05,
+          "preferred_terrain": ["plain"],
+          "resource_type": "food",
+          "production_rate": 100
+        },
+        "mines": {
+          "density": 0.03,
+          "preferred_terrain": ["mountain"],
+          "resource_type": "iron",
+          "production_rate": 50
+        },
+        "markets": {
+          "density": 0.02,
+          "preferred_terrain": ["plain", "river"],
+          "resource_type": "gold",
+          "production_rate": 30
+        }
+      }
+    },
+    "map_events": {
+      "type": "json",
+      "description": "地图事件配置",
+      "default": {
+        "yellow_turban_rebellion": {
+          "name": "黄巾起义",
+          "frequency": "monthly",
+          "affected_regions": ["central"],
+          "effects": {
+            "public_order": -20,
+            "rebel_spawn_rate": 0.1
+          }
+        }
+      }
+    },
+    "vision_rules": {
+      "type": "json",
+      "description": "视野规则",
+      "default": {
+        "base_vision_range": 50,
+        "scout_vision_bonus": 25,
+        "mountain_vision_bonus": 30,
+        "forest_vision_penalty": -20
+      }
+    },
+    "movement_rules": {
+      "type": "json",
+      "description": "移动规则",
+      "default": {
+        "base_movement_points": 100,
+        "road_movement_bonus": 0.5,
+        "cavalry_movement_bonus": 0.3,
+        "rain_movement_penalty": 0.2
+      }
+    }
+  }
+}

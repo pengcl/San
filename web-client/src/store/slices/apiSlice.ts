@@ -32,6 +32,8 @@ export const apiSlice = createApi({
     'Stage',
     'StageProgress',
     'Summon',
+    'Map',
+    'UserCity',
   ],
   endpoints: (builder) => ({
     // 认证相关API
@@ -489,6 +491,96 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Summon', 'Hero', 'Item'],
     }),
+
+    // 地图系统API
+    getMapConfig: builder.query({
+      query: () => '/map',
+      providesTags: ['Map'],
+    }),
+    getMapData: builder.query({
+      query: (params = {}) => {
+        const searchParams = new URLSearchParams();
+        if (params.center_x) searchParams.append('center_x', params.center_x);
+        if (params.center_y) searchParams.append('center_y', params.center_y);
+        if (params.radius) searchParams.append('radius', params.radius);
+        return `/map/data?${searchParams.toString()}`;
+      },
+      providesTags: ['Map', 'UserCity'],
+    }),
+    getSpawnLocation: builder.mutation({
+      query: (data) => ({
+        url: '/map/spawn-location',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Map'],
+    }),
+    attackCity: builder.mutation({
+      query: ({ targetCityId, ...data }) => ({
+        url: `/map/cities/${targetCityId}/attack`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Map', 'UserCity'],
+    }),
+    defendCity: builder.mutation({
+      query: ({ cityId, ...data }) => ({
+        url: `/map/cities/${cityId}/defend`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Map', 'UserCity'],
+    }),
+    collectResources: builder.mutation({
+      query: ({ cityId }) => ({
+        url: `/map/cities/${cityId}/collect`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Map', 'UserCity'],
+    }),
+    upgradeCity: builder.mutation({
+      query: ({ cityId, ...data }) => ({
+        url: `/map/cities/${cityId}/upgrade`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Map', 'UserCity'],
+    }),
+    getCityDevelopment: builder.query({
+      query: (cityId) => `/map/cities/${cityId}/development`,
+      providesTags: (result, error, cityId) => [{ type: 'UserCity', id: cityId }],
+    }),
+
+    // 用户城池系统API
+    getUserCities: builder.query({
+      query: (params = {}) => {
+        const searchParams = new URLSearchParams();
+        if (params.page) searchParams.append('page', params.page);
+        if (params.limit) searchParams.append('limit', params.limit);
+        return `/user-cities?${searchParams.toString()}`;
+      },
+      providesTags: ['UserCity'],
+    }),
+    getUserCity: builder.query({
+      query: (id) => `/user-cities/${id}`,
+      providesTags: (result, error, id) => [{ type: 'UserCity', id }],
+    }),
+    createUserCity: builder.mutation({
+      query: (cityData) => ({
+        url: '/user-cities',
+        method: 'POST',
+        body: cityData,
+      }),
+      invalidatesTags: ['UserCity', 'Map'],
+    }),
+    updateUserCity: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/user-cities/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'UserCity', id }, 'Map'],
+    }),
   }),
 });
 
@@ -564,4 +656,18 @@ export const {
   useGetSummonHistoryQuery,
   useGetSummonRatesQuery,
   useSynthesizeHeroMutation,
+  // 地图系统
+  useGetMapConfigQuery,
+  useGetMapDataQuery,
+  useGetSpawnLocationMutation,
+  useAttackCityMutation,
+  useDefendCityMutation,
+  useCollectResourcesMutation,
+  useUpgradeCityMutation,
+  useGetCityDevelopmentQuery,
+  // 用户城池系统
+  useGetUserCitiesQuery,
+  useGetUserCityQuery,
+  useCreateUserCityMutation,
+  useUpdateUserCityMutation,
 } = apiSlice;

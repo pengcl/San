@@ -14,6 +14,7 @@ interface GameClient {
   userId?: string;
   authenticated: boolean;
   lastPing?: number;
+  mapRoom?: string; // 当前观看的地图区域
 }
 
 class WebSocketService {
@@ -108,6 +109,12 @@ class WebSocketService {
           break;
         case 'chat':
           this.handleChat(clientId, message.data);
+          break;
+        case 'join_map_room':
+          this.handleJoinMapRoom(clientId, message.data);
+          break;
+        case 'leave_map_room':
+          this.handleLeaveMapRoom(clientId);
           break;
         default:
           console.log(`⚠️ 未知消息类型: ${message.type}`);
@@ -236,6 +243,95 @@ class WebSocketService {
         client.ws.send(JSON.stringify(message));
       }
     });
+  }
+
+  private handleJoinMapRoom(clientId: string, data: any) {
+    const client = this.clients.get(clientId);
+    if (!client || !client.authenticated) {
+      this.sendToClient(clientId, {
+        type: 'error',
+        data: { message: '未认证的客户端' },
+        timestamp: Date.now(),
+      });
+      return;
+    }
+
+    const { center_x, center_y, radius } = data;
+    const mapRoom = `map_${Math.floor(center_x / 100)}_${Math.floor(center_y / 100)}`;
+    
+    client.mapRoom = mapRoom;
+
+    this.sendToClient(clientId, {
+      type: 'map_room_joined',
+      data: { mapRoom, center_x, center_y, radius },
+      timestamp: Date.now(),
+    });
+
+    console.log(`🗺️ 客户端加入地图房间 [${clientId}]: ${mapRoom}`);
+  }
+
+  private handleLeaveMapRoom(clientId: string) {
+    const client = this.clients.get(clientId);
+    if (!client) return;
+
+    const mapRoom = client.mapRoom;
+    client.mapRoom = undefined;
+
+    this.sendToClient(clientId, {
+      type: 'map_room_left',
+      data: { mapRoom },
+      timestamp: Date.now(),
+    });
+
+    console.log(`🗺️ 客户端离开地图房间 [${clientId}]: ${mapRoom}`);
+  }
+
+  public broadcastToMapRoom(mapRoom: string, message: WebSocketMessage, excludeClientId?: string) {
+    this.clients.forEach((client, clientId) => {
+      if (
+        clientId !== excludeClientId &&
+        client.authenticated &&
+        client.mapRoom === mapRoom &&
+        client.ws.readyState === WebSocket.OPEN
+      ) {
+        client.ws.send(JSON.stringify(message));
+      }
+    });
+  }
+
+  public notifyMapUpdate(center_x: number, center_y: number, updateType: string, updateData: any) {
+    const mapRoom = `map_${Math.floor(center_x / 100)}_${Math.floor(center_y / 100)}`;
+    
+    this.broadcastToMapRoom(mapRoom, {
+      type: 'map_update',
+      data: {
+        updateType,
+        updateData,
+        center_x,
+        center_y,
+        timestamp: Date.now()
+      },
+      timestamp: Date.now()
+    });
+
+    console.log(`🗺️ 发送地图更新到房间 ${mapRoom}: ${updateType}`);
+  }
+
+  public notifyBattleUpdate(battleData: any) {
+    // 通知相关区域的战斗更新
+    if (battleData.attacker_city && battleData.defender_city) {
+      const center_x = (battleData.attacker_city.coordinate_x + battleData.defender_city.coordinate_x) / 2;
+      const center_y = (battleData.attacker_city.coordinate_y + battleData.defender_city.coordinate_y) / 2;
+      
+      this.notifyMapUpdate(center_x, center_y, 'battle_update', battleData);
+    }
+  }
+
+  public notifyCityUpdate(cityData: any) {
+    // 通知城池变更
+    if (cityData.coordinate_x && cityData.coordinate_y) {
+      this.notifyMapUpdate(cityData.coordinate_x, cityData.coordinate_y, 'city_update', cityData);
+    }
   }
 
   private generateClientId(): string {

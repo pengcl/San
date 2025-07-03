@@ -85,6 +85,9 @@ export default {
       // 给新用户分配初始武将（刘备 - 适合新手的蜀国武将）
       await giveInitialHeroesToNewUser(newUser.id);
 
+      // 为新用户创建主城（基于阵营自动分配坐标）
+      await createMainCityForNewUser(newUser.id, username);
+
       // 生成JWT token
       const token = jwt.sign(
         { 
@@ -545,4 +548,76 @@ function calculateInitialPower(hero: any, level: number, star: number): number {
 
   // 战力计算公式
   return Math.floor(finalHp * 0.3 + finalAttack * 1.0 + finalDefense * 0.8 + finalSpeed * 0.5);
+}
+
+/**
+ * 为新用户创建主城（基于阵营自动分配坐标）
+ */
+async function createMainCityForNewUser(userId: number, username: string) {
+  try {
+    // 默认为蜀国阵营（因为给了刘备作为初始武将）
+    const shuFaction = await strapi.db.query('api::faction.faction').findOne({
+      where: { faction_id: 'shu' }
+    });
+
+    if (!shuFaction) {
+      console.error('蜀国阵营不存在，无法创建主城');
+      return;
+    }
+
+    // 调用地图服务获取主城坐标
+    const spawnLocationResult = await strapi.service('api::map.map').getSpawnLocation({
+      faction_id: 'shu'
+    });
+
+    if (!spawnLocationResult || !spawnLocationResult.coordinate_x) {
+      console.error('无法获取主城坐标');
+      return;
+    }
+
+    // 创建用户主城
+    const userCity = await strapi.db.query('api::user-city.user-city').create({
+      data: {
+        user: userId,
+        faction: shuFaction.id,
+        coordinate_x: spawnLocationResult.coordinate_x,
+        coordinate_y: spawnLocationResult.coordinate_y,
+        city_level: 1,
+        city_type: 'main',
+        is_main_city: true,
+        development_level: 1,
+        development_points: 0,
+        defense_value: 200,
+        max_garrison: 1000,
+        garrison_strength: 500,
+        current_prosperity: 60,
+        public_order: 70,
+        resource_efficiency: 1.0,
+        military_readiness: 0.6,
+        administrative_efficiency: 0.5,
+        infrastructure_level: 1,
+        governance_score: 60,
+        stored_resources: {
+          gold: 5000,
+          food: 3000,
+          iron: 1000,
+          wood: 2000
+        },
+        daily_production: {
+          gold: 200,
+          food: 150,
+          iron: 50,
+          wood: 100
+        },
+        occupation_status: 'controlled',
+        occupied_at: new Date()
+      }
+    });
+
+    console.log(`✅ 新用户 ${userId} (${username}) 的主城已创建在坐标 (${spawnLocationResult.coordinate_x}, ${spawnLocationResult.coordinate_y})`);
+    
+    return userCity;
+  } catch (error) {
+    console.error('创建主城失败:', error);
+  }
 }

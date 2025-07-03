@@ -1,0 +1,298 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <defs>
+    <linearGradient id="inventoryBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="itemSlotBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3748;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#1a202c;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffb347;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect width="375" height="812" fill="url(#inventoryBg)"/>
+  
+  <!-- 装饰性背景图案 -->
+  <g opacity="0.1">
+    <circle cx="50" cy="100" r="30" fill="#ffd700"/>
+    <circle cx="320" cy="200" r="25" fill="#ff6b6b"/>
+    <circle cx="80" cy="400" r="20" fill="#4ecdc4"/>
+    <circle cx="300" cy="500" r="35" fill="#45b7d1"/>
+  </g>
+  
+  <!-- 顶部导航栏 -->
+  <rect x="0" y="0" width="375" height="88" fill="rgba(0,0,0,0.8)"/>
+  
+  <!-- 返回按钮 -->
+  <g transform="translate(20,54)">
+    <circle cx="0" cy="0" r="18" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <path d="M-6,-3 L-6,3 L6,0 Z" fill="#ffd700"/>
+  </g>
+  
+  <!-- 页面标题 -->
+  <text x="187.5" y="60" text-anchor="middle" fill="#ffd700" font-size="20" font-weight="bold">背包</text>
+  
+  <!-- 整理按钮 -->
+  <g transform="translate(335,54)">
+    <circle cx="0" cy="0" r="18" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <rect x="-8" y="-8" width="4" height="16" fill="#ffd700"/>
+    <rect x="-2" y="-8" width="4" height="16" fill="#ffd700"/>
+    <rect x="4" y="-8" width="4" height="16" fill="#ffd700"/>
+  </g>
+  
+  <!-- 背包容量信息 -->
+  <g transform="translate(20,100)">
+    <rect x="0" y="0" width="335" height="40" rx="8" fill="rgba(0,0,0,0.6)" stroke="#ffd700" stroke-width="1"/>
+    
+    <text x="20" y="20" fill="#ffd700" font-size="14" font-weight="bold">背包容量: 45/60</text>
+    <rect x="20" y="25" width="200" height="6" rx="3" fill="rgba(255,255,255,0.2)"/>
+    <rect x="20" y="25" width="150" height="6" rx="3" fill="#ffd700"/>
+    
+    <text x="240" y="20" fill="#4ecdc4" font-size="12">扩容</text>
+    <text x="280" y="20" fill="#ffffff" font-size="12">|</text>
+    <text x="290" y="20" fill="#ff6b6b" font-size="12">出售</text>
+  </g>
+  
+  <!-- 物品分类标签 -->
+  <g transform="translate(0,155)">
+    <!-- 全部 -->
+    <rect x="20" y="0" width="50" height="30" rx="15" fill="#ffd700" opacity="0.9"/>
+    <text x="45" y="19" text-anchor="middle" fill="#1a1a2e" font-size="12" font-weight="bold">全部</text>
+    
+    <!-- 装备 -->
+    <rect x="80" y="0" width="50" height="30" rx="15" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="105" y="19" text-anchor="middle" fill="#ffd700" font-size="12">装备</text>
+    
+    <!-- 道具 -->
+    <rect x="140" y="0" width="50" height="30" rx="15" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="165" y="19" text-anchor="middle" fill="#ffd700" font-size="12">道具</text>
+    
+    <!-- 材料 -->
+    <rect x="200" y="0" width="50" height="30" rx="15" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="225" y="19" text-anchor="middle" fill="#ffd700" font-size="12">材料</text>
+    
+    <!-- 其他 -->
+    <rect x="260" y="0" width="50" height="30" rx="15" fill="rgba(255,255,255,0.1)" stroke="#ffd700" stroke-width="1"/>
+    <text x="285" y="19" text-anchor="middle" fill="#ffd700" font-size="12">其他</text>
+  </g>
+  
+  <!-- 物品网格 -->
+  <g transform="translate(20,200)">
+    <!-- 第一行 -->
+    <!-- 青龙偃月刀 -->
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#ffd700" stroke-width="2"/>
+      <rect x="5" y="5" width="50" height="50" rx="4" fill="#8B4513"/>
+      <text x="30" y="35" text-anchor="middle" fill="#ffd700" font-size="10" font-weight="bold">刀</text>
+      <!-- 数量 -->
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">1</text>
+      <!-- 品质星级 -->
+      <text x="30" y="75" text-anchor="middle" fill="#ffd700" font-size="8">★★★★★</text>
+    </g>
+    
+    <!-- 生命药水 -->
+    <g transform="translate(70,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#ff6b6b" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#ff6b6b"/>
+      <text x="30" y="35" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">药</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">15</text>
+      <text x="30" y="75" text-anchor="middle" fill="#ff6b6b" font-size="8">生命药水</text>
+    </g>
+    
+    <!-- 强化石 -->
+    <g transform="translate(140,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#06d6a0" stroke-width="2"/>
+      <polygon points="30,10 40,20 30,50 20,20" fill="#06d6a0"/>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">23</text>
+      <text x="30" y="75" text-anchor="middle" fill="#06d6a0" font-size="8">强化石</text>
+    </g>
+    
+    <!-- 经验书 -->
+    <g transform="translate(210,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#45b7d1" stroke-width="2"/>
+      <rect x="15" y="15" width="30" height="30" rx="4" fill="#45b7d1"/>
+      <text x="30" y="35" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">书</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">8</text>
+      <text x="30" y="75" text-anchor="middle" fill="#45b7d1" font-size="8">经验书</text>
+    </g>
+    
+    <!-- 金币袋 -->
+    <g transform="translate(280,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#ffd700" stroke-width="2"/>
+      <circle cx="30" cy="30" r="18" fill="#ffd700"/>
+      <text x="30" y="35" text-anchor="middle" fill="#1a1a2e" font-size="10" font-weight="bold">金</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">5</text>
+      <text x="30" y="75" text-anchor="middle" fill="#ffd700" font-size="8">金币袋</text>
+    </g>
+  </g>
+  
+  <!-- 第二行 -->
+  <g transform="translate(20,290)">
+    <!-- 铁剑 -->
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#9d4edd" stroke-width="2"/>
+      <rect x="20" y="10" width="20" height="40" rx="2" fill="#9d4edd"/>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">1</text>
+      <text x="30" y="75" text-anchor="middle" fill="#9d4edd" font-size="8">★★★</text>
+    </g>
+    
+    <!-- 魔法药水 -->
+    <g transform="translate(70,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#45b7d1" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#45b7d1"/>
+      <text x="30" y="35" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">魔</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">12</text>
+      <text x="30" y="75" text-anchor="middle" fill="#45b7d1" font-size="8">魔法药水</text>
+    </g>
+    
+    <!-- 武将碎片 -->
+    <g transform="translate(140,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#ff6b6b" stroke-width="2"/>
+      <polygon points="30,15 40,25 30,45 20,25" fill="#ff6b6b"/>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">7</text>
+      <text x="30" y="75" text-anchor="middle" fill="#ff6b6b" font-size="8">关羽碎片</text>
+    </g>
+    
+    <!-- 技能书 -->
+    <g transform="translate(210,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#ffd700" stroke-width="2"/>
+      <rect x="15" y="15" width="30" height="30" rx="4" fill="#ffd700"/>
+      <text x="30" y="35" text-anchor="middle" fill="#1a1a2e" font-size="9" font-weight="bold">技</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">3</text>
+      <text x="30" y="75" text-anchor="middle" fill="#ffd700" font-size="8">技能书</text>
+    </g>
+    
+    <!-- 空槽位 -->
+    <g transform="translate(280,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="rgba(255,255,255,0.05)" stroke="#666666" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="30" y="35" text-anchor="middle" fill="#666666" font-size="20">+</text>
+    </g>
+  </g>
+  
+  <!-- 第三行 -->
+  <g transform="translate(20,380)">
+    <!-- 护甲 -->
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#06d6a0" stroke-width="2"/>
+      <rect x="15" y="15" width="30" height="30" rx="4" fill="#06d6a0"/>
+      <text x="30" y="35" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">甲</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">1</text>
+      <text x="30" y="75" text-anchor="middle" fill="#06d6a0" font-size="8">★★★★</text>
+    </g>
+    
+    <!-- 复活药水 -->
+    <g transform="translate(70,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#itemSlotBg)" stroke="#9d4edd" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#9d4edd"/>
+      <text x="30" y="35" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">复</text>
+      <circle cx="50" cy="10" r="8" fill="#4ecdc4"/>
+      <text x="50" y="14" text-anchor="middle" fill="#ffffff" font-size="8">3</text>
+      <text x="30" y="75" text-anchor="middle" fill="#9d4edd" font-size="8">复活药水</text>
+    </g>
+    
+    <!-- 其他空槽位 -->
+    <g transform="translate(140,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="rgba(255,255,255,0.05)" stroke="#666666" stroke-width="1" stroke-dasharray="3,3"/>
+    </g>
+    
+    <g transform="translate(210,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="rgba(255,255,255,0.05)" stroke="#666666" stroke-width="1" stroke-dasharray="3,3"/>
+    </g>
+    
+    <g transform="translate(280,0)">
+      <rect x="0" y="0" width="60" height="60" rx="8" fill="rgba(255,255,255,0.05)" stroke="#666666" stroke-width="1" stroke-dasharray="3,3"/>
+    </g>
+  </g>
+  
+  <!-- 选中物品详情 -->
+  <g transform="translate(20,470)">
+    <rect x="0" y="0" width="335" height="120" rx="12" fill="url(#itemSlotBg)" stroke="#ffd700" stroke-width="2"/>
+    
+    <!-- 物品图标 -->
+    <rect x="20" y="20" width="80" height="80" rx="8" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="2"/>
+    <rect x="35" y="35" width="50" height="50" rx="4" fill="#8B4513"/>
+    <text x="60" y="65" text-anchor="middle" fill="#ffd700" font-size="14" font-weight="bold">刀</text>
+    
+    <!-- 物品信息 -->
+    <text x="120" y="35" fill="#ffd700" font-size="16" font-weight="bold">青龙偃月刀</text>
+    <text x="120" y="50" fill="#ffffff" font-size="12">品质: ★★★★★ (传说)</text>
+    <text x="120" y="65" fill="#ffffff" font-size="12">攻击力: +850</text>
+    <text x="120" y="80" fill="#ffffff" font-size="12">特效: 青龙之怒</text>
+    <text x="120" y="95" fill="#4ecdc4" font-size="10">关羽专属武器，大幅提升攻击力</text>
+  </g>
+  
+  <!-- 操作按钮 -->
+  <g transform="translate(20,610)">
+    <!-- 使用 -->
+    <rect x="0" y="0" width="80" height="40" rx="20" fill="url(#goldGradient)" filter="url(#glow)"/>
+    <text x="40" y="25" text-anchor="middle" fill="#1a1a2e" font-size="14" font-weight="bold">使用</text>
+    
+    <!-- 装备 -->
+    <rect x="90" y="0" width="80" height="40" rx="20" fill="rgba(78,205,196,0.2)" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="130" y="25" text-anchor="middle" fill="#4ecdc4" font-size="14">装备</text>
+    
+    <!-- 出售 -->
+    <rect x="180" y="0" width="80" height="40" rx="20" fill="rgba(255,107,107,0.2)" stroke="#ff6b6b" stroke-width="2"/>
+    <text x="220" y="25" text-anchor="middle" fill="#ff6b6b" font-size="14">出售</text>
+    
+    <!-- 详情 -->
+    <rect x="270" y="0" width="65" height="40" rx="20" fill="rgba(255,255,255,0.1)" stroke="#ffffff" stroke-width="1"/>
+    <text x="302.5" y="25" text-anchor="middle" fill="#ffffff" font-size="14">详情</text>
+  </g>
+  
+  <!-- 快捷操作栏 -->
+  <g transform="translate(20,670)">
+    <rect x="0" y="0" width="335" height="50" rx="8" fill="rgba(0,0,0,0.6)" stroke="#ffd700" stroke-width="1"/>
+    
+    <!-- 批量出售 -->
+    <text x="20" y="20" fill="#ff6b6b" font-size="12" font-weight="bold">批量出售</text>
+    <text x="20" y="35" fill="#ffffff" font-size="10">选择多个物品进行批量出售</text>
+    
+    <!-- 一键整理 -->
+    <text x="180" y="20" fill="#4ecdc4" font-size="12" font-weight="bold">一键整理</text>
+    <text x="180" y="35" fill="#ffffff" font-size="10">自动整理背包物品</text>
+  </g>
+  
+  <!-- 底部导航提示 -->
+  <g transform="translate(20,740)">
+    <text x="0" y="0" fill="#ffd700" font-size="12" font-weight="bold">💡 提示</text>
+    <text x="0" y="15" fill="#ffffff" font-size="10">长按物品可查看详细信息</text>
+    <text x="0" y="30" fill="#ffffff" font-size="10">拖拽物品可快速整理背包</text>
+  </g>
+  
+  <!-- 装饰性光效 -->
+  <g opacity="0.4">
+    <circle cx="60" cy="230" r="2" fill="#ffd700">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="200" cy="320" r="1.5" fill="#4ecdc4">
+      <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="300" cy="410" r="2.5" fill="#ff6b6b">
+      <animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

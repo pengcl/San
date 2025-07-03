@@ -1,0 +1,417 @@
+/* 三国地图自定义样式 - 古典韵味 */
+.three-kingdoms-map {
+  background: 
+    linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 70%, #1a237e 100%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="25" cy="25" r="1" fill="rgba(255,215,0,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,215,0,0.1)"/></svg>');
+  position: relative;
+  background-attachment: fixed;
+  background-size: 100px 100px, cover;
+}
+
+.three-kingdoms-map::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 40% 40%, rgba(52, 168, 83, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 80%, rgba(66, 133, 244, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  animation: ancientGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes ancientGlow {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+/* Leaflet地图容器 */
+.leaflet-container {
+  background: transparent !important;
+  font-family: 'SimHei', 'Microsoft YaHei', sans-serif !important;
+}
+
+/* 隐藏Leaflet默认底图 */
+.leaflet-tile-pane {
+  opacity: 0.1 !important;
+}
+
+/* 自定义城市图标 - 古典风格 */
+.custom-city-icon {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)) drop-shadow(0 0 8px rgba(255,215,0,0.2));
+  position: relative;
+}
+
+.custom-city-icon:hover {
+  transform: scale(1.25) rotate(5deg);
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 15px rgba(255,215,0,0.4));
+  z-index: 1000;
+}
+
+.custom-city-icon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(255,215,0,0.3), 
+    rgba(255,107,53,0.2), 
+    rgba(255,215,0,0.3));
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-city-icon:hover::before {
+  opacity: 1;
+  animation: cityPulse 2s ease-in-out infinite;
+}
+
+@keyframes cityPulse {
+  0%, 100% { 
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* 自定义地形图标 - 古典山水风格 */
+.custom-terrain-icon {
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 6px rgba(141,110,99,0.3));
+  position: relative;
+}
+
+.custom-terrain-icon:hover {
+  transform: scale(1.15) translateY(-2px);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)) drop-shadow(0 0 12px rgba(141,110,99,0.5));
+}
+
+/* 关隘特殊效果 */
+.custom-terrain-icon[data-type="pass"] {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 8px rgba(255,87,34,0.4));
+}
+
+.custom-terrain-icon[data-type="pass"]:hover {
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)) drop-shadow(0 0 15px rgba(255,87,34,0.6));
+  animation: fortressGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes fortressGlow {
+  0% { 
+    transform: scale(1.15) translateY(-2px);
+  }
+  100% { 
+    transform: scale(1.2) translateY(-3px);
+  }
+}
+
+/* 工具提示样式 - 古典卷轴风格 */
+.leaflet-tooltip {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.97), rgba(16, 21, 62, 0.95)) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(15px) !important;
+  font-family: 'SimHei', 'Microsoft YaHei', 'KaiTi', serif !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  padding: 8px 12px !important;
+  position: relative !important;
+}
+
+.leaflet-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(255, 215, 0, 0.6), 
+    rgba(255, 107, 53, 0.4), 
+    rgba(255, 215, 0, 0.6));
+  border-radius: 14px;
+  z-index: -1;
+  opacity: 0.8;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(26, 26, 46, 0.95) !important;
+}
+
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: rgba(26, 26, 46, 0.95) !important;
+}
+
+.leaflet-tooltip-left:before {
+  border-left-color: rgba(26, 26, 46, 0.95) !important;
+}
+
+.leaflet-tooltip-right:before {
+  border-right-color: rgba(26, 26, 46, 0.95) !important;
+}
+
+/* 三国领土多边形样式 */
+.kingdom-polygon {
+  transition: all 0.3s ease;
+}
+
+.kingdom-polygon:hover {
+  opacity: 0.8 !important;
+}
+
+/* 河流样式 - 水墨画风格 */
+.river-line {
+  filter: drop-shadow(0 0 4px rgba(25, 118, 210, 0.6)) drop-shadow(0 0 8px rgba(25, 118, 210, 0.3));
+  animation: riverFlow 4s ease-in-out infinite, riverShimmer 2s ease-in-out infinite alternate;
+  stroke-dasharray: 10, 5;
+  stroke-linecap: round;
+}
+
+@keyframes riverFlow {
+  0% { 
+    opacity: 0.8;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    opacity: 1;
+    stroke-dashoffset: -7.5;
+  }
+  100% { 
+    opacity: 0.85;
+    stroke-dashoffset: -15;
+  }
+}
+
+@keyframes riverShimmer {
+  0% { 
+    filter: drop-shadow(0 0 4px rgba(25, 118, 210, 0.6)) drop-shadow(0 0 8px rgba(25, 118, 210, 0.3));
+  }
+  100% { 
+    filter: drop-shadow(0 0 6px rgba(25, 118, 210, 0.8)) drop-shadow(0 0 12px rgba(25, 118, 210, 0.5));
+  }
+}
+
+/* 山脉样式 */
+.mountain-line {
+  filter: drop-shadow(0 0 2px rgba(141, 110, 99, 0.7));
+}
+
+/* 地图控制按钮 - 古典玉石风格 */
+.map-control-panel {
+  background: linear-gradient(135deg, 
+    rgba(26, 26, 46, 0.9), 
+    rgba(16, 21, 62, 0.85)) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  position: relative !important;
+}
+
+.map-control-panel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(255, 215, 0, 0.4), 
+    rgba(255, 107, 53, 0.3), 
+    rgba(255, 215, 0, 0.4));
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.map-control-panel .MuiIconButton-root {
+  color: rgba(255, 255, 255, 0.95) !important;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1), 
+    rgba(255, 215, 0, 0.05)) !important;
+  border: 1px solid rgba(255, 215, 0, 0.2) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
+  margin: 4px !important;
+}
+
+.map-control-panel .MuiIconButton-root:hover {
+  background: linear-gradient(135deg, 
+    rgba(255, 107, 53, 0.3), 
+    rgba(255, 215, 0, 0.2)) !important;
+  color: #ffd700 !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3) !important;
+}
+
+/* 图例样式 - 古典竹简风格 */
+.map-legend {
+  background: linear-gradient(135deg, 
+    rgba(26, 26, 46, 0.95), 
+    rgba(16, 21, 62, 0.9)) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  position: relative !important;
+  padding: 16px !important;
+}
+
+.map-legend::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(255, 215, 0, 0.5), 
+    rgba(255, 107, 53, 0.3), 
+    rgba(255, 215, 0, 0.5));
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+.map-legend .MuiTypography-root {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  font-family: 'SimHei', 'Microsoft YaHei', 'KaiTi', serif !important;
+}
+
+.map-legend .MuiTypography-subtitle2 {
+  color: #ffd700 !important;
+  font-weight: bold !important;
+  margin-bottom: 12px !important;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3) !important;
+  padding-bottom: 8px !important;
+}
+
+/* 古典边框效果 */
+.classical-border {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1)) border-box;
+  background-clip: padding-box, border-box;
+}
+
+.classical-border::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, #ffd700, #ff6b35, #4285f4, #34a853);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* 动画效果 */
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px rgba(255, 107, 53, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
+  }
+}
+
+.glow-effect {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* 三国纹理背景 */
+.texture-overlay {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(52, 168, 83, 0.02) 0%, transparent 50%),
+    linear-gradient(45deg, 
+      rgba(255, 107, 53, 0.01) 25%, 
+      transparent 25%, 
+      transparent 75%, 
+      rgba(66, 133, 244, 0.01) 75%);
+  background-size: 100px 100px, 100px 100px, 40px 40px;
+}
+
+/* 城池等级指示器 */
+.city-level-indicator {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(45deg, #ffd700, #ffeb3b);
+  color: #000;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 阵营颜色主题 */
+.wei-theme {
+  background: linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(66, 133, 244, 0.05));
+  border-color: #4285f4 !important;
+}
+
+.shu-theme {
+  background: linear-gradient(135deg, rgba(52, 168, 83, 0.1), rgba(52, 168, 83, 0.05));
+  border-color: #34a853 !important;
+}
+
+.wu-theme {
+  background: linear-gradient(135deg, rgba(251, 188, 4, 0.1), rgba(251, 188, 4, 0.05));
+  border-color: #fbbc04 !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .map-control-panel {
+    top: 8px !important;
+    right: 8px !important;
+    padding: 0.5rem !important;
+  }
+  
+  .map-legend {
+    bottom: 8px !important;
+    left: 8px !important;
+    padding: 1rem !important;
+    min-width: 150px !important;
+  }
+  
+  .custom-city-icon {
+    transform: scale(0.9);
+  }
+}

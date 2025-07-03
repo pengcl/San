@@ -38,6 +38,7 @@ import {
   EmojiEvents,
   Inventory,
   AutoAwesome,
+  Map,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 
@@ -64,7 +65,8 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleTheme }) => {
   };
 
   const navigationItems = [
-    { text: '主页', icon: <Home />, path: '/' },
+    { text: '大地图', icon: <Map />, path: '/map', isNew: true, isImportant: true },
+    { text: '主页', icon: <Home />, path: '/home' },
     { text: '武将', icon: <Person />, path: '/heroes' },
     { text: '召唤', icon: <AutoAwesome />, path: '/summon', isNew: true },
     { text: '背包', icon: <Inventory />, path: '/inventory' },
@@ -75,8 +77,11 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleTheme }) => {
   ];
 
   const isCurrentPath = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === '/map') {
+      return location.pathname === '/' || location.pathname === '/map';
+    }
+    if (path === '/home') {
+      return location.pathname === '/home';
     }
     return location.pathname.startsWith(path);
   };
@@ -150,15 +155,21 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleTheme }) => {
               }}
               sx={{
                 '&.Mui-selected': {
-                  bgcolor: 'primary.main',
+                  bgcolor: item.isImportant ? 'linear-gradient(45deg, #ff6b35, #f7931e)' : 'primary.main',
                   color: 'primary.contrastText',
                   '&:hover': {
-                    bgcolor: 'primary.dark',
+                    bgcolor: item.isImportant ? 'linear-gradient(45deg, #e55a2b, #e0831a)' : 'primary.dark',
                   },
                   '& .MuiListItemIcon-root': {
                     color: 'primary.contrastText',
                   },
                 },
+                ...(item.isImportant && !isCurrentPath(item.path) && {
+                  bgcolor: 'rgba(255, 107, 53, 0.1)',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 107, 53, 0.2)',
+                  },
+                }),
               }}
             >
               <ListItemIcon

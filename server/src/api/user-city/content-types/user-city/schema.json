@@ -190,6 +190,57 @@
       "type": "json",
       "description": "特殊事件"
     },
+    "coordinate_x": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 1000,
+      "description": "地图X坐标"
+    },
+    "coordinate_y": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 1000,
+      "description": "地图Y坐标"
+    },
+    "city_level": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 10,
+      "description": "城池等级"
+    },
+    "is_main_city": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否为主城"
+    },
+    "city_type": {
+      "type": "enumeration",
+      "enum": ["main", "npc", "resource"],
+      "default": "main",
+      "description": "城池类型"
+    },
+    "defense_value": {
+      "type": "integer",
+      "default": 100,
+      "min": 0,
+      "max": 10000,
+      "description": "防御值"
+    },
+    "max_garrison": {
+      "type": "integer",
+      "default": 1000,
+      "min": 0,
+      "description": "最大驻军数"
+    },
+    "faction": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::faction.faction",
+      "description": "所属阵营"
+    },
     "user": {
       "type": "relation",
       "relation": "manyToOne",

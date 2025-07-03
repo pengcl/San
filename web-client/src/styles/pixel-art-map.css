@@ -1,0 +1,428 @@
+/* 像素艺术地图样式 */
+.pixel-art-canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  cursor: crosshair;
+  transition: transform 0.3s ease;
+  background: 
+    linear-gradient(45deg, #000 25%, transparent 25%),
+    linear-gradient(-45deg, #000 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #000 75%),
+    linear-gradient(-45deg, transparent 75%, #000 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+  background-color: #111;
+}
+
+.pixel-art-canvas:hover {
+  transform: translate(-50%, -50%) scale(1.02);
+  box-shadow: 0 12px 48px rgba(255, 215, 0, 0.3) !important;
+}
+
+/* 像素控制面板 */
+.pixel-controls {
+  background: linear-gradient(135deg, 
+    rgba(26, 26, 46, 0.95), 
+    rgba(16, 21, 62, 0.9)) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  position: relative !important;
+}
+
+.pixel-controls::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(255, 107, 53, 0.5), 
+    rgba(255, 215, 0, 0.3), 
+    rgba(255, 107, 53, 0.5));
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0.7;
+  animation: pixelGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pixelGlow {
+  0% { 
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  100% { 
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+.pixel-controls .MuiTypography-root {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7) !important;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace !important;
+}
+
+.pixel-controls .MuiTypography-h6 {
+  color: #ff6b35 !important;
+  font-weight: bold !important;
+  margin-bottom: 16px !important;
+  text-align: center !important;
+  border-bottom: 2px solid rgba(255, 107, 53, 0.3) !important;
+  padding-bottom: 8px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+/* 像素风格滑块 */
+.pixel-controls .MuiSlider-root {
+  color: #ff6b35 !important;
+  height: 8px !important;
+}
+
+.pixel-controls .MuiSlider-thumb {
+  background: linear-gradient(45deg, #ff6b35, #ffd700) !important;
+  border: 2px solid #fff !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 2px !important; /* 方形像素风格 */
+}
+
+.pixel-controls .MuiSlider-thumb:hover {
+  box-shadow: 0 6px 12px rgba(255, 107, 53, 0.5) !important;
+  transform: scale(1.2) !important;
+}
+
+.pixel-controls .MuiSlider-track {
+  background: linear-gradient(90deg, #ff6b35, #ffd700) !important;
+  border: none !important;
+  height: 6px !important;
+  border-radius: 1px !important;
+}
+
+.pixel-controls .MuiSlider-rail {
+  background: rgba(255, 255, 255, 0.2) !important;
+  height: 6px !important;
+  border-radius: 1px !important;
+}
+
+.pixel-controls .MuiSlider-mark {
+  background: #fff !important;
+  width: 2px !important;
+  height: 2px !important;
+  border-radius: 0 !important;
+}
+
+/* 像素风格按钮组 */
+.pixel-controls .MuiButtonGroup-root {
+  border-radius: 4px !important;
+  overflow: hidden;
+}
+
+.pixel-controls .MuiButton-root {
+  font-family: 'Courier New', monospace !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-transform: none !important;
+  min-width: auto !important;
+  padding: 6px 8px !important;
+  border-radius: 0 !important;
+  border: 1px solid rgba(255, 107, 53, 0.3) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease !important;
+}
+
+.pixel-controls .MuiButton-root:hover {
+  background: rgba(255, 107, 53, 0.2) !important;
+  border-color: rgba(255, 107, 53, 0.6) !important;
+  transform: translateY(-1px) !important;
+}
+
+.pixel-controls .MuiButton-contained {
+  background: linear-gradient(135deg, #ff6b35, #ffd700) !important;
+  color: #000 !important;
+  border-color: #ffd700 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.pixel-controls .MuiButton-outlined {
+  border: 2px solid rgba(255, 107, 53, 0.5) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.pixel-controls .MuiButton-outlined:hover {
+  background: rgba(255, 107, 53, 0.15) !important;
+  border-color: #ff6b35 !important;
+}
+
+/* 像素风格开关 */
+.pixel-controls .MuiSwitch-root {
+  width: 42px !important;
+  height: 24px !important;
+  padding: 0 !important;
+}
+
+.pixel-controls .MuiSwitch-track {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(255, 107, 53, 0.3) !important;
+}
+
+.pixel-controls .MuiSwitch-thumb {
+  background: #ff6b35 !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 2px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  margin: 2px !important;
+}
+
+.pixel-controls .Mui-checked .MuiSwitch-thumb {
+  background: linear-gradient(45deg, #ffd700, #ff6b35) !important;
+  transform: translateX(18px) !important;
+}
+
+.pixel-controls .Mui-checked + .MuiSwitch-track {
+  background: rgba(255, 215, 0, 0.3) !important;
+  border-color: #ffd700 !important;
+}
+
+/* 像素地图特效 */
+.pixel-terrain-water {
+  animation: pixelWaveEffect 2s ease-in-out infinite;
+}
+
+@keyframes pixelWaveEffect {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2) hue-rotate(10deg); }
+}
+
+.pixel-terrain-mountain {
+  position: relative;
+}
+
+.pixel-terrain-mountain::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    transparent 50%, 
+    rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+/* 像素城池效果 */
+.pixel-city {
+  position: relative;
+  image-rendering: pixelated;
+}
+
+.pixel-city.capital {
+  animation: pixelCapitalGlow 3s ease-in-out infinite;
+}
+
+@keyframes pixelCapitalGlow {
+  0%, 100% { 
+    filter: brightness(1) drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
+  }
+  50% { 
+    filter: brightness(1.3) drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+  }
+}
+
+.pixel-city.player-city {
+  animation: pixelPlayerPulse 2s ease-in-out infinite;
+}
+
+@keyframes pixelPlayerPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% { 
+    transform: scale(1.1);
+    filter: brightness(1.2) hue-rotate(15deg);
+  }
+}
+
+/* 像素天气效果 */
+.pixel-weather-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(173, 216, 230, 0.1) 25%, 
+    transparent 50%, 
+    rgba(173, 216, 230, 0.1) 75%, 
+    transparent 100%);
+  background-size: 8px 8px;
+  animation: pixelRainMove 0.5s linear infinite;
+}
+
+@keyframes pixelRainMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 8px 8px; }
+}
+
+.pixel-weather-snow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+              radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
+  background-size: 16px 16px, 12px 12px;
+  animation: pixelSnowFall 3s linear infinite;
+}
+
+@keyframes pixelSnowFall {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 0 16px, 0 12px; }
+}
+
+/* 像素网格效果 */
+.pixel-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* 像素化UI增强 */
+.pixel-controls .MuiStack-root {
+  gap: 12px !important;
+}
+
+.pixel-controls .MuiBox-root {
+  padding: 8px !important;
+  border: 1px solid rgba(255, 107, 53, 0.2) !important;
+  border-radius: 4px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* 时间周期效果 */
+.time-dawn {
+  filter: sepia(30%) saturate(1.4) hue-rotate(300deg) brightness(0.9);
+}
+
+.time-day {
+  filter: brightness(1.1) saturate(1.2);
+}
+
+.time-dusk {
+  filter: sepia(40%) saturate(1.5) hue-rotate(20deg) brightness(0.8);
+}
+
+.time-night {
+  filter: brightness(0.4) saturate(0.7) hue-rotate(220deg) contrast(1.2);
+}
+
+/* 季节效果 */
+.season-spring {
+  filter: saturate(1.3) hue-rotate(10deg);
+}
+
+.season-summer {
+  filter: brightness(1.2) saturate(1.4);
+}
+
+.season-autumn {
+  filter: sepia(20%) saturate(1.2) hue-rotate(30deg);
+}
+
+.season-winter {
+  filter: brightness(0.9) saturate(0.8) contrast(1.1);
+}
+
+/* 响应式像素设计 */
+@media (max-width: 768px) {
+  .pixel-controls {
+    top: 8px !important;
+    right: 8px !important;
+    left: 8px !important;
+    max-height: 400px !important;
+    min-width: auto !important;
+  }
+  
+  .pixel-art-canvas {
+    max-width: calc(100vw - 32px) !important;
+    max-height: calc(100vh - 200px) !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  
+  .pixel-controls .MuiButton-root {
+    font-size: 10px !important;
+    padding: 4px 6px !important;
+  }
+}
+
+/* 性能优化 */
+.pixel-art-canvas,
+.pixel-controls * {
+  will-change: transform, filter;
+}
+
+/* 像素完美渲染 */
+* {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* 复古CRT效果（可选） */
+.retro-crt-effect {
+  position: relative;
+}
+
+.retro-crt-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent 50%, 
+    rgba(0, 255, 0, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.retro-crt-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 1001;
+}
